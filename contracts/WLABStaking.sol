@@ -76,7 +76,16 @@ contract WLABStaking is Ownable, ReentrancyGuard {
         uint256 weight = (amount * multipliers[tierIndex]) / 1e18;
         s.amount += amount;
         s.weight += weight;
-        s.lockEnd = uint64(block.timestamp + lockDurations[tierIndex]);
+        // lockEnd uses max(existing, fresh) so a same-tier top-up never
+        // silently shortens the user's commitment. Behavior is identical to
+        // the previous unconditional write under today's monotone durations,
+        // but encoding the invariant in source guards every future change to
+        // tier durations or top-up paths from regressing into a silent
+        // unlock-time reduction.
+        uint64 newCandidate = uint64(block.timestamp + lockDurations[tierIndex]);
+        if (newCandidate > s.lockEnd) {
+            s.lockEnd = newCandidate;
+        }
         s.tierIndex = tierIndex;
         s.compound = compound;
         s.rewardDebt = (s.weight * accRewardPerWeight) / 1e18;

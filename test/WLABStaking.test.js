@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, network } = require("hardhat");
 const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
 describe("WLABStaking", function () {
@@ -69,5 +69,52 @@ describe("WLABStaking", function () {
     await staking.connect(user).emergencyUnstake();
     const after = await token.balanceOf(user.address);
     expect(after - before).to.be.lt(ethers.parseEther("100"));
+  });
+
+  // ── Phase 1D regression: top-ups never silently shorten or mis-handle the lock ─
+  it("same-tier top-up never shortens the lock and matches max(existing, new)", async function () {
+    const tier = 3; // 365 days
+    const tierDurationSec = await staking.lockDurations(tier);
+
+    await staking.connect(user).stake(ethers.parseEther("100"), tier, false);
+    const first = await staking.stakes(user.address);
+    const initialLockEnd = first.lockEnd;
+
+    // Advance the clock so the freshly-computed candidate would be later
+    // than the existing lockEnd. Top up should extend, not shrink.
+    await time.increase(60 * 24 * 60 * 60);
+    await staking.connect(user).stake(ethers.parseEther("50"), tier, false);
+
+    const second = await staking.stakes(user.address);
+    const now = BigInt(await time.latest());
+    const newCandidate = now + tierDurationSec;
+    const expected = newCandidate > initialLockEnd ? newCandidate : initialLockEnd;
+
+    // Hard invariant: lockEnd is monotonically non-decreasing across top-ups.
+    expect(second.lockEnd).to.be.gte(initialLockEnd);
+    // Behavioral invariant: lockEnd is exactly the spec'd max.
+    expect(second.lockEnd).to.equal(expected);
+  });
+
+  it("same-block top-up leaves lockEnd unchanged", async function () {
+    const tier = 2; // 180 days
+
+    // Disable automine so both stake txs land in the same block; otherwise
+    // Hardhat mines one block per tx and block.timestamp advances by 1.
+    await network.provider.send("evm_setAutomine", [false]);
+    try {
+      const tx1 = await staking.connect(user).stake(ethers.parseEther("100"), tier, false);
+      const tx2 = await staking.connect(user).stake(ethers.parseEther("25"), tier, false);
+      await network.provider.send("evm_mine", []);
+      await tx1.wait();
+      await tx2.wait();
+    } finally {
+      await network.provider.send("evm_setAutomine", [true]);
+    }
+
+    const stakeInfo = await staking.stakes(user.address);
+    const expected = BigInt(await time.latest()) + (await staking.lockDurations(tier));
+    expect(stakeInfo.lockEnd).to.equal(expected);
+    expect(stakeInfo.amount).to.equal(ethers.parseEther("125"));
   });
 });
