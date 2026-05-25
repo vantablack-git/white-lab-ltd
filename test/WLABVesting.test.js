@@ -78,4 +78,56 @@ describe("WLABVesting", function () {
     // Event still fires; refund argument matches owner-side payout.
     await expect(tx).to.emit(vesting, "ScheduleRevoked");
   });
+
+  // ── Phase 1B regression: emergency withdraw cannot drain the vested token ──
+  it("blocks emergencyWithdraw of the vested token below the outstanding obligation", async function () {
+    const amount = ethers.parseEther("1000");
+    const start = (await time.latest()) + 1;
+    const cliff = 30n * 24n * 60n * 60n;
+    const duration = 365n * 24n * 60n * 60n;
+
+    await vesting.createSchedule(beneficiary.address, amount, start, cliff, duration, true);
+
+    // Donate extra `token` directly into the vesting contract so balance > obligation.
+    const excess = ethers.parseEther("250");
+    await token.connect(owner).mint(owner.address, excess);
+    await token.connect(owner).transfer(await vesting.getAddress(), excess);
+
+    expect(await vesting.totalOutstanding()).to.equal(amount);
+    expect(await token.balanceOf(await vesting.getAddress())).to.equal(amount + excess);
+
+    // Cannot drain the entire balance — that would breach beneficiary's promise.
+    await expect(
+      vesting.connect(owner).emergencyWithdraw(await token.getAddress(), amount + excess)
+    ).to.be.revertedWith("Vesting: protected balance");
+
+    // Cannot pull a single wei more than the strict excess.
+    await expect(
+      vesting.connect(owner).emergencyWithdraw(await token.getAddress(), excess + 1n)
+    ).to.be.revertedWith("Vesting: protected balance");
+
+    // Excess recovery is allowed.
+    const ownerBefore = await token.balanceOf(owner.address);
+    await vesting.connect(owner).emergencyWithdraw(await token.getAddress(), excess);
+    const ownerAfter = await token.balanceOf(owner.address);
+    expect(ownerAfter - ownerBefore).to.equal(excess);
+
+    // Beneficiary is still made whole at the end of the schedule.
+    await time.increase(Number(cliff + duration + 1n));
+    await vesting.connect(beneficiary).release();
+    expect(await token.balanceOf(beneficiary.address)).to.equal(amount);
+  });
+
+  it("still allows recovering an unrelated ERC20 mistakenly sent to the vault", async function () {
+    const Token = await ethers.getContractFactory("WLABToken");
+    const stray = await Token.deploy(owner.address, treasury.address);
+    const stuck = ethers.parseEther("42");
+    await stray.connect(owner).mint(await vesting.getAddress(), stuck);
+
+    const ownerBefore = await stray.balanceOf(owner.address);
+    await vesting.connect(owner).emergencyWithdraw(await stray.getAddress(), stuck);
+    const ownerAfter = await stray.balanceOf(owner.address);
+
+    expect(ownerAfter - ownerBefore).to.equal(stuck);
+  });
 });

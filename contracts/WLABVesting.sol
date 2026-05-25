@@ -27,6 +27,12 @@ contract WLABVesting is Ownable, ReentrancyGuard {
 
     mapping(address => Schedule) public schedules;
 
+    /// @notice Sum of unreleased obligations across all active schedules. The
+    ///         vesting token balance held by this contract may never go below
+    ///         this number — that invariant is what allows emergencyWithdraw to
+    ///         exist without becoming a rug surface.
+    uint256 public totalOutstanding;
+
     event ScheduleCreated(
         address indexed beneficiary,
         uint256 amount,
@@ -69,6 +75,7 @@ contract WLABVesting is Ownable, ReentrancyGuard {
             revocable: revocable,
             revoked: false
         });
+        totalOutstanding += amount;
 
         token.safeTransferFrom(msg.sender, address(this), amount);
 
@@ -84,6 +91,7 @@ contract WLABVesting is Ownable, ReentrancyGuard {
 
         Schedule storage s = schedules[msg.sender];
         s.released += amount;
+        totalOutstanding -= amount;
         token.safeTransfer(msg.sender, amount);
 
         emit TokensReleased(msg.sender, amount);
@@ -113,6 +121,7 @@ contract WLABVesting is Ownable, ReentrancyGuard {
         // future _vestedAmount math cannot grow past what we just paid.
         s.revoked = true;
         s.totalAmount = s.released + unreleased;
+        totalOutstanding -= (unreleased + refund);
 
         if (unreleased > 0) {
             s.released += unreleased;
@@ -148,9 +157,23 @@ contract WLABVesting is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Owner emergency withdraw (e.g. wrong token) — use with timelock off-chain
+     * @notice Owner emergency withdraw, hard-restricted so it cannot violate
+     *         outstanding obligations.
+     *
+     *         - For unrelated ERC20s mistakenly sent to this contract, the
+     *           full balance is freely recoverable.
+     *         - For the vesting token itself, only the strict excess of the
+     *           contract's balance over `totalOutstanding` may be withdrawn.
+     *           This makes it impossible for the owner to drain tokens that
+     *           any active schedule still has a claim to.
      */
     function emergencyWithdraw(address erc20, uint256 amount) external onlyOwner {
+        if (erc20 == address(token)) {
+            uint256 bal = token.balanceOf(address(this));
+            uint256 protectedBal = totalOutstanding;
+            uint256 withdrawable = bal > protectedBal ? bal - protectedBal : 0;
+            require(amount <= withdrawable, "Vesting: protected balance");
+        }
         IERC20(erc20).safeTransfer(owner(), amount);
         emit EmergencyWithdraw(erc20, amount);
     }
