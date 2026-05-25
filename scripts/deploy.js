@@ -86,7 +86,7 @@ async function main() {
   const treasuryImpl = await TreasuryImpl.deploy();
   await treasuryImpl.waitForDeployment();
   const initData = TreasuryImpl.interface.encodeFunctionData("initialize", [treasury]);
-  const Proxy = await hre.ethers.getContractFactory("TestERC1967Proxy");
+  const Proxy = await hre.ethers.getContractFactory("WLABERC1967Proxy");
   const treasuryProxy = await Proxy.deploy(await treasuryImpl.getAddress(), initData);
   await treasuryProxy.waitForDeployment();
   const treasuryProxyAddr = await treasuryProxy.getAddress();

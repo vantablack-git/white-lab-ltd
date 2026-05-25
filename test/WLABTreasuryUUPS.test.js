@@ -14,7 +14,7 @@ describe("WLABTreasuryUUPS", function () {
     implementation = await Treasury.deploy();
 
     const initData = Treasury.interface.encodeFunctionData("initialize", [owner.address]);
-    const Proxy = await ethers.getContractFactory("TestERC1967Proxy");
+    const Proxy = await ethers.getContractFactory("WLABERC1967Proxy");
     const proxy = await Proxy.deploy(await implementation.getAddress(), initData);
     treasury = Treasury.attach(await proxy.getAddress());
 
