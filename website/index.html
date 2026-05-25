@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="WhiteLab Launch OS — audit-ready token infrastructure on Base. $WLAB protocol." />
+    <title>WhiteLab — Launch OS on Base</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/website/css/site.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="/">
+        <span class="logo-mark">W</span>
+        <span>WhiteLab</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#protocol">Protocol</a>
+        <a href="#tokenomics">Tokenomics</a>
+        <a href="#transparency">Transparency</a>
+        <a href="/whitepaper">Whitepaper</a>
+        <a class="nav-cta" href="/app">Launch App</a>
+      </nav>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Base L2 · Launch OS · $WLAB</p>
+          <h1>Clean-room token launches with institutional-grade contracts.</h1>
+          <p class="lead">
+            WhiteLab unifies IDO sales, vesting, staking, vote escrow, and timelock governance into one
+            transparent stack — built on OpenZeppelin, tested end-to-end, ready for public testnet.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="/app">Open Protocol Console</a>
+            <a class="btn ghost" href="/whitepaper">Read Whitepaper</a>
+          </div>
+          <dl class="hero-stats">
+            <div><dt>Max Supply</dt><dd>1B WLAB</dd></div>
+            <div><dt>TGE Float</dt><dd>~8.85%</dd></div>
+            <div><dt>Timelock</dt><dd>48h+</dd></div>
+          </dl>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orb orb-a"></div>
+          <div class="orb orb-b"></div>
+          <div class="mesh-card">
+            <p>Neural Launch Mesh</p>
+            <span>IDO · Vesting · Stake · DAO</span>
+            <div class="pulse-line"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="protocol">
+        <div class="section-head">
+          <p class="eyebrow">Architecture</p>
+          <h2>Everything investors expect — in one monorepo.</h2>
+        </div>
+        <div class="card-grid">
+          <article class="card reveal">
+            <h3>WLABToken</h3>
+            <p>ERC-20 with votes, permit, fee controls, pause, and compliance tooling.</p>
+          </article>
+          <article class="card reveal">
+            <h3>Token Sale</h3>
+            <p>Three-phase IDO with Merkle whitelist, wallet caps, claim, and refund accounting.</p>
+          </article>
+          <article class="card reveal">
+            <h3>Staking & veWLAB</h3>
+            <p>Tiered locks, weighted rewards, and gauge voting with reuse protection.</p>
+          </article>
+          <article class="card reveal">
+            <h3>Governance</h3>
+            <p>OpenZeppelin Governor + Timelock — propose, vote, queue, execute on-chain.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section alt" id="tokenomics">
+        <div class="section-head">
+          <p class="eyebrow">Tokenomics</p>
+          <h2>Fixed cap. Documented unlocks. Deflationary fee burns.</h2>
+        </div>
+        <div class="tokenomics-layout">
+          <div class="donut-wrap reveal" id="donutChart" aria-label="Supply allocation chart"></div>
+          <div class="allocation-table reveal">
+            <table>
+              <thead><tr><th>Bucket</th><th>Share</th><th>WLAB</th><th>TGE Unlock</th></tr></thead>
+              <tbody id="allocationRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="transparency">
+        <div class="section-head">
+          <p class="eyebrow">On-chain transparency</p>
+          <h2>Live deployment registry</h2>
+        </div>
+        <div class="transparency-panel reveal">
+          <div class="network-badge" id="networkBadge">Loading network…</div>
+          <div class="address-grid" id="contractGrid"></div>
+          <p class="fine-print">Bridge adapter is a disabled stub until LayerZero OFT v2 audit. Mainnet requires external audit + multisig handover.</p>
+        </div>
+      </section>
+
+      <section class="section cta-band">
+        <div class="cta-inner reveal">
+          <h2>Operate the protocol from one console.</h2>
+          <p>Connect wallet on Base Sepolia or local Hardhat, participate in IDO flows, stake, and inspect governance parameters.</p>
+          <a class="btn primary" href="/app">Enter Console</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 WhiteLab Protocol. Not financial advice. Testnet candidate — audit before mainnet.</p>
+      <div class="footer-links">
+        <a href="/whitepaper">Whitepaper</a>
+        <a href="/legal">Legal &amp; risks</a>
+        <a href="/app">Console</a>
+        <a href="https://base.org" target="_blank" rel="noopener">Base</a>
+      </div>
+    </footer>
+
+    <script src="/website/js/site.js" type="module"></script>
+  </body>
+</html>

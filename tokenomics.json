@@ -1,0 +1,40 @@
+{
+  "token": {
+    "symbol": "WLAB",
+    "name": "WhiteLab",
+    "maxSupply": "1000000000",
+    "decimals": 18
+  },
+  "tge": {
+    "circulatingTokens": "88500000",
+    "circulatingPercent": "8.85",
+    "note": "Sum of documented TGE unlocks from allocation table"
+  },
+  "staking": {
+    "emissionPoolTokens": "180000000",
+    "emissionMonths": 60,
+    "monthlyEmissionTokens": "3000000"
+  },
+  "mechanics": {
+    "model": "fixed_cap",
+    "buybackBurn": "protocol_revenue_share",
+    "bridge": "disabled_stub_until_audit"
+  },
+  "allocations": [
+    { "id": "team", "label": "Team", "percent": 15, "tokens": "150000000", "tgeUnlock": "0%", "cliffMonths": 12, "vestingMonths": 36 },
+    { "id": "seed", "label": "Seed", "percent": 6, "tokens": "60000000", "tgeUnlock": "10%", "cliffMonths": 6, "vestingMonths": 18 },
+    { "id": "private", "label": "Private", "percent": 8, "tokens": "80000000", "tgeUnlock": "15%", "cliffMonths": 3, "vestingMonths": 12 },
+    { "id": "public", "label": "Public IDO", "percent": 5, "tokens": "50000000", "tgeUnlock": "25%", "cliffMonths": 0, "vestingMonths": 6 },
+    { "id": "ecosystem", "label": "Ecosystem", "percent": 20, "tokens": "200000000", "tgeUnlock": "5%", "cliffMonths": 0, "vestingMonths": 48 },
+    { "id": "liquidity", "label": "Liquidity", "percent": 10, "tokens": "100000000", "tgeUnlock": "40%", "cliffMonths": 0, "vestingMonths": 12 },
+    { "id": "staking", "label": "Staking Rewards", "percent": 18, "tokens": "180000000", "tgeUnlock": "0%", "cliffMonths": 0, "vestingMonths": 60, "emission": true },
+    { "id": "treasury", "label": "Treasury", "percent": 12, "tokens": "120000000", "tgeUnlock": "0%", "cliffMonths": 6, "vestingMonths": 0 },
+    { "id": "community", "label": "Community", "percent": 4, "tokens": "40000000", "tgeUnlock": "20%", "cliffMonths": 0, "vestingMonths": 24 },
+    { "id": "advisors", "label": "Advisors", "percent": 2, "tokens": "20000000", "tgeUnlock": "0%", "cliffMonths": 6, "vestingMonths": 24 }
+  ],
+  "governance": {
+    "quorumPercent": 4,
+    "proposalThresholdTokens": "100000",
+    "timelockMinDelaySeconds": 172800
+  }
+}

@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhiteLab Protocol Console</title>
+    <link rel="stylesheet" href="/frontend/src/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Protocol navigation">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">W</div>
+          <div>
+            <p class="eyebrow">WhiteLab</p>
+            <h1>Protocol Console</h1>
+          </div>
+        </div>
+        <nav class="nav-list" aria-label="Primary">
+          <a class="nav-link" href="/">← Marketing Site</a>
+          <button class="nav-button active" data-view="overview" type="button">Overview</button>
+          <button class="nav-button" data-view="ido" type="button">IDO</button>
+          <button class="nav-button" data-view="staking" type="button">Staking</button>
+          <button class="nav-button" data-view="vetoken" type="button">veWLAB</button>
+          <button class="nav-button" data-view="governance" type="button">Governance</button>
+          <button class="nav-button" data-view="docs" type="button">Docs</button>
+          <button class="nav-button" data-view="admin" type="button">Admin</button>
+        </nav>
+        <div class="risk-strip">
+          <span class="status-dot warn"></span>
+          <span>Unaudited candidate. OFT bridge disabled by default.</span>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Base-compatible launch OS</p>
+            <h2>Operate token sale, staking, vote escrow, and governance from one surface.</h2>
+          </div>
+          <div class="wallet-panel">
+            <div class="network-pill" id="networkStatus">
+              <span class="status-dot"></span>
+              <span>Wallet not connected</span>
+            </div>
+            <button class="primary-action" id="connectWallet" type="button">Connect Wallet</button>
+          </div>
+        </header>
+
+        <section class="chain-guard" id="chainGuard" hidden></section>
+        <section class="alert-row" id="alertRow" aria-live="polite"></section>
+
+        <section class="view active" id="overview">
+          <div class="metric-grid">
+            <article class="metric-card">
+              <span class="metric-label">WLAB Balance</span>
+              <strong id="tokenBalance">-</strong>
+              <span id="walletAddress">No wallet</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">Voting Power</span>
+              <strong id="votePower">-</strong>
+              <span>ERC20Votes checkpoints</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">Sale Obligations</span>
+              <strong id="saleObligations">-</strong>
+              <span>Unclaimed buyer entitlements</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">TGE Float</span>
+              <strong id="tgeFloat">-</strong>
+              <span id="maxSupplyLabel">Max supply</span>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Deployment</p>
+                  <h3>Contract Registry</h3>
+                </div>
+                <button class="ghost-action" id="refreshState" type="button">Refresh</button>
+              </div>
+              <div class="address-list" id="addressList"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Economic Shape</p>
+                  <h3>Supply Allocation</h3>
+                </div>
+              </div>
+              <canvas id="allocationCanvas" width="620" height="320" aria-label="Token allocation chart"></canvas>
+              <div class="legend-grid" id="allocationLegend"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="ido">
+          <div class="section-title">
+            <p class="eyebrow">User Flow</p>
+            <h3>IDO Participation</h3>
+          </div>
+          <div class="form-grid">
+            <form class="panel tx-form" data-action="buy">
+              <label>Phase
+                <select name="phase">
+                  <option value="3">Public</option>
+                  <option value="2">Private</option>
+                  <option value="1">Seed</option>
+                </select>
+              </label>
+              <label>Token Amount
+                <input name="amount" inputmode="decimal" placeholder="1000" />
+              </label>
+              <label>Merkle Proof (optional)
+                <input name="merkleProof" placeholder="0x... 0x... (comma separated)" />
+              </label>
+              <button class="primary-action" type="submit">Buy Tokens</button>
+              <p class="form-note">Uses active sale phase pricing. ETH payment only in current deployment script.</p>
+            </form>
+
+            <form class="panel tx-form" data-action="claim">
+              <label>Claim Phase
+                <select name="phase">
+                  <option value="3">Public</option>
+                  <option value="2">Private</option>
+                  <option value="1">Seed</option>
+                </select>
+              </label>
+              <button class="primary-action" type="submit">Claim Purchased Tokens</button>
+              <p class="form-note">Claims exact entitlement when sale contract is fee-exempt.</p>
+            </form>
+
+            <form class="panel tx-form" data-action="refund">
+              <label>Refund Phase
+                <select name="phase">
+                  <option value="3">Public</option>
+                  <option value="2">Private</option>
+                  <option value="1">Seed</option>
+                </select>
+              </label>
+              <button class="danger-action" type="submit">Request Refund</button>
+              <p class="form-note">Available only after failed sale finalization.</p>
+            </form>
+          </div>
+        </section>
+
+        <section class="view" id="staking">
+          <div class="section-title">
+            <p class="eyebrow">User Flow</p>
+            <h3>Stake WLAB</h3>
+          </div>
+          <div class="form-grid">
+            <form class="panel tx-form" data-action="stake">
+              <label>Amount
+                <input name="amount" inputmode="decimal" placeholder="500" />
+              </label>
+              <label>Lock Tier
+                <select name="tier">
+                  <option value="0">30 days - 1.0x</option>
+                  <option value="1">90 days - 1.5x</option>
+                  <option value="2">180 days - 2.0x</option>
+                  <option value="3">365 days - 3.0x</option>
+                </select>
+              </label>
+              <label class="check-row">
+                <input name="compound" type="checkbox" />
+                <span>Compound rewards</span>
+              </label>
+              <button class="primary-action" type="submit">Approve and Stake</button>
+            </form>
+
+            <form class="panel tx-form" data-action="unstake">
+              <label>Amount
+                <input name="amount" inputmode="decimal" placeholder="100" />
+              </label>
+              <button class="primary-action" type="submit">Unstake</button>
+              <button class="danger-action" data-action-button="emergencyUnstake" type="button">Emergency Withdraw</button>
+            </form>
+
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Position</p>
+                  <h3>Current Stake</h3>
+                </div>
+              </div>
+              <dl class="state-list">
+                <div><dt>Amount</dt><dd id="stakeAmount">-</dd></div>
+                <div><dt>Weight</dt><dd id="stakeWeight">-</dd></div>
+                <div><dt>Pending Reward</dt><dd id="pendingReward">-</dd></div>
+                <div><dt>Lock End</dt><dd id="lockEnd">-</dd></div>
+              </dl>
+              <button class="ghost-action" data-action-button="claimReward" type="button">Claim Rewards</button>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="vetoken">
+          <div class="section-title">
+            <p class="eyebrow">Vote Escrow</p>
+            <h3>Lock WLAB for vePower</h3>
+          </div>
+          <div class="form-grid">
+            <form class="panel tx-form" data-action="createLock">
+              <label>Amount
+                <input name="amount" inputmode="decimal" placeholder="1000" />
+              </label>
+              <label>Duration
+                <select name="duration">
+                  <option value="604800">7 days</option>
+                  <option value="7776000">90 days</option>
+                  <option value="31536000">1 year</option>
+                  <option value="126144000">4 years</option>
+                </select>
+              </label>
+              <button class="primary-action" type="submit">Approve and Lock</button>
+            </form>
+
+            <form class="panel tx-form" data-action="voteGauge">
+              <label>Gauge ID
+                <input name="gaugeId" inputmode="numeric" placeholder="0" />
+              </label>
+              <label>Weight
+                <input name="weight" inputmode="decimal" placeholder="100" />
+              </label>
+              <button class="primary-action" type="submit">Set Gauge Weight</button>
+              <p class="form-note">Weights are absolute, not additive; this prevents vote reuse.</p>
+            </form>
+
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Power</p>
+                  <h3>veWLAB State</h3>
+                </div>
+              </div>
+              <dl class="state-list">
+                <div><dt>Total vePower</dt><dd id="vePower">-</dd></div>
+                <div><dt>Used Gauge Weight</dt><dd id="usedGaugeWeight">-</dd></div>
+              </dl>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="governance">
+          <div class="section-title">
+            <p class="eyebrow">Governance</p>
+            <h3>DAO Readiness</h3>
+          </div>
+          <div class="two-column">
+            <section class="panel">
+              <button class="primary-action" id="delegateSelfBtn" type="button">Delegate Votes to Self</button>
+              <dl class="state-list">
+                <div><dt>Proposal Threshold</dt><dd id="proposalThreshold">-</dd></div>
+                <div><dt>Quorum Numerator</dt><dd id="quorumNumerator">-</dd></div>
+                <div><dt>Voting Delay</dt><dd id="votingDelay">-</dd></div>
+                <div><dt>Voting Period</dt><dd id="votingPeriod">-</dd></div>
+              </dl>
+            </section>
+            <section class="panel">
+              <div class="readiness-list">
+                <div><span class="status-dot ok"></span><span>Governor can queue through Timelock in tests.</span></div>
+                <div><span class="status-dot warn"></span><span>Admin role handover must be completed before mainnet.</span></div>
+                <div><span class="status-dot warn"></span><span>Distribution concentration remains a governance risk.</span></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="docs">
+          <div class="section-title">
+            <p class="eyebrow">Documentation</p>
+            <h3>Tokenomics & risks</h3>
+          </div>
+          <section class="panel" id="tokenomicsPanel">Loading tokenomics…</section>
+          <p class="plain-copy">
+            <a href="/whitepaper">Whitepaper</a>
+            · <a href="/tokenomics.json" target="_blank" rel="noopener">tokenomics.json</a>
+            · Audit required before mainnet
+          </p>
+        </section>
+
+        <section class="view" id="admin">
+          <div class="section-title">
+            <p class="eyebrow">Admin Visibility</p>
+            <h3>Sale and Treasury Controls</h3>
+          </div>
+          <div class="form-grid">
+            <form class="panel tx-form" data-action="configurePhase">
+              <label>Phase
+                <select name="phase">
+                  <option value="3">Public</option>
+                  <option value="2">Private</option>
+                  <option value="1">Seed</option>
+                </select>
+              </label>
+              <label>Price ETH per Token
+                <input name="price" inputmode="decimal" placeholder="0.00004" />
+              </label>
+              <label>Allocation
+                <input name="allocation" inputmode="decimal" placeholder="1000000" />
+              </label>
+              <label>Hard Cap ETH
+                <input name="hardCap" inputmode="decimal" placeholder="100" />
+              </label>
+              <label>Soft Cap ETH
+                <input name="softCap" inputmode="decimal" placeholder="0.01" />
+              </label>
+              <label>Max Per Wallet (0 = uncapped)
+                <input name="maxPerWallet" inputmode="decimal" placeholder="0" />
+              </label>
+              <button class="primary-action" type="submit">Configure Phase</button>
+            </form>
+
+            <section class="panel action-stack">
+              <button class="primary-action" data-action-button="startPublicPhase" type="button">Start Public Phase</button>
+              <button class="primary-action" data-action-button="finalizeSale" type="button">Finalize Sale</button>
+              <button class="ghost-action" data-action-button="withdrawFunds" type="button">Withdraw Raised ETH</button>
+              <button class="ghost-action" data-action-button="recoverUnsold" type="button">Recover Unsold Tokens</button>
+            </section>
+
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Treasury</p>
+                  <h3>Transparency</h3>
+                </div>
+              </div>
+              <p class="plain-copy">Treasury UUPS deploys with the standard script. Before mainnet: assign SPENDER/UPGRADER to Gnosis Safe, document upgrade ceremony, and verify proxy on Basescan.</p>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/frontend/src/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "note": "Replace with real leaves per phase. Console buy form accepts comma-separated proof hashes.",
+  "phases": {
+    "Seed": {},
+    "Private": {},
+    "Public": {}
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "network": "baseSepolia",
+  "chainId": "84532",
+  "note": "Production-candidate demo verified locally: 47 tests passing, 90.03% line coverage. Run npm run env:check before npm run deploy:sepolia.",
+  "contracts": {}
+}

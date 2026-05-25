@@ -1,0 +1,139 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
+/**
+ * @title WLABVesting
+ * @notice Cliff + linear vesting per beneficiary; revocable by owner
+ */
+contract WLABVesting is Ownable, ReentrancyGuard {
+    using SafeERC20 for IERC20;
+
+    IERC20 public immutable token;
+
+    struct Schedule {
+        uint256 totalAmount;
+        uint256 released;
+        uint64 start;
+        uint64 cliffDuration;
+        uint64 vestingDuration;
+        bool revocable;
+        bool revoked;
+    }
+
+    mapping(address => Schedule) public schedules;
+
+    event ScheduleCreated(
+        address indexed beneficiary,
+        uint256 amount,
+        uint64 start,
+        uint64 cliff,
+        uint64 duration,
+        bool revocable
+    );
+    event TokensReleased(address indexed beneficiary, uint256 amount);
+    event ScheduleRevoked(address indexed beneficiary, uint256 refundAmount);
+    event EmergencyWithdraw(address indexed token, uint256 amount);
+
+    constructor(address _token, address initialOwner) Ownable(initialOwner) {
+        require(_token != address(0), "Vesting: zero token");
+        token = IERC20(_token);
+    }
+
+    /**
+     * @notice Create vesting schedule for beneficiary
+     */
+    function createSchedule(
+        address beneficiary,
+        uint256 amount,
+        uint64 start,
+        uint64 cliffDuration,
+        uint64 vestingDuration,
+        bool revocable
+    ) external onlyOwner {
+        require(beneficiary != address(0), "Vesting: zero beneficiary");
+        require(amount > 0, "Vesting: zero amount");
+        require(schedules[beneficiary].totalAmount == 0, "Vesting: exists");
+        require(vestingDuration > 0, "Vesting: zero duration");
+
+        schedules[beneficiary] = Schedule({
+            totalAmount: amount,
+            released: 0,
+            start: start,
+            cliffDuration: cliffDuration,
+            vestingDuration: vestingDuration,
+            revocable: revocable,
+            revoked: false
+        });
+
+        token.safeTransferFrom(msg.sender, address(this), amount);
+
+        emit ScheduleCreated(beneficiary, amount, start, cliffDuration, vestingDuration, revocable);
+    }
+
+    /**
+     * @notice Claim vested tokens
+     */
+    function release() external nonReentrant {
+        uint256 amount = releasableAmount(msg.sender);
+        require(amount > 0, "Vesting: nothing to release");
+
+        Schedule storage s = schedules[msg.sender];
+        s.released += amount;
+        token.safeTransfer(msg.sender, amount);
+
+        emit TokensReleased(msg.sender, amount);
+    }
+
+    /**
+     * @notice Revoke schedule and return unvested tokens to owner
+     */
+    function revoke(address beneficiary) external onlyOwner {
+        Schedule storage s = schedules[beneficiary];
+        require(s.totalAmount > 0, "Vesting: no schedule");
+        require(s.revocable, "Vesting: not revocable");
+        require(!s.revoked, "Vesting: already revoked");
+
+        uint256 vested = s.released + releasableAmount(beneficiary);
+        uint256 refund = s.totalAmount - vested;
+        s.revoked = true;
+
+        if (refund > 0) {
+            token.safeTransfer(owner(), refund);
+        }
+
+        emit ScheduleRevoked(beneficiary, refund);
+    }
+
+    /**
+     * @notice View releasable amount for beneficiary
+     */
+    function releasableAmount(address beneficiary) public view returns (uint256) {
+        Schedule memory s = schedules[beneficiary];
+        if (s.totalAmount == 0 || s.revoked) return 0;
+        return _vestedAmount(s) - s.released;
+    }
+
+    function _vestedAmount(Schedule memory s) internal view returns (uint256) {
+        if (block.timestamp < s.start + s.cliffDuration) {
+            return 0;
+        }
+        if (block.timestamp >= s.start + s.cliffDuration + s.vestingDuration) {
+            return s.totalAmount;
+        }
+        uint256 elapsed = block.timestamp - s.start - s.cliffDuration;
+        return (s.totalAmount * elapsed) / s.vestingDuration;
+    }
+
+    /**
+     * @notice Owner emergency withdraw (e.g. wrong token) — use with timelock off-chain
+     */
+    function emergencyWithdraw(address erc20, uint256 amount) external onlyOwner {
+        IERC20(erc20).safeTransfer(owner(), amount);
+        emit EmergencyWithdraw(erc20, amount);
+    }
+}

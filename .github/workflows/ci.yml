@@ -1,0 +1,40 @@
+name: WhiteLab CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Compile, test, and local E2E
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Unit and integration tests
+        run: npm test
+
+      - name: Local E2E
+        run: npm run e2e:local
+
+      - name: Coverage
+        run: npm run coverage
+
+      - name: Build static site
+        run: npm run build:site

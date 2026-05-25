@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhiteLab Whitepaper — $WLAB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/website/css/site.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="logo" href="/"><span class="logo-mark">W</span><span>WhiteLab</span></a>
+      <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/app">Console</a>
+      </nav>
+    </header>
+    <article class="wp-page">
+      <p class="eyebrow">Whitepaper v1.0 · May 2026</p>
+      <h1>WhiteLab Protocol ($WLAB)</h1>
+      <p><strong>Abstract.</strong> WhiteLab is a compliance-oriented token launch operating system on Base. It unifies audit-ready contracts, gated IDO sales, vesting, staking, vote escrow, and timelock governance. Max supply is fixed at 1 billion WLAB with documented emissions, fee burns, and transparent on-chain operations.</p>
+
+      <h2>Problem & Opportunity</h2>
+      <p>Token launches remain fragmented and trust-deficient. WhiteLab standardizes the launch stack: OpenZeppelin Governor, Merkle-gated IDO, vesting schedules, and protocol consoles for verifiable operations.</p>
+
+      <h2>Architecture</h2>
+      <ul>
+        <li><strong>WLABToken</strong> — ERC-20 + Votes + Permit + compliance controls</li>
+        <li><strong>WLABTokenSale</strong> — Seed / Private / Public phases, refunds, claims</li>
+        <li><strong>WLABVesting</strong> — Cliff + linear release, revocable schedules</li>
+        <li><strong>WLABStaking</strong> — Tiered locks (30–365d), weighted rewards</li>
+        <li><strong>WLABGovernor + Timelock</strong> — 48h+ execution delay, 4% quorum</li>
+        <li><strong>WLABVeToken</strong> — Gauge voting (parallel to token votes)</li>
+        <li><strong>WLABTreasuryUUPS</strong> — Upgradeable treasury behind proxy</li>
+      </ul>
+
+      <h2>Token Utility</h2>
+      <p>Launch fees, staking rewards, governance, liquidity incentives, bridge fees (Phase 2), and programmatic buyback-and-burn from protocol revenue.</p>
+
+      <h2>Tokenomics</h2>
+      <p><strong>Max supply:</strong> 1,000,000,000 WLAB (fixed cap).</p>
+      <p><strong>TGE circulating:</strong> ~88.5M WLAB (~8.85%) from documented unlock buckets.</p>
+      <p><strong>Staking emissions:</strong> 180M WLAB over 60 months (3M/month from pre-allocated pool).</p>
+
+      <h2>Governance</h2>
+      <p>Proposal threshold 100,000 WLAB delegated. Voting period ~7 days on Base. Critical operations route through Timelock. Admin roles must migrate to Gnosis Safe before mainnet.</p>
+
+      <h2>Security</h2>
+      <p>Reentrancy guards, SafeERC20 on value transfers, disabled OFT stub by default, invariant tests on sale obligations and staking weights. External audit required before mainnet capital deployment.</p>
+
+      <h2>Risks</h2>
+      <ul>
+        <li>Smart contract vulnerabilities (mitigated via audit + bug bounty)</li>
+        <li>Admin key compromise (mitigated via multisig + timelock)</li>
+        <li>Vesting cliff sell pressure (documented in tokenomics)</li>
+        <li>Regulatory uncertainty for token sales in your jurisdiction</li>
+      </ul>
+
+      <p><a class="btn primary" href="/app">Open Protocol Console</a></p>
+    </article>
+    <footer class="site-footer">
+      <p>Full technical docs in repository <code>docs/</code> directory.</p>
+    </footer>
+  </body>
+</html>
