@@ -90,17 +90,35 @@ contract WLABVesting is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Revoke schedule and return unvested tokens to owner
+     * @notice Revoke schedule. Beneficiary keeps every token that was already
+     *         vested at the moment of revocation; only the strictly unvested
+     *         remainder is refunded to the owner. After revoke, the schedule
+     *         is closed: no more releasable amount, no double-claim path,
+     *         and the contract holds no obligation toward this beneficiary.
+     *
+     *         This protects the most basic vesting invariant: revocation
+     *         affects future allocation only, never accrued entitlement.
      */
-    function revoke(address beneficiary) external onlyOwner {
+    function revoke(address beneficiary) external onlyOwner nonReentrant {
         Schedule storage s = schedules[beneficiary];
         require(s.totalAmount > 0, "Vesting: no schedule");
         require(s.revocable, "Vesting: not revocable");
         require(!s.revoked, "Vesting: already revoked");
 
-        uint256 vested = s.released + releasableAmount(beneficiary);
-        uint256 refund = s.totalAmount - vested;
+        uint256 unreleased = releasableAmount(beneficiary);
+        uint256 refund = s.totalAmount - s.released - unreleased;
+
+        // Close the schedule's books before any external transfer so
+        // releasableAmount() returns 0 even on re-entrant view calls and
+        // future _vestedAmount math cannot grow past what we just paid.
         s.revoked = true;
+        s.totalAmount = s.released + unreleased;
+
+        if (unreleased > 0) {
+            s.released += unreleased;
+            token.safeTransfer(beneficiary, unreleased);
+            emit TokensReleased(beneficiary, unreleased);
+        }
 
         if (refund > 0) {
             token.safeTransfer(owner(), refund);
