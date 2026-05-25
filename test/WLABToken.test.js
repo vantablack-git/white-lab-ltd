@@ -76,6 +76,55 @@ describe("WLABToken", function () {
     await expect(token.connect(admin).snapshot()).to.emit(token, "Snapshot");
   });
 
+  // ── Phase 1E regression: fee path is symmetric with no-fee on the sender side ─
+  it("emits exactly one Transfer with from=sender, matching the no-fee path", async function () {
+    await token.connect(admin).setTransferFee(true, 100, 7000, treasury.address);
+    await token.connect(admin).mint(admin.address, ethers.parseEther("1000"));
+
+    // No-fee baseline: admin is fee-exempt.
+    await token.connect(admin).setFeeExempt(admin.address, true);
+    const noFeeTx = await token.connect(admin).transfer(user.address, ethers.parseEther("50"));
+    const noFeeRcpt = await noFeeTx.wait();
+    const noFeeFromAdmin = noFeeRcpt.logs.filter((log) => {
+      try {
+        const parsed = token.interface.parseLog(log);
+        return parsed?.name === "Transfer" && parsed.args.from === admin.address;
+      } catch {
+        return false;
+      }
+    });
+
+    // Fee-on transfer with admin no longer fee-exempt.
+    await token.connect(admin).setFeeExempt(admin.address, false);
+    const feeTx = await token.connect(admin).transfer(user.address, ethers.parseEther("100"));
+    const feeRcpt = await feeTx.wait();
+    const feeFromAdmin = feeRcpt.logs.filter((log) => {
+      try {
+        const parsed = token.interface.parseLog(log);
+        return parsed?.name === "Transfer" && parsed.args.from === admin.address;
+      } catch {
+        return false;
+      }
+    });
+
+    // Sender-side event count must be identical between the two paths.
+    expect(feeFromAdmin.length).to.equal(noFeeFromAdmin.length);
+    expect(feeFromAdmin.length).to.equal(1);
+
+    // The single sender-side event carries the gross value, not the net.
+    const parsed = token.interface.parseLog(feeFromAdmin[0]);
+    expect(parsed.args.to).to.equal(user.address);
+    expect(parsed.args.value).to.equal(ethers.parseEther("100"));
+
+    // Vote checkpoint accounting is unchanged: admin's votes drop by gross.
+    await token.connect(admin).delegate(admin.address);
+    const checkpointsBefore = await token.numCheckpoints(admin.address);
+    await token.connect(admin).transfer(user.address, ethers.parseEther("10"));
+    const checkpointsAfter = await token.numCheckpoints(admin.address);
+    // Exactly one checkpoint added per logical transfer (matches no-fee).
+    expect(checkpointsAfter - checkpointsBefore).to.equal(1n);
+  });
+
   // ── P0 votes regression: fee + votes checkpoint ───────────────────────────
   it("P0 votes: getVotes correct after fee-bearing transfer", async function () {
     await token.connect(admin).setTransferFee(true, 100, 7000, treasury.address);

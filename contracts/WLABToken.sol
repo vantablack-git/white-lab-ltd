@@ -10,12 +10,18 @@ import "@openzeppelin/contracts/utils/Nonces.sol";
 
 /**
  * @title WLABToken
- * @notice WhiteLab ($WLAB) utility token — max 1B supply, compliance hooks, optional fees
- * @dev OZ v5 removed ERC20Snapshot; governance uses ERC20Votes checkpoints + snapshotId event
+ * @notice WhiteLab ($WLAB) utility token — max 1B supply, compliance hooks, optional fees.
+ * @dev OZ v5 removed ERC20Snapshot; governance uses ERC20Votes checkpoints + snapshotId event.
  *
- * FIX (P0): _update() fee logic refactored — full fee deducted from sender in ONE super._update
- *   call per fee path (from→feeReceiver), then burnAmt burned from feeReceiver. This prevents
- *   triple-call vote-checkpoint drift under ERC20Votes. (Option A from KNOWN-ISSUES doc)
+ *      Fee path (Phase 1E): the sender debit is symmetric with the no-fee
+ *      path. The contract performs one `super._update(from, to, value)`
+ *      with the GROSS value (one Transfer with `from == sender`, one
+ *      ERC20Votes _transferVotingUnits call from the sender). The
+ *      recipient then forwards `fee` to `feeReceiver`, and `feeReceiver`
+ *      burns `burnAmt`. This means a fee-bearing transfer emits an
+ *      additional `Transfer(recipient -> feeReceiver, fee)` event;
+ *      indexers must handle that pattern, but the sender-side
+ *      Transfer/checkpoint trail is identical to a fee-exempt transfer.
  */
 contract WLABToken is ERC20, ERC20Permit, ERC20Votes, Pausable, AccessControl {
     bytes32 public constant MINTER_ROLE     = keccak256("MINTER_ROLE");
@@ -148,13 +154,15 @@ contract WLABToken is ERC20, ERC20Permit, ERC20Votes, Pausable, AccessControl {
     // ─── _update (core transfer hook) ────────────────────────────────────────
 
     /**
-     * @dev P0 FIX — fee accounting uses 2 super._update calls maximum:
-     *   1. from → to   (net amount)
-     *   2. from → feeReceiver (full fee)          ← single debit from sender
-     *   3. feeReceiver → address(0) (burn share)  ← debit from feeReceiver, NOT from sender
+     * @dev Phase 1E fee accounting:
+     *   1. from        → to            (full GROSS value)   <- single sender debit
+     *   2. to          → feeReceiver   (fee)                <- recipient pays the fee
+     *   3. feeReceiver → address(0)    (burn share)         <- burn out of feeReceiver
      *
-     * This ensures ERC20Votes only writes two checkpoint entries for the sender,
-     * avoiding the stale-delegate drift caused by the original triple-debit pattern.
+     *   Sender side performs exactly one super._update — symmetric with the
+     *   no-fee path. ERC20Votes _transferVotingUnits fires once for the
+     *   sender per logical transfer, and the sender-side Transfer event
+     *   trail is identical to a fee-exempt transfer.
      */
     function _update(address from, address to, uint256 value)
         internal
@@ -180,21 +188,22 @@ contract WLABToken is ERC20, ERC20Permit, ERC20Votes, Pausable, AccessControl {
         ) {
             uint256 fee = (value * transferFeeBps) / BPS_DENOMINATOR;
             if (fee > 0) {
-                uint256 burnAmt     = (fee * burnShareBps) / BPS_DENOMINATOR;
-                uint256 net         = value - fee;
+                uint256 burnAmt = (fee * burnShareBps) / BPS_DENOMINATOR;
 
-                // 1) Net transfer: from → to
-                super._update(from, to, net);
+                // 1) Gross transfer from sender to recipient — single sender debit.
+                super._update(from, to, value);
 
-                // 2) Full fee: from → feeReceiver  (single debit from sender)
-                super._update(from, feeReceiver, fee);
+                // 2) Recipient forwards the fee to the configured receiver.
+                super._update(to, feeReceiver, fee);
 
-                // 3) Burn share: feeReceiver → address(0)  (debit is from feeReceiver)
+                // 3) Burn share leaves circulation via feeReceiver.
                 if (burnAmt > 0) {
                     super._update(feeReceiver, address(0), burnAmt);
                 }
 
-                // ── maxWallet check on net recipient ────────────────────────
+                // maxWallet is checked against the recipient's NET position
+                // (after the fee has been forwarded out). Same effective
+                // constraint as before, but expressed against the final state.
                 if (maxWalletEnabled && to != address(0) && to != address(0xdead)) {
                     require(balanceOf(to) <= maxWalletAmount, "WLAB: max wallet");
                 }
