@@ -3,11 +3,13 @@
   "chainId": "31337",
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   "treasury": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "treasuryProxyAdmin": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "multisig": null,
   "timelockDelay": 172800,
-  "deployedAt": "2026-05-25T15:08:43.384Z",
+  "deployedAt": "2026-05-25T21:27:47.397Z",
   "status": {
     "mainnetReady": false,
-    "oftAdapter": "disabled-stub",
+    "oftAdapter": "deployed-disabled-stub",
     "treasuryProxy": "deployed",
     "audit": "required-before-mainnet"
   },
@@ -24,7 +26,7 @@
     "WLABGovernor": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
     "WLABTokenSale": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
     "WLABLockVault": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-    "WLABOFTAdapter": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-    "WLABTreasuryUUPS": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0"
+    "WLABTreasuryUUPS": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+    "WLABOFTAdapter": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
   }
 }

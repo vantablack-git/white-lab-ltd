@@ -1,20 +1,24 @@
 /**
- * Transfer Ownable contracts + token admin roles to Gnosis Safe.
- * Requires MULTISIG_ADDRESS in .env and deployer still holding admin.
+ * Standalone handover — transfers all token AccessControl roles, Ownable
+ * ownerships, and the Timelock admin role from the deployer EOA to the
+ * configured multisig.
+ *
+ * On production deploys (`scripts/deploy.js` against `base` /
+ * `baseSepolia`), this same logic is invoked automatically before the
+ * deploy script exits successfully. This script exists for two cases:
+ *
+ *   1. Idempotent re-runs against a manifest that already underwent
+ *      auto-handover (no-ops everywhere).
+ *   2. Recovery on dev networks where the operator wants to simulate
+ *      the production posture before pushing to mainnet.
+ *
  * Run: npx hardhat run scripts/handover-multisig.js --network <network>
  */
 const hre = require("hardhat");
 const fs = require("fs");
 const path = require("path");
 
-async function grantAndRevoke(token, role, safe, deployer) {
-  if (!(await token.hasRole(role, safe))) {
-    await (await token.grantRole(role, safe)).wait();
-  }
-  if (await token.hasRole(role, deployer.address)) {
-    await (await token.revokeRole(role, deployer.address)).wait();
-  }
-}
+const { performHandover, auditDeployerResidual } = require("./lib/handover");
 
 async function main() {
   const safe = process.env.MULTISIG_ADDRESS;
@@ -29,7 +33,6 @@ async function main() {
   }
 
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-  const c = manifest.contracts;
   const [deployer] = await hre.ethers.getSigners();
 
   if (deployer.address.toLowerCase() === safe.toLowerCase()) {
@@ -41,44 +44,24 @@ async function main() {
   console.log("Deployer:", deployer.address);
   console.log("Safe    :", safe);
 
-  const token = await hre.ethers.getContractAt("WLABToken", c.WLABToken);
-  const vesting = await hre.ethers.getContractAt("WLABVesting", c.WLABVesting);
-  const staking = await hre.ethers.getContractAt("WLABStaking", c.WLABStaking);
-  const sale = await hre.ethers.getContractAt("WLABTokenSale", c.WLABTokenSale);
-  const lockVault = await hre.ethers.getContractAt("WLABLockVault", c.WLABLockVault);
-  const oft = await hre.ethers.getContractAt("WLABOFTAdapter", c.WLABOFTAdapter);
-  const timelock = await hre.ethers.getContractAt("TimelockController", c.TimelockController);
+  await performHandover({
+    hre,
+    deployer,
+    safe,
+    contracts: manifest.contracts,
+  });
 
-  const roles = [
-    await token.DEFAULT_ADMIN_ROLE(),
-    await token.MINTER_ROLE(),
-    await token.BURNER_ROLE(),
-    await token.PAUSER_ROLE(),
-    await token.SNAPSHOT_ROLE(),
-    await token.COMPLIANCE_ROLE(),
-  ];
-
-  for (const role of roles) {
-    await grantAndRevoke(token, role, safe, deployer);
+  const residual = await auditDeployerResidual({
+    hre,
+    deployer,
+    contracts: manifest.contracts,
+  });
+  if (residual.length > 0) {
+    throw new Error(
+      "Handover halted: deployer still holds privileged authority:\n  - " +
+        residual.join("\n  - ")
+    );
   }
-  console.log("Token roles → Safe");
-
-  for (const contract of [vesting, staking, sale, lockVault, oft]) {
-    const current = await contract.owner();
-    if (current.toLowerCase() !== safe.toLowerCase()) {
-      await (await contract.transferOwnership(safe)).wait();
-      console.log("Ownership transferred:", await contract.getAddress());
-    }
-  }
-
-  const adminRole = await timelock.TIMELOCK_ADMIN_ROLE();
-  if (!(await timelock.hasRole(adminRole, safe))) {
-    await (await timelock.grantRole(adminRole, safe)).wait();
-  }
-  if (await timelock.hasRole(adminRole, deployer.address)) {
-    await (await timelock.revokeRole(adminRole, deployer.address)).wait();
-  }
-  console.log("Timelock admin → Safe");
 
   manifest.adminHandover = {
     safe,
@@ -96,7 +79,11 @@ async function main() {
   console.log("=== Handover complete — verify Safe can pause/configure before revoking backup keys ===");
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { main };
