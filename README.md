@@ -1,96 +1,102 @@
-# WhiteLab ($WLAB)
+# WhiteLab Launch OS
 
-**WhiteLab Launch OS** — Base üzerinde audit-ready token launchpad, DAO ve compliance modülleri.
+WhiteLab is a Base-native launch and protocol stack for the WLAB ecosystem: ERC-20 token, multi-phase token sale, vesting, staking, governance locking, Governor/Timelock governance, upgradeable treasury, protocol console, marketing site, deployment scripts, and runbooks.
 
-> **Sunum ve eksiksiz kurulum:** [docs/tr/SUNUM.md](./docs/tr/SUNUM.md) (Türkçe, adım adım + mimari + P0 özeti)  
-> **Windows 11 PowerShell:** [docs/tr/KURULUM-WIN11.md](./docs/tr/KURULUM-WIN11.md) + `.\scripts\setup\setup-win11.ps1`
+Current status: **testnet candidate, audit pending, mainnet blocked**. The contracts have a growing regression suite and local E2E coverage, but this repository should not be described as audited, production-ready, or mainnet-ready until the remaining launch gates in `docs/10-production-candidate-readiness.md` are closed.
 
-## Hızlı başlangıç
+## Quick Start
 
 ```bash
-cd whitelab
-cp .env.example .env
-# PRIVATE_KEY ve ETHERSCAN_API_KEY doldur
-npm install
-npx hardhat compile
+npm ci
+npm run compile
 npm test
 npm run e2e:local
-npm run frontend
+npm run build:site
 ```
 
-Beklenen: **50 passing** test.
+Expected today: `79 passing` plus local E2E passing.
+
+For a local deploy:
 
 ```bash
 npm run deploy:local
 npm run start
 ```
 
-- Site: `http://127.0.0.1:4173`
-- Console: `http://127.0.0.1:4173/app`
+- Marketing site: `http://127.0.0.1:4173/`
+- Protocol console: `http://127.0.0.1:4173/app`
+- Static build output: `dist/`
 
-Detaylı launch: [docs/tr/LAUNCH.md](./docs/tr/LAUNCH.md)  
-**Senin checklist:** [docs/tr/SENIN-ADIMLAR.md](./docs/tr/SENIN-ADIMLAR.md)  
-Cloudflare: `npm run build:site` → output `dist/`
+Windows helper:
 
-## Deploy (Base Sepolia)
+```powershell
+.\scripts\setup\setup-win11.ps1 -Phase check
+```
+
+## Repository Layout
+
+| Path | Purpose |
+| --- | --- |
+| `contracts/` | Solidity contracts. Production proxy wrapper lives under `contracts/proxy/`; test-only upgrade fixture lives under `contracts/test/`. |
+| `test/` | Hardhat unit, integration, lifecycle, and invariant tests. |
+| `scripts/` | Deploy, verify, local E2E, environment validation, setup, and handover scripts. |
+| `frontend/` | Protocol console source. |
+| `website/` | Marketing, legal, and whitepaper source. |
+| `shared/` | Canonical shared data, including `shared/tokenomics.json`. |
+| `docs/` | Canonical docs, ADRs, readiness notes, operations guide, Turkish translations, and internal notes. |
+| `deployments/` | Deployment manifests. |
+| `public/` | Static runtime data copied into the built site. |
+
+See `docs/repo-structure-map.md` for the Phase 4 migration map.
+
+## Contracts
+
+| Contract | Role |
+| --- | --- |
+| `WLABToken` | ERC-20 with Permit, Votes, fee controls, pause, blacklist/whitelist controls, and capped minting. |
+| `WLABTokenSale` | Multi-phase sale with whitelist support, per-phase refunds, claims, and bounded fund withdrawal. |
+| `WLABVesting` | Cliff + linear vesting with protected outstanding obligations. |
+| `WLABStaking` | Tiered staking with funded finite reward programs and principal-aware reward accounting. |
+| `WLABLockVault` | Weighted governance lock vault with fixed, non-decaying voting power. This is not a veCRV-style vote escrow. |
+| `WLABGovernor` | OpenZeppelin Governor integrated with TimelockController. |
+| `WLABTreasuryUUPS` | UUPS treasury with role-gated withdrawals and upgrades. |
+| `WLABOFTAdapter` | Disabled bridge stub for demos/tests only. Not production bridge infrastructure. |
+
+## Deployment Policy
+
+Production-network deploys (`base`, `baseSepolia`) must set `MULTISIG_ADDRESS`. `scripts/deploy.js` refuses production deploys that would leave the deployer EOA with critical authority, and it gates the OFT adapter off Base mainnet unless `DEPLOY_OFT=true` is explicitly set.
 
 ```bash
+npm run env:check:base
+npm run deploy:base
+npm run verify:base
+```
+
+Base Sepolia:
+
+```bash
+npm run env:check
 npm run deploy:sepolia
 npm run verify
 ```
 
-Adresler: `deployments/baseSepolia.json`
+## Documentation
 
-Mainnet: `npm run deploy:base` → `npm run verify:base`
+- Readiness: `docs/10-production-candidate-readiness.md`
+- Operations: `docs/11-operations-runbook.md`
+- Threat model: `docs/13-threat-model.md`
+- ADRs: `docs/adr/`
+- Turkish materials/translations: `docs/tr/`
+- Internal handoff and historical notes: `docs/internal/`
 
-## Yapı
+## Mainnet Blockers
 
-| Dizin | İçerik |
-|-------|--------|
-| `docs/` | Bölüm 0–9 master rehber |
-| `contracts/` | 8 production Solidity sözleşmesi |
-| `test/` | Hardhat test suite (47+ test) |
-| `scripts/` | Deploy & verify |
-| `frontend/` | Static protocol console |
-| `docs/tr/SUNUM.md` | Türkçe sunum + kurulum notları |
-| `docs/internal/ARCHITECT_LOG.md` | İç mimari karar logu |
+- External smart contract audit not complete.
+- Public bug bounty not complete.
+- Slither/static analysis must be run in CI or release ceremony and remediated.
+- Real bridge implementation is not present; current OFT adapter is a disabled stub.
+- Legal/compliance review, liquidity plan, and public launch operations remain outside the codebase.
 
-## Kontratlar
+## License
 
-| Sözleşme | Rol |
-|----------|-----|
-| `WLABToken` | ERC-20 + Votes + fee + compliance |
-| `WLABTokenSale` | 3 fazlı IDO, claim, refund |
-| `WLABVesting` | Cliff + linear vesting |
-| `WLABStaking` | Tier lock + rewards |
-| `WLABGovernor` | DAO + Timelock |
-| `WLABLockVault` | Weighted governance lock vault (no decay) |
-| `WLABOFTAdapter` | Cross-chain stub (Faz 2) |
-| `WLABTreasuryUUPS` | Upgradeable treasury |
-
-## Zincir
-
-- **Testnet:** Base Sepolia (`chainId` 84532)
-- **Mainnet:** Base (`chainId` 8453)
-
-## Token
-
-- **Sembol:** WLAB
-- **Max supply:** 1,000,000,000
-- **Standard:** ERC-20 (+ Permit, Votes, compliance)
-
-## Lisans
-
-MIT — eğitim ve geliştirme. Mainnet öncesi profesyonel audit ve hukuki görüş zorunludur.
-
-## Claude handoff
-
-AI devam paketi: [docs/internal/claude-handoff/](./docs/internal/claude-handoff/) — `00-README-CLAUDE-HANDOFF.md` ile başla.
-
-## Production Candidate Notes
-
-- Readiness summary: [docs/10-production-candidate-readiness.md](./docs/10-production-candidate-readiness.md)
-- Operations runbook: [docs/11-operations-runbook.md](./docs/11-operations-runbook.md)
-- User guides: [docs/12-user-guides.md](./docs/12-user-guides.md)
-
-WhiteLab remains unaudited and is not mainnet-ready until audit, Safe/timelock handover, Slither, coverage uplift, and bridge replacement are complete.
+MIT. Use at your own risk. This repository is a testnet candidate until the readiness gates above are closed.

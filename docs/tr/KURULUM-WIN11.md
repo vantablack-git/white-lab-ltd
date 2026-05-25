@@ -12,7 +12,7 @@ cd C:\Users\zylmz\Documents\Project\WLAB\white-lab\white-lab\whitelab
 
 ## 1. Proje nedir?
 
-**WhiteLab Launch OS** — Base zincirinde audit-ready token launchpad:
+**WhiteLab Launch OS** — Base zincirinde audit-conscious token launchpad:
 
 | Bileşen | Açıklama |
 |---------|----------|
@@ -22,7 +22,7 @@ cd C:\Users\zylmz\Documents\Project\WLAB\white-lab\white-lab\whitelab
 | **Site** | Marketing (`website/`) + Protocol console (`frontend/`) |
 | **Zincir** | Test: Base Sepolia (84532) → Prod: Base (8453) |
 
-**Durum:** MVP launch-ready — **50 passing** test, lokal demo deploy, statik site build.
+**Durum:** testnet adayı — root `README.md` güncel canonical durum bilgisidir.
 
 ---
 
@@ -77,7 +77,7 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
 Bu komut sırayla:
 
 1. Ön koşulları kontrol eder  
-2. `npm install` → `compile` → **50 test** → `e2e:local`  
+2. `npm install` → `compile` → test suite → `e2e:local`  
 3. `deploy:local:demo` → `build:site`  
 4. `http://127.0.0.1:4173` önizlemesini başlatır  
 
@@ -165,7 +165,7 @@ Detay checklist: [SENIN-ADIMLAR.md](./SENIN-ADIMLAR.md) · [GO-LIVE.md](./GO-LIV
 
 | Script | Ne yapar |
 |--------|----------|
-| `npm test` | 50 Hardhat testi |
+| `npm test` | Hardhat test suite |
 | `npm run e2e:local` | IDO + stake + vesting E2E |
 | `npm run deploy:local:demo` | Lokal kontrat + demo IDO |
 | `npm run build:site` | `dist/` (Cloudflare) |
@@ -202,4 +202,4 @@ WhiteLab **henüz audit edilmedi** — README ve `docs/10-production-candidate-r
 
 ---
 
-*Son doğrulama: compile OK, 50 passing, E2E PASSED, build:site OK — Windows 11 / Node 22.*
+*Canonical doğrulama komutları root `README.md` içindedir.*

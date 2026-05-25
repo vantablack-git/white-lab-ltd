@@ -73,6 +73,6 @@ Additional deposits into an existing staking position must use the same tier. Th
 
 ## Bölüm Özeti & Sonraki Adım
 
-Akıllı sözleşmeler `contracts/` altında production-ready. Test: [05-security-audit.md](./05-security-audit.md).
+Akıllı sözleşmeler `contracts/` altında testnet adayıdır. Mainnet için external audit, release-time static analysis, multisig manifest doğrulaması ve açık risklerin kapatılması gerekir. Test: [05-security-audit.md](./05-security-audit.md).
 
 **Sonraki adım:** `npm test`

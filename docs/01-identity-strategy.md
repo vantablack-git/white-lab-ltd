@@ -9,7 +9,7 @@
 | | İçerik |
 |---|--------|
 | **Problem** | Token lansmanları parçalı araçlar, zayıf KYC/AML, opak vesting ve kopyala-yapıştır sözleşmeler nedeniyle yatırımcı kaybı ve regülasyon riski yaratıyor. 2024–2025 döneminde launchpad dolandırıcılık ve rug-pull vakaları toplam kaybın önemli kısmını oluşturdu. |
-| **Çözüm** | **WhiteLab Launch OS** — audit-ready şablon sözleşmeler, tier'lı KYC IDO, şeffaf tokenomics, zincir üstü vesting/staking/governance ve DAO treasury. |
+| **Çözüm** | **WhiteLab Launch OS** — audit-conscious şablon sözleşmeler, tier'lı KYC IDO, şeffaf tokenomics, zincir üstü vesting/staking/governance ve DAO treasury. |
 | **Fark yaratma** | "Clean room launch": tek SDK + compliance hooks (blacklist, permit, snapshot) + Tier-1 denetim checklist'i; rakiplerde parçalı olan uçtan uca paket. |
 
 ### Vizyon & Misyon

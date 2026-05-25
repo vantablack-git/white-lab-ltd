@@ -1,6 +1,6 @@
 # Senin adımların (15 dakika checklist)
 
-Repo **launch-ready MVP** durumda. Sıra sende.
+Repo **testnet adayı** durumda. Mainnet için audit, legal, Safe doğrulaması ve launch operasyon kapıları hâlâ zorunlu.
 
 ## A) Lokal kontrol (3 dk)
 
@@ -23,7 +23,7 @@ Tarayıcı:
 ```powershell
 git init
 git add .
-git commit -m "WhiteLab launch-ready MVP"
+git commit -m "WhiteLab testnet candidate"
 git branch -M main
 git remote add origin SENIN_REPO_URL
 git push -u origin main

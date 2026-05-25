@@ -11,11 +11,11 @@ This document is intentionally conservative. WhiteLab is a stronger production c
 | Token | `WLABToken` | ERC20, Permit, Votes, fee controls, pause, blacklist, whitelist, fee exemptions |
 | IDO | `WLABTokenSale` | Multi-phase ETH/ERC20 sale, Merkle gating, claim, refund, safe unsold recovery |
 | Vesting | `WLABVesting` | Single schedule per beneficiary, cliff, linear release, revocation |
-| Staking | `WLABStaking` | Single active position per wallet, weighted tiers, reward debt accounting |
+| Staking | `WLABStaking` | Single active position per wallet, weighted tiers, funded finite reward programs |
 | Governance | `WLABGovernor` + `TimelockController` | OZ Governor lifecycle validated in tests |
-| Governance lock vault | `WLABLockVault` | Weighted governance lock with fixed (non-decaying) voting power and gauge weights, not yet integrated into Governor |
+| Governance lock vault | `WLABLockVault` | Weighted governance lock with fixed (non-decaying) voting power, gauge weights, and compacted lock storage |
 | Bridge | `WLABOFTAdapter` | Stub only, disabled by default, not production bridge infrastructure |
-| Treasury | `WLABTreasuryUUPS` | UUPS proxy deployed by `scripts/deploy.js`; Safe role handover still required |
+| Treasury | `WLABTreasuryUUPS` | UUPS proxy deployed by `scripts/deploy.js`; production deploy enforces multisig role handover |
 
 ## State Invariants
 
@@ -24,8 +24,10 @@ This document is intentionally conservative. WhiteLab is a stronger production c
 | `WLABToken.totalSupply() <= 1B WLAB` | Unit tests and capped mint logic |
 | Fee-bearing transfers keep ERC20Votes aligned with balances | Regression test covers sender, receiver, treasury |
 | Sale obligations are not recoverable by owner | `totalUnclaimedTokens` accounting and invariant test |
-| Staking `totalWeightedStake` equals active position weights | Invariant test after multiple stake/unstake transitions |
-| ve gauge weight cannot exceed user voting power | Unit tests for repeated and cross-gauge voting |
+| Staking rewards cannot consume user principal | `totalStaked`, `reservedRewards`, finite program tests |
+| Staking `totalWeightedStake` equals active position weights | Regression tests after stake/top-up/unstake/compound paths |
+| Lock vault gauge weight cannot exceed user voting power | Unit tests for repeated and cross-gauge voting |
+| Withdrawn lock records do not grow unbounded | Swap-and-pop compaction test |
 | Timelock delay gates Governor execution | Full propose/vote/queue/execute test |
 | UUPS upgrades require `UPGRADER_ROLE` and preserve storage | Proxy upgrade test with V2 implementation |
 | OFT stub cannot be used accidentally | Bridge disabled by default; explicit enable required |
@@ -36,11 +38,11 @@ Current maturity: **testnet candidate, not audited**.
 
 | Area | Score | Notes |
 |------|-------|-------|
-| Unit/integration coverage | 7/10 | Core flows are covered; coverage target still below 95% |
+| Unit/integration coverage | 8/10 | Core flows and recent blocker regressions are covered; coverage target still below 95% |
 | Governance lifecycle | 7/10 | Happy-path Timelock execution covered; cancellation/defeat paths need tests |
-| Upgradeability | 6/10 | UUPS proxy test added; deployment pipeline still omits treasury proxy |
+| Upgradeability | 7/10 | UUPS proxy test added; production-named proxy deployed by pipeline |
 | Bridge safety | 3/10 | Stub disabled by default, but real LayerZero OFT is not implemented |
-| Admin hardening | 4/10 | Roles exist; Safe/timelock handover not executed |
+| Admin hardening | 7/10 | Production deploy now requires multisig and refuses residual deployer authority |
 | Static analysis | 2/10 | Slither unavailable in local environment |
 | Documentation | 8/10 | Trust assumptions and runbooks are now explicit |
 
@@ -61,7 +63,7 @@ Recommendation: keep critical admin under Safe + Timelock first, then phase in D
 
 `WLABTreasuryUUPS` uses OZ UUPS and role-gated `_authorizeUpgrade`. The proxy test proves implementation initializers are disabled, proxy initialization grants roles, unauthorized upgrades revert, and storage persists across upgrade.
 
-Open gap: deploy script does not yet deploy an ERC1967 proxy for treasury. Treat treasury as a tested module, not deployed production infrastructure.
+Open gap: treasury upgrade ceremonies still need release-time review, storage layout notes, and multisig/timelock transaction records.
 
 ## Economic Sustainability
 
@@ -89,7 +91,7 @@ The protocol needs transparent vesting, Safe custody, and public allocation dash
 
 ## Frontend/Demo Readiness
 
-Marketing site at `/` (AI-styled landing, tokenomics, live address registry) and protocol console at `/app` (wallet, IDO, staking, veLock, governance, chain guard, Merkle proof input).
+Marketing site at `/` (landing page, tokenomics, live address registry) and protocol console at `/app` (wallet, IDO, staking, governance lock, governance, chain guard, Merkle proof input).
 
 Host via `npm run start` (port 4173) or static export to Cloudflare Pages / GitHub Pages at $0.
 
@@ -98,7 +100,7 @@ Host via `npm run start` (port 4173) or static export to Cloudflare Pages / GitH
 | Check | Status |
 |-------|--------|
 | Hardhat compile | Passing |
-| Tests | Passing |
+| Tests | Passing (`79 passing` as of Phase 5) |
 | Local E2E script | Passing |
 | Hardhat deploy dry run | Passing |
 | Env validation script | Added |
@@ -108,25 +110,24 @@ Host via `npm run start` (port 4173) or static export to Cloudflare Pages / GitH
 
 ## Mainnet Readiness Estimate
 
-Current estimate: **72 / 100** for testnet/demo readiness, **55 / 100** for mainnet readiness.
+Current estimate: **80 / 100** for testnet/demo readiness, **62 / 100** for mainnet readiness.
 
 Blocking risks:
 
 - No external audit.
 - Slither/static analysis not run in this environment.
 - Coverage below 95%.
-- Treasury proxy not deployed by main deploy script.
 - OFT bridge is a disabled stub.
-- Admin handover to Safe/Timelock not executed.
+- Production Safe/timelock ownership must be verified on the actual deployed manifest.
 - Legal/compliance review not complete.
 - Liquidity and market-maker assumptions are not validated.
 
 ## Roadmap After Testnet Launch
 
-1. Deploy to Base Sepolia with Safe treasury.
+1. Deploy to Base Sepolia with Safe/multisig address configured.
 2. Run Slither and fix Critical/High/Medium findings.
 3. Add defeat/cancel/late-quorum governance tests.
-4. Add coverage for Treasury deploy script and proxy manifest.
+4. Add release coverage/reporting for Treasury proxy manifest and upgrade ceremony.
 5. Replace `WLABOFTAdapter` with real LayerZero OFT v2 implementation.
 6. Add allocation dashboard backed by real vesting schedules.
 7. Run external audit.

@@ -17,14 +17,20 @@
 
 ## Role Handover
 
-Before mainnet:
+Production deploys on `base` and `baseSepolia` enforce handover inside `scripts/deploy.js`. A deploy must not be considered successful unless `adminHandover.deployerRevoked == true` is present in the manifest and the residual-authority audit passes.
 
 - `DEFAULT_ADMIN_ROLE` on `WLABToken` must move from deployer to Safe or Timelock.
 - `PAUSER_ROLE` should be held by emergency Safe.
-- Sale, staking, vesting, OFT, and ve owner roles should be transferred to Safe or Timelock.
+- Sale, staking, vesting, OFT (if deployed), and lock-vault owner roles should be transferred to Safe or Timelock.
 - Timelock `PROPOSER_ROLE` and `CANCELLER_ROLE` should be Governor.
 - Timelock `EXECUTOR_ROLE` can be open if execution payloads are fully timelocked.
 - Deployer should retain no unilateral mint, pause, withdraw, or upgrade power.
+
+Standalone recovery/idempotent re-run:
+
+```bash
+MULTISIG_ADDRESS=0x... npm run handover:multisig -- --network baseSepolia
+```
 
 ## Upgrade Procedure
 
@@ -61,7 +67,7 @@ Emergency actions must be logged with timestamp, triggering transaction or repor
 - [ ] Deployment manifest reviewed
 - [ ] Safe owners verified
 - [ ] Timelock roles verified
-- [ ] Admin role migration executed
+- [ ] Manifest `adminHandover.deployerRevoked` is true on production networks
 - [ ] Frontend points to verified manifests
 - [ ] Emergency contacts confirmed
 - [ ] Known risks updated
