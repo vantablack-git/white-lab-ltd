@@ -2,8 +2,8 @@
 
 **WhiteLab Launch OS** — Base üzerinde audit-ready token launchpad, DAO ve compliance modülleri.
 
-> **Sunum ve eksiksiz kurulum:** [SUNUM.md](./SUNUM.md) (Türkçe, adım adım + mimari + P0 özeti)  
-> **Windows 11 PowerShell:** [KURULUM-WIN11.md](./KURULUM-WIN11.md) + `.\setup-win11.ps1`
+> **Sunum ve eksiksiz kurulum:** [docs/tr/SUNUM.md](./docs/tr/SUNUM.md) (Türkçe, adım adım + mimari + P0 özeti)  
+> **Windows 11 PowerShell:** [docs/tr/KURULUM-WIN11.md](./docs/tr/KURULUM-WIN11.md) + `.\scripts\setup\setup-win11.ps1`
 
 ## Hızlı başlangıç
 
@@ -28,8 +28,8 @@ npm run start
 - Site: `http://127.0.0.1:4173`
 - Console: `http://127.0.0.1:4173/app`
 
-Detaylı launch: [LAUNCH.md](./LAUNCH.md)  
-**Senin checklist:** [SENIN-ADIMLAR.md](./SENIN-ADIMLAR.md)  
+Detaylı launch: [docs/tr/LAUNCH.md](./docs/tr/LAUNCH.md)  
+**Senin checklist:** [docs/tr/SENIN-ADIMLAR.md](./docs/tr/SENIN-ADIMLAR.md)  
 Cloudflare: `npm run build:site` → output `dist/`
 
 ## Deploy (Base Sepolia)
@@ -52,8 +52,8 @@ Mainnet: `npm run deploy:base` → `npm run verify:base`
 | `test/` | Hardhat test suite (47+ test) |
 | `scripts/` | Deploy & verify |
 | `frontend/` | Static protocol console |
-| `SUNUM.md` | Sunum + divine komut + P0/P1 özeti |
-| `ARCHITECT_LOG.md` | Mimari karar logu |
+| `docs/tr/SUNUM.md` | Türkçe sunum + kurulum notları |
+| `docs/internal/ARCHITECT_LOG.md` | İç mimari karar logu |
 
 ## Kontratlar
 
@@ -85,7 +85,7 @@ MIT — eğitim ve geliştirme. Mainnet öncesi profesyonel audit ve hukuki gör
 
 ## Claude handoff
 
-AI devam paketi: [claude-handoff/](./claude-handoff/) — `00-README-CLAUDE-HANDOFF.md` ile başla.
+AI devam paketi: [docs/internal/claude-handoff/](./docs/internal/claude-handoff/) — `00-README-CLAUDE-HANDOFF.md` ile başla.
 
 ## Production Candidate Notes
 

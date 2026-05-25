@@ -40,7 +40,7 @@ whitelab/
 ├── docs/               # Bölüm 0–13 master dokümantasyon
 ├── dist/               # Cloudflare Pages çıktısı (npm run build:site)
 ├── .github/workflows/  # CI: Node 20, compile, test, e2e, coverage, build
-├── setup-win11.ps1     # ← Bu makinedeki ana kurulum scripti
+├── scripts/setup/      # Windows kurulum scripti
 └── package.json        # npm scriptleri
 ```
 
@@ -71,7 +71,7 @@ PowerShell'i **whitelab** klasöründe aç:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
-.\setup-win11.ps1 -StartPreview
+.\scripts\setup\setup-win11.ps1 -StartPreview
 ```
 
 Bu komut sırayla:
@@ -94,25 +94,25 @@ Bu komut sırayla:
 
 ```powershell
 # Sadece kontrol
-.\setup-win11.ps1 -Phase check
+.\scripts\setup\setup-win11.ps1 -Phase check
 
 # Git (+ opsiyonel araçlar) kur
-.\setup-win11.ps1 -Phase tools -InstallTools
+.\scripts\setup\setup-win11.ps1 -Phase tools -InstallTools
 
 # Lokal pipeline (varsayılan)
-.\setup-win11.ps1 -Phase local
+.\scripts\setup\setup-win11.ps1 -Phase local
 
 # Hızlı build (test atla)
-.\setup-win11.ps1 -SkipTests
+.\scripts\setup\setup-win11.ps1 -SkipTests
 
 # Geliştirme sunucusu (frontend + website kaynak)
-.\setup-win11.ps1 -StartDevServer
+.\scripts\setup\setup-win11.ps1 -StartDevServer
 
 # Base Sepolia (.env dolu olmalı)
-.\setup-win11.ps1 -Phase testnet
+.\scripts\setup\setup-win11.ps1 -Phase testnet
 
 # Araç kur + lokal + .env hazırsa testnet dene
-.\setup-win11.ps1 -Phase full -InstallTools
+.\scripts\setup\setup-win11.ps1 -Phase full -InstallTools
 ```
 
 Log dosyası: `setup-win11.log`
@@ -142,7 +142,7 @@ Doğrula ve deploy:
 
 ```powershell
 npm run env:check
-.\setup-win11.ps1 -Phase testnet
+.\scripts\setup\setup-win11.ps1 -Phase testnet
 ```
 
 ---
@@ -151,10 +151,10 @@ npm run env:check
 
 | Adım | Süre | Komut / aksiyon |
 |------|------|-----------------|
-| A) Lokal doğrulama | 3 dk | `.\setup-win11.ps1` |
+| A) Lokal doğrulama | 3 dk | `.\scripts\setup\setup-win11.ps1` |
 | B) GitHub push | 5 dk | Git kur → `git init` → push |
 | C) Cloudflare Pages | 5 dk | Build: `npm run build:site`, Output: `dist` |
-| D) Base Sepolia | 10 dk | `.env` + `.\setup-win11.ps1 -Phase testnet` |
+| D) Base Sepolia | 10 dk | `.env` + `.\scripts\setup\setup-win11.ps1 -Phase testnet` |
 | E) Mainnet | Sonra | Audit + Safe multisig + LP + legal |
 
 Detay checklist: [SENIN-ADIMLAR.md](./SENIN-ADIMLAR.md) · [GO-LIVE.md](./GO-LIVE.md)
@@ -194,7 +194,7 @@ WhiteLab **henüz audit edilmedi** — README ve `docs/10-production-candidate-r
 | Sorun | Çözüm |
 |-------|--------|
 | `npm` tanınmıyor | Node kur, terminali yeniden aç |
-| `git` tanınmıyor | `.\setup-win11.ps1 -Phase tools -InstallTools` |
+| `git` tanınmıyor | `.\scripts\setup\setup-win11.ps1 -Phase tools -InstallTools` |
 | Script çalışmıyor | `Set-ExecutionPolicy RemoteSigned` |
 | Test fail | `npm run compile` sonra `npm test` |
 | Sepolia deploy fail | `.env`, faucet ETH, `npm run env:check` |

@@ -233,7 +233,6 @@ async function main() {
   );
   const tokenomicsSrc = path.join(__dirname, "..", "shared", "tokenomics.json");
   if (fs.existsSync(tokenomicsSrc)) {
-    fs.copyFileSync(tokenomicsSrc, path.join(publicDir, "..", "tokenomics.json"));
     fs.copyFileSync(tokenomicsSrc, path.join(publicDir, "tokenomics.json"));
   }
 

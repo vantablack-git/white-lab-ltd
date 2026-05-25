@@ -1,5 +1,5 @@
 #Requires -Version 5.1
-# WhiteLab Windows 11 setup - documentation: KURULUM-WIN11.md
+# WhiteLab Windows 11 setup - documentation: docs/tr/KURULUM-WIN11.md
 
 param(
     [ValidateSet("check", "tools", "local", "testnet", "full")]
@@ -11,7 +11,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ProjectRoot = $PSScriptRoot
+$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 $MinNodeMajor = 18
 $RecommendedNodeMajor = 20
 $LogFile = Join-Path $ProjectRoot "setup-win11.log"
@@ -209,8 +209,8 @@ function Show-MarketSteps {
     Write-Host ""
     Write-Host "GitHub:  git init, commit, push (install Git first)"
     Write-Host "Cloudflare Pages: build=npm run build:site, output=dist, Node 20"
-    Write-Host "Sepolia: fill .env, faucet ETH, .\setup-win11.ps1 -Phase testnet"
-    Write-Host "Guides: KURULUM-WIN11.md, GO-LIVE.md, SENIN-ADIMLAR.md"
+    Write-Host "Sepolia: fill .env, faucet ETH, .\scripts\setup\setup-win11.ps1 -Phase testnet"
+    Write-Host "Guides: docs/tr/KURULUM-WIN11.md, docs/tr/GO-LIVE.md, docs/tr/SENIN-ADIMLAR.md"
     Write-Host ""
 }
 

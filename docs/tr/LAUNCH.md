@@ -47,7 +47,7 @@ Faucet: https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet
 ## Tokenomics source of truth
 
 Edit only: `shared/tokenomics.json`  
-Copied to: `tokenomics.json` (site root) on deploy/build.
+Build output: `dist/tokenomics.json`. Deploy/runtime copy: `public/tokenomics.json`.
 
 ## Mainnet blockers
 

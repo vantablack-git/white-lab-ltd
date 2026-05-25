@@ -105,4 +105,4 @@ UUPS treasury, Lock Vault, fee switch ve risk çerçevesi tamamlandı. WhiteLab 
 | 10 | [10-production-candidate-readiness.md](./10-production-candidate-readiness.md) |
 | 11 | [11-operations-runbook.md](./11-operations-runbook.md) |
 | 12 | [12-user-guides.md](./12-user-guides.md) |
-| Log | [../ARCHITECT_LOG.md](../ARCHITECT_LOG.md) |
+| Log | [internal/ARCHITECT_LOG.md](internal/ARCHITECT_LOG.md) |
