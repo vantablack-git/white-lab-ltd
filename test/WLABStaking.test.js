@@ -63,6 +63,62 @@ describe("WLABStaking", function () {
     ).to.be.revertedWith("Staking: compound token mismatch");
   });
 
+  it("rejects reward programs that are not backed by available reward balance", async function () {
+    const Staking = await ethers.getContractFactory("WLABStaking");
+    const unfundedStaking = await Staking.deploy(
+      await token.getAddress(),
+      await token.getAddress(),
+      owner.address
+    );
+
+    await token.connect(user).approve(await unfundedStaking.getAddress(), ethers.parseEther("100"));
+    await unfundedStaking.connect(user).stake(ethers.parseEther("100"), 0, false);
+
+    // The contract holds 100 WLAB, but all of it is user principal. It cannot
+    // be counted as reward backing.
+    await expect(
+      unfundedStaking.connect(owner).setRewardProgram(ethers.parseEther("1") / 86400n, 7 * 24 * 60 * 60)
+    ).to.be.revertedWith("Staking: insufficient rewards");
+  });
+
+  it("stops reward accrual at the funded program end", async function () {
+    const rate = ethers.parseEther("1") / 86400n; // 1 WLAB/day
+
+    await staking.connect(owner).setRewardRate(0);
+    await staking.connect(user).stake(ethers.parseEther("100"), 0, false);
+    await staking.connect(owner).setRewardProgram(rate, 24 * 60 * 60);
+
+    const stakeInfo = await staking.stakes(user.address);
+    const rewardEnd = await staking.rewardEndTime();
+    const fundedSeconds = rewardEnd - stakeInfo.lockEnd + (await staking.lockDurations(0));
+
+    await time.increase(2 * 24 * 60 * 60);
+
+    const pending = await staking.pendingReward(user.address);
+    expect(pending).to.be.gt(0);
+    expect(pending).to.be.lte(rate * fundedSeconds);
+
+    await staking.connect(user).claimReward();
+    const afterClaim = await staking.pendingReward(user.address);
+    expect(afterClaim).to.equal(0);
+  });
+
+  it("tracks totalStaked and consumes reserved rewards when compounding", async function () {
+    const rate = ethers.parseEther("1") / 86400n; // 1 WLAB/day
+
+    await staking.connect(owner).setRewardRate(0);
+    await staking.connect(user).stake(ethers.parseEther("100"), 0, true);
+    await staking.connect(owner).setRewardProgram(rate, 24 * 60 * 60);
+    await time.increase(24 * 60 * 60);
+
+    await staking.connect(user).claimReward();
+
+    const info = await staking.stakes(user.address);
+    expect(info.amount).to.be.gt(ethers.parseEther("100"));
+    expect(await staking.totalStaked()).to.equal(info.amount);
+    expect(await staking.reservedRewards()).to.equal(0);
+  });
+
   it("emergency unstake applies penalty", async function () {
     await staking.connect(user).stake(ethers.parseEther("100"), 0, false);
     const before = await token.balanceOf(user.address);

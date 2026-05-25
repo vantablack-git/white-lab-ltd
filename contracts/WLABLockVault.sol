@@ -80,12 +80,20 @@ contract WLABLockVault is Ownable, ReentrancyGuard {
             "LockVault: active votes"
         );
 
-        lk.amount = 0;
-        lk.votingPower = 0;
         totalVotingPower[msg.sender] -= power;
+
+        uint256 lastIndex = locks[msg.sender].length - 1;
+        if (lockIndex != lastIndex) {
+            locks[msg.sender][lockIndex] = locks[msg.sender][lastIndex];
+        }
+        locks[msg.sender].pop();
 
         wlab.safeTransfer(msg.sender, amount);
         emit Withdrawn(msg.sender, amount);
+    }
+
+    function lockCount(address user) external view returns (uint256) {
+        return locks[user].length;
     }
 
     function createGauge(address token) external onlyOwner returns (uint256) {

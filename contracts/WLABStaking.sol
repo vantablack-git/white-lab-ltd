@@ -18,10 +18,14 @@ contract WLABStaking is Ownable, ReentrancyGuard {
 
     uint256 public rewardRatePerSecond;
     uint256 public totalWeightedStake;
+    uint256 public totalStaked;
     uint256 public accRewardPerWeight;
     uint256 public lastUpdateTime;
+    uint256 public rewardEndTime;
+    uint256 public reservedRewards;
     uint256 public constant EMERGENCY_PENALTY_BPS = 1000;
     uint256 public constant BPS = 10_000;
+    uint64 public constant DEFAULT_REWARD_DURATION = 365 days;
 
     struct StakeInfo {
         uint256 amount;
@@ -42,6 +46,7 @@ contract WLABStaking is Ownable, ReentrancyGuard {
     event RewardClaimed(address indexed user, uint256 amount);
     event EmergencyUnstaked(address indexed user, uint256 amount, uint256 penalty);
     event RewardRateUpdated(uint256 newRate);
+    event RewardProgramUpdated(uint256 rewardRatePerSecond, uint256 rewardEndTime);
 
     constructor(address _stakingToken, address _rewardToken, address initialOwner) Ownable(initialOwner) {
         require(_stakingToken != address(0) && _rewardToken != address(0), "Staking: zero token");
@@ -51,9 +56,34 @@ contract WLABStaking is Ownable, ReentrancyGuard {
     }
 
     function setRewardRate(uint256 _ratePerSecond) external onlyOwner {
+        _setRewardProgram(_ratePerSecond, DEFAULT_REWARD_DURATION);
+    }
+
+    function setRewardProgram(uint256 _ratePerSecond, uint64 duration) external onlyOwner {
+        _setRewardProgram(_ratePerSecond, duration);
+    }
+
+    function _setRewardProgram(uint256 _ratePerSecond, uint64 duration) internal {
         _updatePool();
+        lastUpdateTime = block.timestamp;
+        if (_ratePerSecond == 0) {
+            rewardRatePerSecond = 0;
+            rewardEndTime = block.timestamp;
+            emit RewardRateUpdated(0);
+            emit RewardProgramUpdated(0, rewardEndTime);
+            return;
+        }
+
+        require(duration > 0, "Staking: zero duration");
+        uint256 futureObligation = _ratePerSecond * uint256(duration);
+        require(
+            reservedRewards + futureObligation <= _rewardBackingBalance(),
+            "Staking: insufficient rewards"
+        );
         rewardRatePerSecond = _ratePerSecond;
+        rewardEndTime = block.timestamp + uint256(duration);
         emit RewardRateUpdated(_ratePerSecond);
+        emit RewardProgramUpdated(_ratePerSecond, rewardEndTime);
     }
 
     function stake(uint256 amount, uint8 tierIndex, bool compound) external nonReentrant {
@@ -76,6 +106,7 @@ contract WLABStaking is Ownable, ReentrancyGuard {
         uint256 weight = (amount * multipliers[tierIndex]) / 1e18;
         s.amount += amount;
         s.weight += weight;
+        totalStaked += amount;
         // lockEnd uses max(existing, fresh) so a same-tier top-up never
         // silently shortens the user's commitment. Behavior is identical to
         // the previous unconditional write under today's monotone durations,
@@ -107,6 +138,7 @@ contract WLABStaking is Ownable, ReentrancyGuard {
         uint256 weightReduction = (amount * multipliers[s.tierIndex]) / 1e18;
         s.amount -= amount;
         s.weight -= weightReduction;
+        totalStaked -= amount;
         totalWeightedStake -= weightReduction;
 
         stakingToken.safeTransfer(msg.sender, amount);
@@ -137,6 +169,7 @@ contract WLABStaking is Ownable, ReentrancyGuard {
         uint256 penalty = (amount * EMERGENCY_PENALTY_BPS) / BPS;
         uint256 payout = amount - penalty;
 
+        totalStaked -= amount;
         totalWeightedStake -= s.weight;
         delete stakes[msg.sender];
 
@@ -153,8 +186,9 @@ contract WLABStaking is Ownable, ReentrancyGuard {
         if (s.weight == 0) return 0;
 
         uint256 acc = accRewardPerWeight;
-        if (totalWeightedStake > 0 && block.timestamp > lastUpdateTime) {
-            uint256 timeElapsed = block.timestamp - lastUpdateTime;
+        uint256 applicableTime = _lastApplicableRewardTime();
+        if (totalWeightedStake > 0 && applicableTime > lastUpdateTime) {
+            uint256 timeElapsed = applicableTime - lastUpdateTime;
             acc += (timeElapsed * rewardRatePerSecond * 1e18) / totalWeightedStake;
         }
 
@@ -162,14 +196,17 @@ contract WLABStaking is Ownable, ReentrancyGuard {
     }
 
     function _updatePool() internal {
-        if (block.timestamp <= lastUpdateTime) return;
+        uint256 applicableTime = _lastApplicableRewardTime();
+        if (applicableTime <= lastUpdateTime) return;
         if (totalWeightedStake == 0) {
-            lastUpdateTime = block.timestamp;
+            lastUpdateTime = applicableTime;
             return;
         }
-        uint256 timeElapsed = block.timestamp - lastUpdateTime;
-        accRewardPerWeight += (timeElapsed * rewardRatePerSecond * 1e18) / totalWeightedStake;
-        lastUpdateTime = block.timestamp;
+        uint256 timeElapsed = applicableTime - lastUpdateTime;
+        uint256 accrued = timeElapsed * rewardRatePerSecond;
+        reservedRewards += accrued;
+        accRewardPerWeight += (accrued * 1e18) / totalWeightedStake;
+        lastUpdateTime = applicableTime;
     }
 
     function _harvest(address user) internal {
@@ -178,17 +215,31 @@ contract WLABStaking is Ownable, ReentrancyGuard {
         if (pending == 0) return;
 
         s.rewardDebt = (s.weight * accRewardPerWeight) / 1e18;
+        reservedRewards -= pending;
 
         if (s.compound && s.amount > 0) {
             require(address(stakingToken) == address(rewardToken), "Staking: compound token mismatch");
             uint256 addedWeight = (pending * multipliers[s.tierIndex]) / 1e18;
             s.amount += pending;
             s.weight += addedWeight;
+            totalStaked += pending;
             totalWeightedStake += addedWeight;
             s.rewardDebt = (s.weight * accRewardPerWeight) / 1e18;
         } else {
             rewardToken.safeTransfer(user, pending);
             emit RewardClaimed(user, pending);
         }
+    }
+
+    function _lastApplicableRewardTime() internal view returns (uint256) {
+        return block.timestamp < rewardEndTime ? block.timestamp : rewardEndTime;
+    }
+
+    function _rewardBackingBalance() internal view returns (uint256) {
+        uint256 balance = rewardToken.balanceOf(address(this));
+        if (address(stakingToken) == address(rewardToken)) {
+            return balance > totalStaked ? balance - totalStaked : 0;
+        }
+        return balance;
     }
 }

@@ -85,4 +85,25 @@ describe("WLABLockVault", function () {
 
     expect(await token.balanceOf(user.address)).to.equal(ethers.parseEther("1000"));
   });
+
+  it("compacts withdrawn locks with swap-and-pop instead of leaving zeroed slots", async function () {
+    const shortLock = 7n * 24n * 60n * 60n;
+    const longLock = 30n * 24n * 60n * 60n;
+
+    await lockVault.connect(user).createLock(ethers.parseEther("100"), shortLock);
+    await lockVault.connect(user).createLock(ethers.parseEther("250"), longLock);
+
+    const secondBefore = await lockVault.locks(user.address, 1);
+    expect(await lockVault.lockCount(user.address)).to.equal(2);
+
+    await time.increase(shortLock + 1n);
+    await lockVault.connect(user).withdraw(0);
+
+    expect(await lockVault.lockCount(user.address)).to.equal(1);
+    const moved = await lockVault.locks(user.address, 0);
+    expect(moved.amount).to.equal(secondBefore.amount);
+    expect(moved.unlockTime).to.equal(secondBefore.unlockTime);
+    expect(moved.votingPower).to.equal(secondBefore.votingPower);
+    await expect(lockVault.locks(user.address, 1)).to.be.reverted;
+  });
 });

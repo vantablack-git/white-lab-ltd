@@ -229,6 +229,36 @@ describe("WLABTokenSale", function () {
     expect(await token.balanceOf(saleAddr)).to.equal(0n);
   });
 
+  it("recoverUnsoldTokens preserves all unclaimed obligations across successful phases", async function () {
+    const easySoftCap = ethers.parseEther("0.0001");
+    const publicBuy = ethers.parseEther("500");
+    const privateBuy = ethers.parseEther("750");
+    const totalOwed = publicBuy + privateBuy;
+
+    await sale.configurePhase(3, PRICE, ALLOCATION, HARD_CAP, easySoftCap, ethers.ZeroHash, 0);
+    await sale.configurePhase(2, PRICE, ALLOCATION, HARD_CAP, easySoftCap, ethers.ZeroHash, 0);
+
+    await sale.startPhase(3);
+    await sale.connect(buyer).buy(publicBuy, [], { value: costOf(publicBuy) });
+    await sale.connect(owner).finalizePhase(3);
+
+    await sale.startPhase(2);
+    await sale.connect(buyer2).buy(privateBuy, [], { value: costOf(privateBuy) });
+    await sale.connect(owner).finalizePhase(2);
+    await sale.connect(owner).finalizeSale();
+
+    expect(await sale.totalUnclaimedTokens()).to.equal(totalOwed);
+
+    await sale.connect(owner).recoverUnsoldTokens(owner.address);
+    expect(await token.balanceOf(await sale.getAddress())).to.equal(totalOwed);
+
+    await sale.connect(buyer).claim(3);
+    await sale.connect(buyer2).claim(2);
+    expect(await sale.totalUnclaimedTokens()).to.equal(0n);
+    expect(await token.balanceOf(buyer.address)).to.equal(publicBuy);
+    expect(await token.balanceOf(buyer2.address)).to.equal(privateBuy);
+  });
+
   it("reverts when payment rounds to zero", async function () {
     await sale.configurePhase(3, 1n, ALLOCATION, HARD_CAP, SOFT_CAP, ethers.ZeroHash, 0);
     await sale.startPhase(3);

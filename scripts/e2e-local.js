@@ -75,7 +75,8 @@ async function main() {
 
   // Stake
   await token.connect(buyer).approve(await staking.getAddress(), buyAmt);
-  await staking.setRewardRate(hre.ethers.parseEther("1"));
+  await token.transfer(await staking.getAddress(), hre.ethers.parseEther("500000"));
+  await staking.setRewardRate(hre.ethers.parseEther("1") / 86400n);
   await staking.connect(buyer).stake(buyAmt / 10n, 0, false);
   console.log("Staked:", hre.ethers.formatEther(buyAmt / 10n), "WLAB");
 
