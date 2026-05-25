@@ -1,0 +1,30 @@
+# Default: treat as text, normalize to LF in the repo, restore platform EOL on checkout.
+* text=auto eol=lf
+
+# Source / config / docs explicitly LF
+*.sol      text eol=lf
+*.js       text eol=lf
+*.ts       text eol=lf
+*.json     text eol=lf
+*.md       text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.css      text eol=lf
+*.html     text eol=lf
+*.sh       text eol=lf
+
+# Windows-only artifacts keep CRLF on disk (and in the repo) so PowerShell stays happy
+*.ps1      text eol=crlf
+*.cmd      text eol=crlf
+*.bat      text eol=crlf
+
+# Binary
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.webp     binary
+*.gif      binary
+*.ico      binary
+*.pdf      binary
+*.woff     binary
+*.woff2    binary
