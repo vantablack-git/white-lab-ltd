@@ -29,7 +29,7 @@ async function loadTokenomicsForSite() {
   }
 }
 
-const COLORS = ["#6366f1", "#4c7f9f", "#5a4fcf", "#167c70", "#2f855a", "#b83245", "#3f8f7a", "#6f5cc2", "#d07a2d", "#7b6f63"];
+const COLORS = ["#ffffff", "#e8e8e8", "#d0d0d0", "#b8b8b8", "#a2a2a2", "#8c8c8c", "#767676", "#606060", "#4a4a4a", "#343434"];
 
 async function loadDeployments() {
   const paths = ["/public/deployments.json", "/deployments/base-sepolia.json", "/deployments/hardhat.json"];
