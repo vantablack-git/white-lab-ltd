@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="WhiteLab Launch OS — audit-ready token infrastructure on Base. $WLAB protocol." />
+    <meta name="description" content="WhiteLab Launch OS — audit-conscious token launch infrastructure on Base. Testnet candidate, audit pending." />
     <title>WhiteLab — Launch OS on Base</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,7 +33,7 @@
       <section class="hero">
         <div class="hero-copy">
           <p class="eyebrow">Base L2 · Launch OS · $WLAB</p>
-          <h1>Clean-room token launches with institutional-grade contracts.</h1>
+          <h1>A calm control plane for capital launches on Base.</h1>
           <p class="lead">
             WhiteLab unifies IDO sales, vesting, staking, a weighted governance lock vault, and timelock
             governance into one transparent stack — built on OpenZeppelin, tested end-to-end, audit pending.
@@ -47,13 +47,19 @@
             <div><dt>TGE Float</dt><dd>~8.85%</dd></div>
             <div><dt>Timelock</dt><dd>48h+</dd></div>
           </dl>
+          <div class="status-ribbon" aria-label="Current protocol status">
+            <span class="proof-pill">79 tests passing</span>
+            <span class="proof-pill">Multisig-enforced deploy</span>
+            <span class="proof-pill">Bridge stub disabled</span>
+            <span class="proof-pill warn">Audit pending</span>
+          </div>
         </div>
         <div class="hero-visual" aria-hidden="true">
           <div class="orb orb-a"></div>
           <div class="orb orb-b"></div>
           <div class="mesh-card">
-            <p>Neural Launch Mesh</p>
-            <span>IDO · Vesting · Stake · DAO</span>
+            <p>Launch Control Plane</p>
+            <span>IDO · Vesting · Stake · Lock · DAO</span>
             <div class="pulse-line"></div>
           </div>
         </div>
@@ -62,7 +68,7 @@
       <section class="section" id="protocol">
         <div class="section-head">
           <p class="eyebrow">Architecture</p>
-          <h2>Everything investors expect — in one monorepo.</h2>
+          <h2>Protocol primitives with explicit trust assumptions.</h2>
         </div>
         <div class="card-grid">
           <article class="card reveal">
@@ -75,7 +81,7 @@
           </article>
           <article class="card reveal">
             <h3>Staking &amp; Governance Lock Vault</h3>
-            <p>Tiered staking with weighted rewards. Separate weighted governance lock vault (fixed power, no decay) drives gauge voting with reuse protection.</p>
+            <p>Tiered staking uses funded finite reward programs. Separate governance lock vault has fixed power, no decay, and vote reuse protection.</p>
           </article>
           <article class="card reveal">
             <h3>Governance</h3>
@@ -87,7 +93,7 @@
       <section class="section alt" id="tokenomics">
         <div class="section-head">
           <p class="eyebrow">Tokenomics</p>
-          <h2>Fixed cap. Documented unlocks. Deflationary fee burns.</h2>
+          <h2>Fixed cap. Documented unlocks. Accounting before narrative.</h2>
         </div>
         <div class="tokenomics-layout">
           <div class="donut-wrap reveal" id="donutChart" aria-label="Supply allocation chart"></div>
@@ -108,7 +114,7 @@
         <div class="transparency-panel reveal">
           <div class="network-badge" id="networkBadge">Loading network…</div>
           <div class="address-grid" id="contractGrid"></div>
-          <p class="fine-print">Bridge adapter is a disabled stub until LayerZero OFT v2 audit. Mainnet requires external audit + multisig handover.</p>
+          <p class="fine-print">Production deploys enforce multisig handover. Bridge adapter is skipped on Base mainnet unless explicitly enabled and remains a disabled stub until real OFT engineering and audit.</p>
         </div>
       </section>
 

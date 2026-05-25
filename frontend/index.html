@@ -266,7 +266,7 @@
             <section class="panel">
               <div class="readiness-list">
                 <div><span class="status-dot ok"></span><span>Governor can queue through Timelock in tests.</span></div>
-                <div><span class="status-dot warn"></span><span>Admin role handover must be completed before mainnet.</span></div>
+                <div><span class="status-dot ok"></span><span>Production deploy script enforces multisig handover.</span></div>
                 <div><span class="status-dot warn"></span><span>Distribution concentration remains a governance risk.</span></div>
               </div>
             </section>
@@ -332,7 +332,7 @@
                   <h3>Transparency</h3>
                 </div>
               </div>
-              <p class="plain-copy">Treasury UUPS deploys with the standard script. Before mainnet: assign SPENDER/UPGRADER to Gnosis Safe, document upgrade ceremony, and verify proxy on Basescan.</p>
+              <p class="plain-copy">Treasury UUPS deploys behind `WLABERC1967Proxy`. Production deploys initialize roles to the multisig; every upgrade still needs a documented Safe/timelock ceremony and Basescan verification.</p>
             </section>
           </div>
         </section>
