@@ -39,7 +39,18 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
     mapping(Phase => mapping(address => uint256))   public walletBoughtTokens;
 
     bool public saleFinalized;
-    bool public refundsEnabled;
+
+    /// @notice Per-phase refund latch. Set true if and only if a phase failed
+    ///         its softCap at finalization. Each phase's claim/refund path is
+    ///         gated on its own latch — a failed phase cannot block a
+    ///         successful phase's claims, and a successful phase cannot leak
+    ///         into another phase's refunds.
+    mapping(Phase => bool) public phaseRefundsEnabled;
+
+    /// @notice Sum of raised wei from finalized successful phases that the
+    ///         owner is entitled to withdraw. Failed-phase contributions stay
+    ///         locked in escrow until refunded.
+    uint256 public withdrawableRaisedWei;
 
     uint256 public totalUnclaimedTokens;
 
@@ -164,11 +175,7 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
         }
 
         cfg.finalized = true;
-        if (cfg.totalRaisedWei < cfg.softCapWei) {
-            refundsEnabled = true;
-        }
-
-        emit PhaseFinalized(phase, cfg.totalRaisedWei >= cfg.softCapWei);
+        _settleFinalizedPhase(phase, cfg);
     }
 
     /**
@@ -183,16 +190,25 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
             cfg.active    = false;
             cfg.finalized = true;
             currentPhase  = Phase.None;
-            if (cfg.totalRaisedWei < cfg.softCapWei) {
-                refundsEnabled = true;
-            }
-            emit PhaseFinalized(phase, cfg.totalRaisedWei >= cfg.softCapWei);
+            _settleFinalizedPhase(phase, cfg);
         } else {
             require(_anyPhaseFinalized(), "Sale: no phase ready");
         }
 
         saleFinalized = true;
-        emit SaleFinalized(!refundsEnabled);
+        emit SaleFinalized(!refundsEnabled());
+    }
+
+    function _settleFinalizedPhase(Phase phase, PhaseConfig storage cfg) internal {
+        bool succeeded = cfg.totalRaisedWei >= cfg.softCapWei;
+        if (succeeded) {
+            // Funds raised by a successful phase belong to the owner.
+            withdrawableRaisedWei += cfg.totalRaisedWei;
+        } else {
+            // Funds raised by a failed phase must remain locked for buyer refunds.
+            phaseRefundsEnabled[phase] = true;
+        }
+        emit PhaseFinalized(phase, succeeded);
     }
 
     function _anyPhaseFinalized() internal view returns (bool) {
@@ -201,9 +217,18 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
             || phases[Phase.Public].finalized;
     }
 
+    /// @notice Aggregate view: true iff any phase is in refund mode. Useful
+    ///         for legacy callers; per-phase decisions should read
+    ///         `phaseRefundsEnabled(phase)` directly.
+    function refundsEnabled() public view returns (bool) {
+        return phaseRefundsEnabled[Phase.Seed]
+            || phaseRefundsEnabled[Phase.Private]
+            || phaseRefundsEnabled[Phase.Public];
+    }
+
     function claim(Phase phase) external nonReentrant {
         require(phases[phase].finalized, "Sale: not finalized");
-        require(!refundsEnabled,         "Sale: refunds active, claim disabled");
+        require(!phaseRefundsEnabled[phase], "Sale: refunds active, claim disabled");
         uint256 tokens = purchasedTokens[phase][msg.sender];
         require(tokens > 0, "Sale: nothing to claim");
         purchasedTokens[phase][msg.sender] = 0;
@@ -213,7 +238,7 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
     }
 
     function refund(Phase phase) external nonReentrant {
-        require(refundsEnabled, "Sale: refunds off");
+        require(phaseRefundsEnabled[phase], "Sale: refunds off");
         uint256 paid = purchasedWei[phase][msg.sender];
         require(paid > 0, "Sale: nothing to refund");
         uint256 owedTokens = purchasedTokens[phase][msg.sender];
@@ -236,15 +261,20 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
         emit Refunded(phase, msg.sender, paid);
     }
 
-    function withdrawFunds(address to) external onlyOwner {
-        require(saleFinalized && !refundsEnabled, "Sale: not allowed");
+    /// @notice Owner withdrawal is bounded by `withdrawableRaisedWei`, which
+    ///         only accumulates from finalized successful phases. Funds owed
+    ///         to refunds in failed phases are unreachable from this path.
+    function withdrawFunds(address to) external onlyOwner nonReentrant {
+        require(saleFinalized, "Sale: not allowed");
         require(to != address(0), "Sale: zero to");
+        uint256 amount = withdrawableRaisedWei;
+        require(amount > 0, "Sale: nothing to withdraw");
+        withdrawableRaisedWei = 0;
         if (paymentToken == address(0)) {
-            (bool ok, ) = to.call{value: address(this).balance}("");
+            (bool ok, ) = to.call{value: amount}("");
             require(ok, "Sale: withdraw fail");
         } else {
-            uint256 bal = IERC20(paymentToken).balanceOf(address(this));
-            IERC20(paymentToken).safeTransfer(to, bal);
+            IERC20(paymentToken).safeTransfer(to, amount);
         }
     }
 
