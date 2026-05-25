@@ -48,9 +48,9 @@ User WLAB → WhiteLabVault → stake in Staking + compound
          Performance fee 10% → Treasury
 ```
 
-### Curve-style gauge (veWLAB)
+### Lock Vault gauge
 
-`WLABVeToken.voteGauge()` — emission yönlendirme LP havuzlarına.
+`WLABLockVault.voteGauge()` — Lock Vault sahipleri (weighted governance lock — decay yok) gauge emission ağırlığı belirler. veCRV tarzı sürekli decay yoktur.
 
 ---
 

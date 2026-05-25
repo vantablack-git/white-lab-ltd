@@ -18,7 +18,7 @@ cd C:\Users\zylmz\Documents\Project\WLAB\white-lab\white-lab\whitelab
 |---------|----------|
 | **WLAB** | ERC-20 token (max 1B), fee, pause, blacklist, votes |
 | **IDO** | 3 fazlı satış (Seed / Private / Public), claim, refund |
-| **Vesting / Staking / veToken / Governor** | Tam protokol yığını |
+| **Vesting / Staking / Lock Vault / Governor** | Tam protokol yığını (weighted governance lock — decay yok) |
 | **Site** | Marketing (`website/`) + Protocol console (`frontend/`) |
 | **Zincir** | Test: Base Sepolia (84532) → Prod: Base (8453) |
 

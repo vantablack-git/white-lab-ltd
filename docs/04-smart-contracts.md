@@ -43,7 +43,7 @@ hardhat.config.js
 | **Staking** | [`WLABStaking.sol`](../contracts/WLABStaking.sol) | 30/90/180/365 gün çarpanlar, compound, emergency %10 ceza |
 | **Governance** | [`WLABGovernor.sol`](../contracts/WLABGovernor.sol) | OZ Governor + Timelock 48h |
 | **Token Sale** | [`WLABTokenSale.sol`](../contracts/WLABTokenSale.sol) | Seed/Private/Public, merkle WL, refund |
-| **veToken** | [`WLABVeToken.sol`](../contracts/WLABVeToken.sol) | Vote escrow, gauges |
+| **Lock Vault** | [`WLABLockVault.sol`](../contracts/WLABLockVault.sol) | Weighted governance lock (no decay), gauges |
 | **OFT Adapter** | [`WLABOFTAdapter.sol`](../contracts/WLABOFTAdapter.sol) | Bridge stub → LayerZero production |
 | **Treasury UUPS** | [`upgrades/WLABTreasuryUUPS.sol`](../contracts/upgrades/WLABTreasuryUUPS.sol) | Upgradeable treasury |
 
@@ -67,7 +67,7 @@ Additional deposits into an existing staking position must use the same tier. Th
 
 ### veGauge Voting Invariant
 
-`WLABVeToken.voteGauge(gaugeId, weight)` sets the user's absolute weight for that gauge. A user cannot allocate more aggregate gauge weight than their current `totalVotingPower`, and active votes must be reduced before withdrawing a lock that would leave votes overcommitted.
+`WLABLockVault.voteGauge(gaugeId, weight)` sets the user's absolute weight for that gauge. A user cannot allocate more aggregate gauge weight than their current `totalVotingPower`, and active votes must be reduced before withdrawing a lock that would leave votes overcommitted. Voting power is fixed at lock creation as `amount * lockDuration / MAX_LOCK` and does not decay over time. This is intentionally a weighted governance lock, not a veCRV-style continuously-decaying vote escrow.
 
 ---
 

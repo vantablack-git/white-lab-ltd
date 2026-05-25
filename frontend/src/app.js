@@ -236,7 +236,7 @@ async function loadAbis() {
     WLABToken: "/artifacts/contracts/WLABToken.sol/WLABToken.json",
     WLABTokenSale: "/artifacts/contracts/WLABTokenSale.sol/WLABTokenSale.json",
     WLABStaking: "/artifacts/contracts/WLABStaking.sol/WLABStaking.json",
-    WLABVeToken: "/artifacts/contracts/WLABVeToken.sol/WLABVeToken.json",
+    WLABLockVault: "/artifacts/contracts/WLABLockVault.sol/WLABLockVault.json",
     WLABGovernor: "/artifacts/contracts/WLABGovernor.sol/WLABGovernor.json",
   };
 
@@ -268,7 +268,7 @@ function connectContracts() {
   state.contracts.token = new ethers.Contract(contracts.WLABToken, state.abis.WLABToken, state.signer);
   state.contracts.sale = new ethers.Contract(contracts.WLABTokenSale, state.abis.WLABTokenSale, state.signer);
   state.contracts.staking = new ethers.Contract(contracts.WLABStaking, state.abis.WLABStaking, state.signer);
-  state.contracts.ve = new ethers.Contract(contracts.WLABVeToken, state.abis.WLABVeToken, state.signer);
+  state.contracts.lockVault = new ethers.Contract(contracts.WLABLockVault, state.abis.WLABLockVault, state.signer);
   state.contracts.governor = new ethers.Contract(contracts.WLABGovernor, state.abis.WLABGovernor, state.signer);
 }
 
@@ -316,15 +316,15 @@ async function refreshState() {
     return;
   }
 
-  const { token, sale, staking, ve, governor } = state.contracts;
-  const [balance, votes, obligations, stakeInfo, pending, vePower, usedGauge, threshold, quorum, delay, period] = await Promise.all([
+  const { token, sale, staking, lockVault, governor } = state.contracts;
+  const [balance, votes, obligations, stakeInfo, pending, lockPower, usedGauge, threshold, quorum, delay, period] = await Promise.all([
     token.balanceOf(state.account),
     token.getVotes(state.account),
     sale.totalUnclaimedTokens(),
     staking.stakes(state.account),
     staking.pendingReward(state.account),
-    ve.totalVotingPower(state.account),
-    ve.usedGaugeWeight(state.account),
+    lockVault.totalVotingPower(state.account),
+    lockVault.usedGaugeWeight(state.account),
     governor.proposalThreshold(),
     governor.quorumNumerator(),
     governor.votingDelay(),
@@ -338,7 +338,7 @@ async function refreshState() {
   $("#stakeWeight").textContent = formatToken(stakeInfo.weight);
   $("#pendingReward").textContent = `${formatToken(pending)} WLAB`;
   $("#lockEnd").textContent = Number(stakeInfo.lockEnd) ? new Date(Number(stakeInfo.lockEnd) * 1000).toLocaleString() : "-";
-  $("#vePower").textContent = formatToken(vePower);
+  $("#lockPower").textContent = formatToken(lockPower);
   $("#usedGaugeWeight").textContent = formatToken(usedGauge);
   $("#proposalThreshold").textContent = `${formatToken(threshold)} WLAB`;
   $("#quorumNumerator").textContent = `${quorum}%`;
@@ -411,15 +411,17 @@ function bindForms() {
       }
 
       if (action === "createLock") {
-        await sendTx("Create veLock", async () => {
+        await sendTx("Create governance lock", async () => {
           const amount = parseToken(data.amount);
-          await approveIfNeeded(await state.contracts.ve.getAddress(), amount);
-          return state.contracts.ve.createLock(amount, data.duration);
+          await approveIfNeeded(await state.contracts.lockVault.getAddress(), amount);
+          return state.contracts.lockVault.createLock(amount, data.duration);
         });
       }
 
       if (action === "voteGauge") {
-        await sendTx("Set gauge weight", () => state.contracts.ve.voteGauge(data.gaugeId, parseToken(data.weight)));
+        await sendTx("Set gauge weight", () =>
+          state.contracts.lockVault.voteGauge(data.gaugeId, parseToken(data.weight))
+        );
       }
 
       if (action === "configurePhase") {

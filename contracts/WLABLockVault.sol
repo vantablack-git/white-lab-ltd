@@ -7,10 +7,22 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
- * @title WLABVeToken
- * @notice veCRV-style vote escrow — lock WLAB up to 4 years for voting power
+ * @title WLABLockVault
+ * @notice Weighted governance lock vault for WLAB.
+ *
+ * Voting power for each lock is fixed at lock creation as
+ *     power = amount * lockDuration / MAX_LOCK
+ * and does NOT decay over time. This is intentionally a simple
+ * time-weighted lock, not a veCRV-style continuously-decaying vote
+ * escrow. A lock's voting power resolves to zero only when the
+ * underlying lock is withdrawn after `unlockTime`.
+ *
+ * Each user may hold multiple locks. Per-gauge weight is assigned
+ * absolutely (not additively) so the same voting power cannot be
+ * spent twice, and any outstanding gauge weight blocks the
+ * underlying lock from being withdrawn until it is released.
  */
-contract WLABVeToken is Ownable, ReentrancyGuard {
+contract WLABLockVault is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable wlab;
@@ -37,16 +49,14 @@ contract WLABVeToken is Ownable, ReentrancyGuard {
     event GaugeVoted(address indexed user, uint256 gaugeId, uint256 weight);
 
     constructor(address _wlab, address initialOwner) Ownable(initialOwner) {
-        require(_wlab != address(0), "veWLAB: zero token");
+        require(_wlab != address(0), "LockVault: zero token");
         wlab = IERC20(_wlab);
     }
 
-    /**
-     * @notice Lock tokens — voting power = amount * (lockDuration / MAX_LOCK)
-     */
+    /// @notice Create a new lock. Voting power = amount * lockDuration / MAX_LOCK, fixed at lock time.
     function createLock(uint256 amount, uint256 lockDuration) external nonReentrant {
-        require(amount > 0, "veWLAB: zero amount");
-        require(lockDuration >= 7 days && lockDuration <= MAX_LOCK, "veWLAB: invalid lock");
+        require(amount > 0, "LockVault: zero amount");
+        require(lockDuration >= 7 days && lockDuration <= MAX_LOCK, "LockVault: invalid lock");
 
         uint256 unlockTime = block.timestamp + lockDuration;
         uint256 power = (amount * lockDuration) / MAX_LOCK;
@@ -59,13 +69,16 @@ contract WLABVeToken is Ownable, ReentrancyGuard {
     }
 
     function withdraw(uint256 lockIndex) external nonReentrant {
-        require(lockIndex < locks[msg.sender].length, "veWLAB: invalid index");
+        require(lockIndex < locks[msg.sender].length, "LockVault: invalid index");
         Lock storage lk = locks[msg.sender][lockIndex];
-        require(block.timestamp >= lk.unlockTime, "veWLAB: locked");
+        require(block.timestamp >= lk.unlockTime, "LockVault: locked");
 
         uint256 amount = lk.amount;
         uint256 power = lk.votingPower;
-        require(usedGaugeWeight[msg.sender] <= totalVotingPower[msg.sender] - power, "veWLAB: active votes");
+        require(
+            usedGaugeWeight[msg.sender] <= totalVotingPower[msg.sender] - power,
+            "LockVault: active votes"
+        );
 
         lk.amount = 0;
         lk.votingPower = 0;
@@ -83,10 +96,10 @@ contract WLABVeToken is Ownable, ReentrancyGuard {
     }
 
     function voteGauge(uint256 gaugeId, uint256 weight) external {
-        require(gaugeId < gaugeCount, "veWLAB: invalid gauge");
+        require(gaugeId < gaugeCount, "LockVault: invalid gauge");
         uint256 previous = userGaugeWeight[msg.sender][gaugeId];
         uint256 newUsed = usedGaugeWeight[msg.sender] - previous + weight;
-        require(newUsed <= totalVotingPower[msg.sender], "veWLAB: insufficient power");
+        require(newUsed <= totalVotingPower[msg.sender], "LockVault: insufficient power");
 
         if (weight > previous) {
             gaugeWeight[gaugeId] += weight - previous;

@@ -35,7 +35,7 @@ Claude için **öncelik sıralı** iş listesi.
 | # | Görev |
 |---|--------|
 | 8 | LayerZero OFT gerçek implementasyon (stub kaldır) |
-| 9 | `WLABVeToken` + Governor entegrasyonu |
+| 9 | `WLABLockVault` + Governor entegrasyonu (vault şu an decay etmeyen weighted bir governance lock; gerçek bir decaying ve dağıtılması ayrı bir mühendislik çalışmasıdır) |
 | 10 | Subgraph (The Graph) |
 | 11 | Minimal React dashboard (ayrı `whitelab-app/` repo önerilir) |
 

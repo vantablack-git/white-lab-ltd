@@ -50,15 +50,15 @@ Hedef Y2: TVL'nin %30'u POL.
 
 ---
 
-## 9.3 veToken Modeli (veWLAB)
+## 9.3 Governance Lock Vault Modeli
 
-[`WLABVeToken.sol`](../contracts/WLABVeToken.sol):
+[`WLABLockVault.sol`](../contracts/WLABLockVault.sol) bir **weighted governance lock vault**'tur. veCRV tarzı sürekli decay'in olduğu bir vote-escrow değildir.
 
-- Max lock 4 yıl → voting power = `amount × (duration / MAX_LOCK)`
-- Gauge emission yönlendirme
-- Withdraw sadece `unlockTime` sonrası
+- Max lock 4 yıl → voting power = `amount × (duration / MAX_LOCK)` — kilit anında sabitlenir, zamanla **decay etmez**.
+- Gauge emission yönlendirme (vote weight gauge'lara mutlak olarak atanır, additive değil).
+- Withdraw sadece `unlockTime` sonrası ve aktif gauge votes salındıktan sonra mümkündür.
 
-**Oy gücü:** `totalVotingPower[account]` — Governor entegrasyonu Y3 roadmap.
+**Oy gücü:** `totalVotingPower[account]` — DAO Governor entegrasyonu ileri bir roadmap maddesi olarak listelenmiştir; gerçek bir decaying ve dağıtılması ayrı bir mühendislik çalışmasıdır, bu vault'a retrofit değildir.
 
 ---
 
@@ -83,7 +83,7 @@ Incident declared → Governor emergency proposal
 
 ## BÖLÜM 9 — Bölüm Özeti & Sonraki Adım
 
-UUPS treasury, veWLAB, fee switch ve risk çerçevesi tamamlandı. WhiteLab master rehberi Bölüm 0–9 ile eksiksiz repo'da.
+UUPS treasury, Lock Vault, fee switch ve risk çerçevesi tamamlandı. WhiteLab master rehberi Bölüm 0–9 ile eksiksiz repo'da.
 
 **Sonraki adım:** `npm install && npm test` → testnet deploy → audit → mainnet TGE.
 

@@ -12,7 +12,7 @@ const ARTIFACTS = [
   "WLABToken",
   "WLABTokenSale",
   "WLABStaking",
-  "WLABVeToken",
+  "WLABLockVault",
   "WLABGovernor",
 ];
 

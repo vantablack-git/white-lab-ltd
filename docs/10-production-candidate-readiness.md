@@ -13,7 +13,7 @@ This document is intentionally conservative. WhiteLab is a stronger production c
 | Vesting | `WLABVesting` | Single schedule per beneficiary, cliff, linear release, revocation |
 | Staking | `WLABStaking` | Single active position per wallet, weighted tiers, reward debt accounting |
 | Governance | `WLABGovernor` + `TimelockController` | OZ Governor lifecycle validated in tests |
-| Vote escrow | `WLABVeToken` | Lock-based voting power plus gauge weights, not yet integrated into Governor |
+| Governance lock vault | `WLABLockVault` | Weighted governance lock with fixed (non-decaying) voting power and gauge weights, not yet integrated into Governor |
 | Bridge | `WLABOFTAdapter` | Stub only, disabled by default, not production bridge infrastructure |
 | Treasury | `WLABTreasuryUUPS` | UUPS proxy deployed by `scripts/deploy.js`; Safe role handover still required |
 

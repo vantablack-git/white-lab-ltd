@@ -22,15 +22,15 @@ Risks: purchases are not claimable until finalization, refunds require failed fi
 
 Important invariant: a wallet has one active staking position. Additional deposits must use the same tier.
 
-## veWLAB Locking
+## Governance Lock Vault
 
-1. Approve WLAB to veToken contract.
+1. Approve WLAB to the `WLABLockVault` contract.
 2. Choose lock duration between 7 days and 4 years.
-3. Voting power is `amount * duration / MAX_LOCK`.
-4. Gauge votes set absolute weight per gauge.
+3. Voting power is `amount * duration / MAX_LOCK`, fixed at lock creation. It does not decay over time. This is not a veCRV-style continuously-decaying vote escrow.
+4. Gauge votes set the absolute weight per gauge (not additive), so the same voting power cannot be reused across gauges.
 5. Reduce active gauge votes before withdrawing a lock if withdrawal would overcommit voting power.
 
-veWLAB is not yet wired into Governor. It is a gauge/vote-escrow module, not the current DAO voting token.
+The Lock Vault is not yet wired into the Governor. It is a gauge / weighted-lock module, not the current DAO voting token. A real decaying vote-escrow system, if ever introduced, would be a separate engineered effort, not a retrofit.
 
 ## Governance
 

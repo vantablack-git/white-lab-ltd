@@ -65,7 +65,7 @@ User flows: (1) Project applies → KYC/KYB review → (2) Sale whitelist → (3
 6. **Collateral roadmap** — Future Aave listing for WLAB deposits (Phase 2).
 7. **Bridge fee** — OFT cross-chain transfers burn a portion of WLAB.
 8. **Grants matching** — Ecosystem fund requires WLAB co-stake from grantees.
-9. **veWLAB boost** (Phase 3) — Extended locks amplify gauge weights.
+9. **Governance Lock Vault boost** (Phase 3) — Extended locks amplify gauge weights via `WLABLockVault` (weighted lock, fixed at lock time, no decay).
 
 ---
 
@@ -110,7 +110,7 @@ User flows: (1) Project applies → KYC/KYB review → (2) Sale whitelist → (3
 | **2026 Q4** | Governance live, first external project launch |
 | **2027 Q1** | LayerZero OFT Polygon/Arbitrum |
 | **2027 Q2** | Grants program $2M equivalent, SDK v1 |
-| **2027 Q3** | Aave collateral proposal, veWLAB beta |
+| **2027 Q3** | Aave collateral proposal, Governance Lock Vault Governor integration |
 | **2027 Q4** | Tier-2 CEX (Bybit/Gate) |
 | **2028 Q1** | Protocol-owned liquidity scale-up |
 | **2028 Q2** | L3 / app-chain research |

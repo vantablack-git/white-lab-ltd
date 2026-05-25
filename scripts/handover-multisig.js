@@ -45,7 +45,7 @@ async function main() {
   const vesting = await hre.ethers.getContractAt("WLABVesting", c.WLABVesting);
   const staking = await hre.ethers.getContractAt("WLABStaking", c.WLABStaking);
   const sale = await hre.ethers.getContractAt("WLABTokenSale", c.WLABTokenSale);
-  const ve = await hre.ethers.getContractAt("WLABVeToken", c.WLABVeToken);
+  const lockVault = await hre.ethers.getContractAt("WLABLockVault", c.WLABLockVault);
   const oft = await hre.ethers.getContractAt("WLABOFTAdapter", c.WLABOFTAdapter);
   const timelock = await hre.ethers.getContractAt("TimelockController", c.TimelockController);
 
@@ -63,7 +63,7 @@ async function main() {
   }
   console.log("Token roles → Safe");
 
-  for (const contract of [vesting, staking, sale, ve, oft]) {
+  for (const contract of [vesting, staking, sale, lockVault, oft]) {
     const current = await contract.owner();
     if (current.toLowerCase() !== safe.toLowerCase()) {
       await (await contract.transferOwnership(safe)).wait();

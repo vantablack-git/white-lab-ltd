@@ -40,7 +40,7 @@ Tüm mimari kararlar, eylemler ve doğrulama kayıtları.
 - **ACTION** `docs/06-deployment.md` — Sepolia, mainnet checklist, LP, CEX
 - **ACTION** `docs/07-ecosystem.md` — grants, Discord, airdrop, PR
 - **ACTION** `docs/08-crosschain-defi.md` — OFT, Aave, subgraph, Chainlink
-- **ACTION** `docs/09-sustainability.md` — UUPS, POL, veWLAB, risk
+- **ACTION** `docs/09-sustainability.md` — UUPS, POL, Lock Vault, risk
 - **ACTION** `docs/team-public.md`, `docs/team-anon.md`
 - **VERIFY** İçerik placeholder içermiyor
 - **NEXT** Kontratlar
@@ -54,7 +54,7 @@ Tüm mimari kararlar, eylemler ve doğrulama kayıtları.
 - **ACTION** `WLABStaking.sol` — 4 tier lock, compound, emergency penalty
 - **ACTION** `WLABGovernor.sol` — Governor+Timelock+Quorum 4%
 - **ACTION** `WLABTokenSale.sol` — 3 phase, merkle, refund
-- **ACTION** `WLABVeToken.sol`, `WLABOFTAdapter.sol`, `WLABTreasuryUUPS.sol`
+- **ACTION** `WLABLockVault.sol` (weighted governance lock, no decay), `WLABOFTAdapter.sol`, `WLABTreasuryUUPS.sol`
 - **VERIFY** `npx hardhat compile` — kullanıcı ortamında çalıştırılacak
 - **NEXT** Testler
 
@@ -158,9 +158,9 @@ Tüm mimari kararlar, eylemler ve doğrulama kayıtları.
 
 - **FIX H-04** `WLABToken` gained explicit `feeExempt` accounting. IDO sale claims are now exempted by deploy scripts through `setFeeExempt`, so enabled transfer fees do not reduce buyer entitlements.
 - **FIX H-05** `WLABStaking.stake()` no longer removes an existing position from `totalWeightedStake` during restake. Added same-tier restake guard and rejected compound mode when staking/reward tokens differ.
-- **FIX H-06** `WLABVeToken.voteGauge()` now sets per-user gauge weight instead of repeatedly adding the same voting power. Added `usedGaugeWeight` / `userGaugeWeight` accounting and withdrawal guard while votes remain active.
+- **FIX H-06** `WLABLockVault.voteGauge()` now sets per-user gauge weight instead of repeatedly adding the same voting power. Added `usedGaugeWeight` / `userGaugeWeight` accounting and withdrawal guard while votes remain active.
 - **FIX M-01** `WLABTokenSale.configurePhase()` cannot reset a phase after sales/finalization, and `finalizeSale()` now requires an active phase.
-- **TEST** Added fee-exempt claim, staking restake, compound mismatch, phase-lock, and ve gauge vote regression tests.
+- **TEST** Added fee-exempt claim, staking restake, compound mismatch, phase-lock, and Lock Vault gauge vote regression tests.
 - **VERIFY** `npm.cmd run compile` -> PASS
 - **VERIFY** `npm.cmd test` -> **39 passing**
 - **VERIFY** `npm.cmd run e2e:local` -> PASS
@@ -177,7 +177,7 @@ Tüm mimari kararlar, eylemler ve doğrulama kayıtları.
 - **TEST** Added `WLABGovernorLifecycle.test.js` for full Governor -> Timelock execution.
 - **TEST** Added `WLABTreasuryUUPS.test.js` with ERC1967 proxy initialization, withdrawals, upgrade auth, and storage persistence.
 - **TEST** Added `WLABOFTAdapter.test.js` and `invariants.test.js`.
-- **FRONTEND** Added `frontend/` static protocol console: wallet connect, network detection, balances, IDO, staking, veWLAB, governance, admin visibility.
+- **FRONTEND** Added `frontend/` static protocol console: wallet connect, network detection, balances, IDO, staking, governance Lock Vault, governance, admin visibility.
 - **OPS** Added `.github/workflows/ci.yml`, `scripts/validate-env.js`, and root `validate` script.
 - **DOC** Added `docs/10-production-candidate-readiness.md`, `docs/11-operations-runbook.md`, and `docs/12-user-guides.md`.
 - **VERIFY** `npm.cmd run validate` -> PASS

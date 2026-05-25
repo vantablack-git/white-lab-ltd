@@ -22,7 +22,7 @@
           <button class="nav-button active" data-view="overview" type="button">Overview</button>
           <button class="nav-button" data-view="ido" type="button">IDO</button>
           <button class="nav-button" data-view="staking" type="button">Staking</button>
-          <button class="nav-button" data-view="vetoken" type="button">veWLAB</button>
+          <button class="nav-button" data-view="lockvault" type="button">Lock Vault</button>
           <button class="nav-button" data-view="governance" type="button">Governance</button>
           <button class="nav-button" data-view="docs" type="button">Docs</button>
           <button class="nav-button" data-view="admin" type="button">Admin</button>
@@ -37,7 +37,7 @@
         <header class="topbar">
           <div>
             <p class="eyebrow">Base-compatible launch OS</p>
-            <h2>Operate token sale, staking, vote escrow, and governance from one surface.</h2>
+            <h2>Operate token sale, staking, governance lock, and DAO from one surface.</h2>
           </div>
           <div class="wallet-panel">
             <div class="network-pill" id="networkStatus">
@@ -201,10 +201,10 @@
           </div>
         </section>
 
-        <section class="view" id="vetoken">
+        <section class="view" id="lockvault">
           <div class="section-title">
-            <p class="eyebrow">Vote Escrow</p>
-            <h3>Lock WLAB for vePower</h3>
+            <p class="eyebrow">Governance Lock Vault</p>
+            <h3>Lock WLAB for weighted voting power (no decay)</h3>
           </div>
           <div class="form-grid">
             <form class="panel tx-form" data-action="createLock">
@@ -237,11 +237,11 @@
               <div class="panel-heading">
                 <div>
                   <p class="eyebrow">Power</p>
-                  <h3>veWLAB State</h3>
+                  <h3>Lock Vault State</h3>
                 </div>
               </div>
               <dl class="state-list">
-                <div><dt>Total vePower</dt><dd id="vePower">-</dd></div>
+                <div><dt>Total Voting Power</dt><dd id="lockPower">-</dd></div>
                 <div><dt>Used Gauge Weight</dt><dd id="usedGaugeWeight">-</dd></div>
               </dl>
             </section>

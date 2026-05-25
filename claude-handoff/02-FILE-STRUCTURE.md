@@ -38,7 +38,7 @@ whitelab/
 │   ├── WLABStaking.sol          ← 30/90/180/365 gün tier
 │   ├── WLABGovernor.sol         ← OZ Governor + timelock
 │   ├── WLABTokenSale.sol        ← IDO 3 faz (⚠️ P0 fix gerekli)
-│   ├── WLABVeToken.sol          ← Vote escrow (Faz 2)
+│   ├── WLABLockVault.sol        ← Weighted governance lock vault (no decay)
 │   ├── WLABOFTAdapter.sol       ← Bridge stub (Faz 2)
 │   └── upgrades/
 │       └── WLABTreasuryUUPS.sol ← UUPS treasury

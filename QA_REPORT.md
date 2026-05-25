@@ -48,7 +48,7 @@ WLABToken (root)
  ├── TimelockController
  │    └── WLABGovernor
  ├── WLABTokenSale
- ├── WLABVeToken
+ ├── WLABLockVault
  └── WLABOFTAdapter
 
 WLABTreasuryUUPS (standalone upgradeable — NOT in deploy script)
@@ -72,7 +72,7 @@ WLABTreasuryUUPS (standalone upgradeable — NOT in deploy script)
 - No `.env` committed (correct); Sepolia deploy blocked without user keys
 - No Foundry/fuzz suite
 - Governor proposal lifecycle untested
-- `WLABVeToken`, `WLABOFTAdapter`, `WLABTreasuryUUPS` — 0% coverage
+- `WLABLockVault`, `WLABOFTAdapter`, `WLABTreasuryUUPS` — 0% coverage at the time of this snapshot
 
 ---
 
@@ -102,7 +102,7 @@ npm test → 28 passing (~2s)
 | WLABVesting | 85% | Good |
 | WLABToken | 76% | Fee, pause, blacklist; whitelist/maxWallet partial |
 | WLABGovernor | 0% | Deploy-only smoke tests |
-| WLABVeToken | 0% | Untested |
+| WLABLockVault | 0% | Untested at snapshot time (now covered) |
 | WLABOFTAdapter | 0% | Untested |
 | WLABTreasuryUUPS | 0% | Untested |
 
@@ -116,7 +116,7 @@ npm test → 28 passing (~2s)
 - ERC20 payment path on TokenSale
 - Multi-phase IDO (Seed → Private → Public sequential)
 - Full governance: propose → vote → queue → execute
-- `WLABVeToken` lock/vote
+- `WLABLockVault` lock/vote
 - OFT bridge out/in
 
 ---
@@ -309,7 +309,7 @@ npm run verify
 - Updated deployment and local E2E scripts to mark `WLABTokenSale` as both whitelisted and fee-exempt.
 - Fixed `WLABStaking` restake accounting: repeated same-tier deposits now preserve `totalWeightedStake`; mixed-tier top-ups revert until per-deposit staking is implemented.
 - Prevented compound staking when reward and staking tokens differ, avoiding unbacked principal accounting.
-- Fixed `WLABVeToken` gauge voting so users set absolute gauge weight instead of repeatedly adding the same voting power.
+- Fixed `WLABLockVault` gauge voting so users set absolute gauge weight instead of repeatedly adding the same voting power.
 - Added sale phase guards against finalizing without an active phase and reconfiguring after purchases begin.
 
 ### Verification

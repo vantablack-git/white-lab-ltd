@@ -22,7 +22,7 @@ Bu dosya projeyi **tek başına sunabileceğin** eksiksiz rehberdir: ne olduğu,
 - **WLABVesting** — cliff + linear vesting
 - **WLABStaking** — 4 kilit süresi, ödül, acil çıkış cezası
 - **WLABGovernor** + **Timelock** — DAO oylama (%4 quorum)
-- **WLABVeToken** — vote-escrow (veCRV tarzı)
+- **WLABLockVault** — weighted governance lock vault (sabit, decay yok — veCRV tarzı bir vote-escrow değildir)
 - **WLABOFTAdapter** — cross-chain stub (LayerZero Faz 2)
 - **WLABTreasuryUUPS** — upgradeable hazine (UUPS)
 
@@ -41,7 +41,7 @@ flowchart TB
   subgraph gov [Governance]
     G[WLABGovernor]
     TL[TimelockController]
-    VE[WLABVeToken]
+    LV[WLABLockVault]
   end
   subgraph bridge [Cross-chain Faz 2]
     OFT[WLABOFTAdapter]
@@ -51,7 +51,7 @@ flowchart TB
   T --> ST
   T --> G
   G --> TL
-  T --> VE
+  T --> LV
   T --> OFT
 ```
 
@@ -61,7 +61,7 @@ flowchart TB
 2. WLABVesting, WLABStaking  
 3. TimelockController → WLABGovernor  
 4. WLABTokenSale (100M WLAB IDO fonu otomatik transfer)  
-5. WLABVeToken, WLABOFTAdapter  
+5. WLABLockVault, WLABOFTAdapter  
 6. Adresler → `deployments/<network>.json`
 
 ---

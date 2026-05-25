@@ -69,11 +69,11 @@ async function main() {
   const saleAddr = await sale.getAddress();
   console.log("WLABTokenSale   :", saleAddr);
 
-  const VeToken = await hre.ethers.getContractFactory("WLABVeToken");
-  const veToken = await VeToken.deploy(tokenAddr, deployer.address);
-  await veToken.waitForDeployment();
-  const veTokenAddr = await veToken.getAddress();
-  console.log("WLABVeToken     :", veTokenAddr);
+  const LockVault = await hre.ethers.getContractFactory("WLABLockVault");
+  const lockVault = await LockVault.deploy(tokenAddr, deployer.address);
+  await lockVault.waitForDeployment();
+  const lockVaultAddr = await lockVault.getAddress();
+  console.log("WLABLockVault   :", lockVaultAddr);
 
   const OFT = await hre.ethers.getContractFactory("WLABOFTAdapter");
   const oft = await OFT.deploy(tokenAddr, deployer.address);
@@ -141,7 +141,7 @@ async function main() {
       TimelockController: timelockAddr,
       WLABGovernor: governorAddr,
       WLABTokenSale: saleAddr,
-      WLABVeToken: veTokenAddr,
+      WLABLockVault: lockVaultAddr,
       WLABOFTAdapter: oftAddr,
       WLABTreasuryUUPS: treasuryProxyAddr,
     },

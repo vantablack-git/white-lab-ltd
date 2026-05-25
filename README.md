@@ -64,7 +64,7 @@ Mainnet: `npm run deploy:base` → `npm run verify:base`
 | `WLABVesting` | Cliff + linear vesting |
 | `WLABStaking` | Tier lock + rewards |
 | `WLABGovernor` | DAO + Timelock |
-| `WLABVeToken` | Vote escrow |
+| `WLABLockVault` | Weighted governance lock vault (no decay) |
 | `WLABOFTAdapter` | Cross-chain stub (Faz 2) |
 | `WLABTreasuryUUPS` | Upgradeable treasury |
 

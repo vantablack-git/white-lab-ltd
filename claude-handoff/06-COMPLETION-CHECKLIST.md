@@ -24,7 +24,7 @@ Tüm maddeler ✅ olunca proje **production-ready MVP** sayılır.
 - [x] WLABTokenSale — **tam IDO akışı (P0)**
 - [x] WLABTreasuryUUPS — compile
 - [ ] WLABOFT — production LayerZero (Faz 2, launch için opsiyonel)
-- [x] WLABVeToken — compile (gov entegrasyonu opsiyonel)
+- [x] WLABLockVault — compile (Governor entegrasyonu opsiyonel; bu vault decay etmeyen weighted bir governance lock'tur, veCRV değildir)
 
 ---
 

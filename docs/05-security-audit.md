@@ -12,7 +12,7 @@ Test dosyaları `test/` altında:
 | `WLABVesting.test.js` | Schedule, release, revoke |
 | `WLABStaking.test.js` | Stake, rewards, emergency penalty |
 | `WLABTokenSale.test.js` | Phase buy, refund |
-| `WLABVeToken.test.js` | Gauge vote accounting, vote reuse prevention |
+| `WLABLockVault.test.js` | Fixed (non-decaying) voting power, gauge vote accounting, vote reuse prevention |
 | `WLABGovernor.test.js` | Deploy, quorum |
 | `WLABGovernorLifecycle.test.js` | Propose, vote, queue, timelock, execute |
 | `WLABTreasuryUUPS.test.js` | Proxy init, roles, withdrawals, UUPS upgrade |

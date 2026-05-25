@@ -68,9 +68,9 @@ async function main() {
     "WLABTokenSale"
   );
   await verifyContract(
-    c.WLABVeToken,
+    c.WLABLockVault,
     [c.WLABToken, d.deployer || deployer.address],
-    "WLABVeToken"
+    "WLABLockVault"
   );
   await verifyContract(
     c.WLABOFTAdapter,

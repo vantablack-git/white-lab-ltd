@@ -41,7 +41,7 @@ Dokümantasyon: `docs/` + OpenAPI (REST indexer) — subgraph GraphQL.
 | #announcements | @everyone read |
 | #general | Verified |
 | #dev-support | Developer |
-| #governance | veWLAB / 10K WLAB |
+| #governance | Lock Vault holders / 10K WLAB |
 | #launch-applications | Project Lead |
 
 **Botlar:** Collab.Land (token gate), Wick (mod), MEE6 (levels).
