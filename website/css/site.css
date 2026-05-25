@@ -100,23 +100,18 @@ main,
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 800;
+  display: inline-flex;
+  align-items: baseline;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.02em;
 }
 
-.logo-mark {
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--ink);
-  border-radius: 50%;
-  background: #fff;
-  color: #000;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  box-shadow: 0 0 34px rgba(255, 255, 255, 0.2);
+.wordmark {
+  font-weight: 300;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1;
 }
 
 .site-nav {
