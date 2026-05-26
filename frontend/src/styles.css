@@ -72,17 +72,6 @@ select {
   border-bottom: 1px solid var(--line);
 }
 
-.brand-mark {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #7c8cff, var(--teal));
-  color: #ffffff;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-}
-
 .eyebrow {
   margin: 0 0 4px;
   color: var(--teal);
@@ -100,7 +89,13 @@ h3 {
 }
 
 h1 {
-  font-size: 1.05rem;
+  font-size: 1.08rem;
+}
+
+.wordmark {
+  font-weight: 560;
+  font-style: normal;
+  letter-spacing: -0.025em;
 }
 
 h2 {

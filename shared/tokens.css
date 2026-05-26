@@ -77,8 +77,57 @@
 
 .wordmark {
   font-family: var(--wl-font-sans);
-  font-weight: 300;
-  font-style: italic;
-  letter-spacing: 0.02em;
+  font-weight: 560;
+  font-style: normal;
+  letter-spacing: -0.025em;
   color: var(--wl-ink);
+}
+
+.brand-sigil {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  flex: 0 0 auto;
+  border: 1px solid var(--wl-line-strong);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.045)),
+    radial-gradient(circle at 38% 18%, rgba(255, 255, 255, 0.34), transparent 48%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 18px 48px rgba(0, 0, 0, 0.42);
+}
+
+.brand-sigil::before,
+.brand-sigil::after,
+.brand-sigil span {
+  content: "";
+  position: absolute;
+  background: var(--wl-ink);
+  border-radius: 999px;
+  opacity: 0.92;
+}
+
+.brand-sigil::before {
+  width: 3px;
+  height: 17px;
+  left: 11px;
+  top: 10px;
+  transform: skewX(-10deg);
+}
+
+.brand-sigil::after {
+  width: 3px;
+  height: 17px;
+  right: 11px;
+  top: 10px;
+  transform: skewX(10deg);
+}
+
+.brand-sigil span {
+  width: 14px;
+  height: 3px;
+  left: 11px;
+  top: 20px;
+  transform: rotate(-18deg);
 }
