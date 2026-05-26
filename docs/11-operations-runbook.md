@@ -1,5 +1,7 @@
 # WhiteLab Operations Runbook
 
+> **Runbook V2 additions:** manifest publish (`npm run publish:manifest`), Basescan ceremony (`docs/internal/BASESCAN-VERIFICATION.md`), pre-mainnet checklist (`docs/pre-mainnet-checklist.md`), and RC-2 validation (`docs/internal/RC2-VALIDATION.md`).
+
 ## Deployment Ceremony
 
 1. Freeze release branch and tag candidate.

@@ -14,7 +14,7 @@ npm run e2e:local
 npm run build:site
 ```
 
-Expected today: `79 passing` plus local E2E passing.
+Expected today: `192 passing` plus local E2E passing.
 
 For a local deploy:
 
@@ -85,6 +85,9 @@ npm run verify
 - Readiness: `docs/10-production-candidate-readiness.md`
 - Operations: `docs/11-operations-runbook.md`
 - Threat model: `docs/13-threat-model.md`
+- Audit prep: `docs/audit-prep.md`
+- Gas budget: `docs/gas-budget.md`
+- Pre-mainnet checklist: `docs/pre-mainnet-checklist.md`
 - ADRs: `docs/adr/`
 - Turkish materials/translations: `docs/tr/`
 - Internal handoff and historical notes: `docs/internal/`

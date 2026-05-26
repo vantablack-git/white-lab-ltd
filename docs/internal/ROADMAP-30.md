@@ -103,4 +103,25 @@ RC-2 validation pass, frozen commit, Safe-orchestrated deploy plan, post-deploy 
 | 8 | done — WLABToken branches 43.33% → 96.67%, 18 new adversarial tests |
 | 9 | done — WLABTokenSale branches 61.11% → 89.68% incl. ERC20 payment path |
 | 10 | done — WLABVesting branches 60.87% → 93.48%, exact cliff/revoke/emergency edges |
-| 11–30 | pending |
+| 11 | done — Governor adversarial lifecycle tests |
+| 12 | done — Gas report + `docs/gas-budget.md` + `npm run gas` |
+| 13 | done — Threat Model V2 |
+| 14 | done — External audit prep package |
+| 15 | **blocked** — requires live Base Sepolia env (see `docs/internal/BASE-SEPOLIA-REHEARSAL.md`) |
+| 16 | done — Basescan verification ceremony documented; verify script skips missing OFT |
+| 17 | done — `scripts/publish-manifest.js` + deploy auto-publish + site registry |
+| 18 | done — Runbook V2 pointers + checklist/RC2 cross-links |
+| 19 | done — `shared/tokens.css` + ADR 0005 |
+| 20 | done — Marketing site registry, tokenomics interactivity, SEO metadata |
+| 21 | done — Console monochrome alignment + shared manifest utils |
+| 22 | done — Copy + Basescan links in site and console registry |
+| 23 | done — Interactive tokenomics dashboard (site + console from JSON) |
+| 24 | done — Reduced motion in tokens.css + reveal fallback |
+| 25 | done — Whitepaper v1.0 TOC + anchor sections |
+| 26 | done — ADR 0006 voice & wordmark |
+| 27 | done — OG/Twitter/JSON-LD on marketing index |
+| 28 | done — Turkish `/tr/` landing page |
+| 29 | done — `docs/pre-mainnet-checklist.md` |
+| 30 | done — `docs/internal/RC2-VALIDATION.md` (testnet RC; mainnet blocked on Phase 15 + audit) |
+
+**30/30 phases addressed.** Only Phase 15 live deploy remains operator-blocked on credentials.
