@@ -138,7 +138,9 @@ function main() {
     "/tr  /tr/index.html  200",
     "/tr/  /tr/index.html  200",
     "/whitepaper  /whitepaper.html  200",
+    "/whitepaper/  /whitepaper.html  200",
     "/legal  /legal.html  200",
+    "/legal/  /legal.html  200",
   ].join("\n");
   fs.writeFileSync(path.join(dist, "_redirects"), `${redirects}\n`);
 

@@ -36,6 +36,14 @@ select {
   font: inherit;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.82);
+  outline-offset: 3px;
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
@@ -103,6 +111,13 @@ h2 {
   font-size: clamp(1.55rem, 2.4vw, 2.45rem);
   line-height: 1.05;
   letter-spacing: -0.045em;
+}
+
+.topbar-copy {
+  max-width: 680px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
 }
 
 h3 {
@@ -219,7 +234,8 @@ h3 {
   border-radius: 28px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.026)),
-    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.08), transparent 20rem);
+    radial-gradient(circle at 80% 0%, rgba(138, 180, 255, 0.12), transparent 20rem),
+    radial-gradient(circle at 20% 100%, rgba(157, 247, 211, 0.075), transparent 22rem);
 }
 
 .wallet-panel {
@@ -345,6 +361,12 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 24px;
   box-shadow: var(--shadow);
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.metric-card:hover,
+.panel:hover {
+  border-color: var(--line-strong, rgba(255, 255, 255, 0.38));
 }
 
 .metric-card {
@@ -591,5 +613,16 @@ canvas {
   .address-row,
   .state-list div {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
