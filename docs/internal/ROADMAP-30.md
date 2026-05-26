@@ -102,4 +102,5 @@ RC-2 validation pass, frozen commit, Safe-orchestrated deploy plan, post-deploy 
 | 7 | done — Slither in CI with high-severity gate, SARIF + JSON artifacts |
 | 8 | done — WLABToken branches 43.33% → 96.67%, 18 new adversarial tests |
 | 9 | done — WLABTokenSale branches 61.11% → 89.68% incl. ERC20 payment path |
-| 10–30 | pending |
+| 10 | done — WLABVesting branches 60.87% → 93.48%, exact cliff/revoke/emergency edges |
+| 11–30 | pending |
