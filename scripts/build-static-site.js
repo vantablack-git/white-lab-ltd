@@ -83,7 +83,9 @@ function writeMarketingIndex() {
 function writeLegal() {
   let html = fs.readFileSync(path.join(root, "website", "legal.html"), "utf8");
   html = html.replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`);
+  mkdir(path.join(dist, "legal"));
   fs.writeFileSync(path.join(dist, "legal.html"), html);
+  fs.writeFileSync(path.join(dist, "legal", "index.html"), html);
 }
 
 function writeWhitepaper() {
@@ -91,7 +93,9 @@ function writeWhitepaper() {
   html = html
     .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
     .replace(/\/shared\/tokens.css/g, `/shared/tokens.css`);
+  mkdir(path.join(dist, "whitepaper"));
   fs.writeFileSync(path.join(dist, "whitepaper.html"), html);
+  fs.writeFileSync(path.join(dist, "whitepaper", "index.html"), html);
 }
 
 function writeTurkishIndex() {
@@ -137,10 +141,10 @@ function main() {
     "/app/*  /app/index.html  200",
     "/tr  /tr/index.html  200",
     "/tr/  /tr/index.html  200",
-    "/whitepaper  /whitepaper.html  200",
-    "/whitepaper/  /whitepaper.html  200",
-    "/legal  /legal.html  200",
-    "/legal/  /legal.html  200",
+    "/whitepaper  /whitepaper/  301",
+    "/whitepaper.html  /whitepaper/  301",
+    "/legal  /legal/  301",
+    "/legal.html  /legal/  301",
   ].join("\n");
   fs.writeFileSync(path.join(dist, "_redirects"), `${redirects}\n`);
 

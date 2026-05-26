@@ -170,7 +170,7 @@ function bindMarketingEvents() {
       trackEvent("open_console", { source: link.className || "link" })
     );
   });
-  document.querySelectorAll('a[href="/whitepaper"], a[href="/whitepaper.html"]').forEach((link) => {
+  document.querySelectorAll('a[href="/whitepaper"], a[href="/whitepaper/"], a[href="/whitepaper.html"]').forEach((link) => {
     link.addEventListener("click", () =>
       trackEvent("whitepaper_open", { source: link.className || "link" })
     );
