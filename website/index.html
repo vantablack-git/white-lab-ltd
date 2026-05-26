@@ -34,10 +34,10 @@
         <span class="wordmark">White Lab</span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <a href="#protocol">Protocol</a>
-        <a href="#tokenomics">Tokenomics</a>
-        <a href="#transparency">Transparency</a>
-        <a href="/whitepaper">Whitepaper</a>
+        <a href="#launch-path">Path</a>
+        <a href="#protocol">System</a>
+        <a href="#transparency">Security</a>
+        <a href="/whitepaper.html">Whitepaper</a>
         <a href="/tr/">TR</a>
         <a class="nav-cta" href="/app">Launch App</a>
       </nav>
@@ -47,6 +47,11 @@
     <main>
       <section class="hero">
         <div class="hero-copy">
+          <div class="release-line">
+            <span>Testnet candidate</span>
+            <span>Audit pending</span>
+            <span>Base-native</span>
+          </div>
           <p class="eyebrow">Base L2 · Launch OS · $WLAB</p>
           <h1>Build the launch layer capital can trust.</h1>
           <p class="lead">
@@ -55,7 +60,7 @@
           </p>
           <div class="hero-actions">
             <a class="btn primary" href="/app">Enter Launch Console</a>
-            <a class="btn ghost" href="#launch-path">Explore the Path</a>
+            <a class="btn ghost" href="/whitepaper.html">Read Whitepaper</a>
           </div>
           <dl class="hero-stats">
             <div><dt>Max Supply</dt><dd>1B WLAB</dd></div>
@@ -70,17 +75,46 @@
           </div>
         </div>
         <div class="hero-visual" aria-hidden="true">
-          <div class="orb orb-a"></div>
-          <div class="orb orb-b"></div>
-          <div class="mesh-card">
-            <p>Launch Readiness</p>
-            <span>Sale · Vesting · Stake · Govern · Publish</span>
-            <div class="mini-path">
-              <i></i><i></i><i></i><i></i>
+          <div class="market-field">
+            <div class="signal-curve"></div>
+            <div class="field-card field-card-a">
+              <span>01</span>
+              <strong>Sale configured</strong>
+              <small>caps · allowlists · refunds</small>
             </div>
-            <div class="pulse-line"></div>
+            <div class="field-card field-card-b">
+              <span>02</span>
+              <strong>Supply locked</strong>
+              <small>vesting · staking · claims</small>
+            </div>
+            <div class="field-card field-card-c">
+              <span>03</span>
+              <strong>Governance routed</strong>
+              <small>votes · timelock · multisig</small>
+            </div>
           </div>
         </div>
+      </section>
+
+      <section class="section command-strip" aria-label="Launch readiness summary">
+        <article class="command-card reveal">
+          <span class="command-kicker">Console</span>
+          <strong>Operate the launch surface</strong>
+          <p>Wallet flows, phase actions, staking, lock vault, and governance checks in one app.</p>
+          <a href="/app">Open app</a>
+        </article>
+        <article class="command-card reveal">
+          <span class="command-kicker">Whitepaper</span>
+          <strong>Read the protocol case</strong>
+          <p>Architecture, risk posture, token utility, governance, and launch constraints.</p>
+          <a href="/whitepaper.html">Open whitepaper</a>
+        </article>
+        <article class="command-card reveal">
+          <span class="command-kicker">Validation</span>
+          <strong>Check the release gate</strong>
+          <p>192 tests, Slither CI, branch coverage, and mainnet blocked until audit review.</p>
+          <a href="#transparency">View security posture</a>
+        </article>
       </section>
 
       <section class="section journey" id="launch-path">
@@ -164,10 +198,16 @@
 
       <section class="section" id="transparency">
         <div class="section-head">
-          <p class="eyebrow">Transparency</p>
-          <h2>Registry, roles, and deployment posture in one view.</h2>
+          <p class="eyebrow">Security Posture</p>
+          <h2>Validation signals stay visible before the launch gets loud.</h2>
         </div>
         <div class="transparency-panel reveal">
+          <div class="security-grid">
+            <div><span>Tests</span><strong>192 passing</strong></div>
+            <div><span>Static analysis</span><strong>Slither CI</strong></div>
+            <div><span>Coverage</span><strong>95.43% branch</strong></div>
+            <div><span>Mainnet</span><strong>Blocked pending audit</strong></div>
+          </div>
           <div class="network-badge" id="networkBadge">Loading network…</div>
           <div class="address-grid" id="contractGrid"></div>
           <p class="fine-print">Production deploys enforce multisig handover. Bridge adapter is skipped on Base mainnet unless explicitly enabled and remains a disabled stub until real OFT engineering and audit.</p>
@@ -184,9 +224,9 @@
     </main>
 
     <footer class="site-footer">
-      <p>© 2026 WhiteLab Protocol. Not financial advice. Testnet candidate — audit before mainnet.</p>
+      <p>© 2026 White Lab Protocol. Not financial advice. Testnet candidate — audit before mainnet.</p>
       <div class="footer-links">
-        <a href="/whitepaper">Whitepaper</a>
+        <a href="/whitepaper.html">Whitepaper</a>
         <a href="/legal">Legal &amp; risks</a>
         <a href="/app">Console</a>
         <a href="https://base.org" target="_blank" rel="noopener">Base</a>
