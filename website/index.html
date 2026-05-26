@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="White Lab Launch OS — audit-conscious token launch infrastructure on Base. Testnet candidate, audit pending." />
+    <meta name="description" content="White Lab is a Base-native launch operating system for token sales, vesting, staking, governance, and treasury control. Testnet candidate, audit pending." />
     <meta property="og:title" content="White Lab — Launch OS on Base" />
     <meta property="og:description" content="IDO, vesting, staking, governance lock vault, and timelock DAO on Base. Testnet candidate — audit pending." />
     <meta property="og:type" content="website" />
@@ -14,7 +14,7 @@
     <script type="application/ld+json">
       {"@context":"https://schema.org","@type":"Organization","name":"White Lab","description":"Base-native launch and protocol stack for WLAB","url":"https://whitelab.example"}
     </script>
-    <title>White Lab — Launch OS on Base</title>
+    <title>White Lab — Base-native Launch Infrastructure</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
@@ -46,59 +46,97 @@
       <section class="hero">
         <div class="hero-copy">
           <p class="eyebrow">Base L2 · Launch OS · $WLAB</p>
-          <h1>A calm control plane for capital launches on Base.</h1>
+          <h1>Launch capital with calm infrastructure.</h1>
           <p class="lead">
-            WhiteLab unifies IDO sales, vesting, staking, a weighted governance lock vault, and timelock
-            governance into one transparent stack — built on OpenZeppelin, tested end-to-end, audit pending.
+            White Lab brings token sales, vesting, staking, governance locks, treasury controls,
+            and audit discipline into one Base-native operating system.
           </p>
           <div class="hero-actions">
-            <a class="btn primary" href="/app">Open Protocol Console</a>
-            <a class="btn ghost" href="/whitepaper">Read Whitepaper</a>
+            <a class="btn primary" href="/app">Launch Console</a>
+            <a class="btn ghost" href="#launch-path">Explore the Path</a>
           </div>
           <dl class="hero-stats">
             <div><dt>Max Supply</dt><dd>1B WLAB</dd></div>
-            <div><dt>TGE Float</dt><dd>~8.85%</dd></div>
-            <div><dt>Timelock</dt><dd>48h+</dd></div>
+            <div><dt>Validation</dt><dd>192 tests</dd></div>
+            <div><dt>Status</dt><dd>Audit pending</dd></div>
           </dl>
           <div class="status-ribbon" aria-label="Current protocol status">
             <span class="proof-pill">192 tests passing</span>
-            <span class="proof-pill">Multisig-enforced deploy</span>
-            <span class="proof-pill">Bridge stub disabled</span>
-            <span class="proof-pill warn">Audit pending</span>
+            <span class="proof-pill">Slither CI</span>
+            <span class="proof-pill">95.43% branch coverage</span>
+            <span class="proof-pill warn">Mainnet blocked until review</span>
           </div>
         </div>
         <div class="hero-visual" aria-hidden="true">
           <div class="orb orb-a"></div>
           <div class="orb orb-b"></div>
           <div class="mesh-card">
-            <p>Launch Control Plane</p>
-            <span>IDO · Vesting · Stake · Lock · DAO</span>
+            <p>Launch Readiness</p>
+            <span>Sale · Vesting · Stake · Govern · Publish</span>
+            <div class="mini-path">
+              <i></i><i></i><i></i><i></i>
+            </div>
             <div class="pulse-line"></div>
           </div>
+        </div>
+      </section>
+
+      <section class="section journey" id="launch-path">
+        <div class="section-head split">
+          <div>
+            <p class="eyebrow">Launch Path</p>
+            <h2>Four checkpoints before capital goes live.</h2>
+          </div>
+          <p class="section-copy">
+            A structured path for teams that need product velocity without skipping security, governance,
+            or operational readiness.
+          </p>
+        </div>
+        <div class="path-grid" aria-label="White Lab launch path">
+          <article class="path-card reveal" tabindex="0">
+            <span class="step-index">01</span>
+            <h3>Configure the sale</h3>
+            <p>Phase pricing, caps, allowlists, refund paths, and buyer entitlements stay explicit.</p>
+          </article>
+          <article class="path-card reveal" tabindex="0">
+            <span class="step-index">02</span>
+            <h3>Lock supply promises</h3>
+            <p>Vesting, staking, and unclaimed obligations are visible before the launch narrative gets loud.</p>
+          </article>
+          <article class="path-card reveal" tabindex="0">
+            <span class="step-index">03</span>
+            <h3>Route governance</h3>
+            <p>Votes, timelock execution, treasury roles, and multisig handover become part of the product surface.</p>
+          </article>
+          <article class="path-card reveal" tabindex="0">
+            <span class="step-index">04</span>
+            <h3>Publish with restraint</h3>
+            <p>Testnet candidate first. Audit pending stays visible. Mainnet remains blocked until review.</p>
+          </article>
         </div>
       </section>
 
       <section class="section" id="protocol">
         <div class="section-head">
           <p class="eyebrow">Architecture</p>
-          <h2>Protocol primitives with explicit trust assumptions.</h2>
+          <h2>A launch stack built from inspectable primitives.</h2>
         </div>
         <div class="card-grid">
           <article class="card reveal">
             <h3>WLABToken</h3>
-            <p>ERC-20 with votes, permit, fee controls, pause, and compliance tooling.</p>
+            <p>ERC-20 votes, permit, fee controls, pause controls, and compliance hooks.</p>
           </article>
           <article class="card reveal">
             <h3>Token Sale</h3>
-            <p>Three-phase IDO with Merkle whitelist, wallet caps, claim, and refund accounting.</p>
+            <p>Three-phase IDO with Merkle allowlists, wallet caps, exact claim accounting, and refunds.</p>
           </article>
           <article class="card reveal">
             <h3>Staking &amp; Governance Lock Vault</h3>
-            <p>Tiered staking uses funded finite reward programs. Separate governance lock vault has fixed power, no decay, and vote reuse protection.</p>
+            <p>Funded reward programs and fixed-power governance locks with vote reuse protection.</p>
           </article>
           <article class="card reveal">
             <h3>Governance</h3>
-            <p>OpenZeppelin Governor + Timelock — propose, vote, queue, execute on-chain.</p>
+            <p>OpenZeppelin Governor plus Timelock for proposal, queue, and execution discipline.</p>
           </article>
         </div>
       </section>
@@ -106,7 +144,7 @@
       <section class="section alt" id="tokenomics">
         <div class="section-head">
           <p class="eyebrow">Tokenomics</p>
-          <h2>Fixed cap. Documented unlocks. Accounting before narrative.</h2>
+          <h2>Fixed cap, documented unlocks, and supply clarity.</h2>
         </div>
         <div class="tokenomics-layout">
           <div class="donut-panel reveal">
@@ -124,8 +162,8 @@
 
       <section class="section" id="transparency">
         <div class="section-head">
-          <p class="eyebrow">On-chain transparency</p>
-          <h2>Live deployment registry</h2>
+          <p class="eyebrow">Transparency</p>
+          <h2>Registry, roles, and deployment posture in one view.</h2>
         </div>
         <div class="transparency-panel reveal">
           <div class="network-badge" id="networkBadge">Loading network…</div>
@@ -136,8 +174,8 @@
 
       <section class="section cta-band">
         <div class="cta-inner reveal">
-          <h2>Operate the protocol from one console.</h2>
-          <p>Connect wallet on Base Sepolia or local Hardhat, participate in IDO flows, stake, and inspect governance parameters.</p>
+          <h2>Move from narrative to controlled execution.</h2>
+          <p>Use the console to inspect deployments, test flows, connect wallets, and keep launch controls visible.</p>
           <a class="btn primary" href="/app">Enter Console</a>
         </div>
       </section>
