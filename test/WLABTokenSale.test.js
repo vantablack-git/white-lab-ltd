@@ -514,6 +514,23 @@ describe("WLABTokenSale", function () {
       expect(balBefore - balAfter - gas).to.equal(cost);
     });
 
+    it("finalizePhase can finalize an inactive different-phase (else-path coverage)", async function () {
+      // Configure Seed (1) and Public (3).
+      await sale.configurePhase(1, PRICE, ALLOCATION, HARD_CAP, SOFT_CAP, ethers.ZeroHash, 0);
+      await sale.configurePhase(3, PRICE, ALLOCATION, HARD_CAP, SOFT_CAP, ethers.ZeroHash, 0);
+      // Start Seed — becomes active, currentPhase = Seed.
+      await sale.startPhase(1);
+      // Start Public — deactivates Seed, activates Public, currentPhase = Public.
+      await sale.startPhase(3);
+      // Finalize Seed — Seed is inactive, currentPhase != Seed.
+      // This covers both else-paths of finalizePhase:
+      //   branch 31: if (cfg.active) → false (else)
+      //   branch 32: if (currentPhase == phase) → false (else)
+      await sale.connect(owner).finalizePhase(1);
+      // Phase 1 (Seed) should now be finalized and in refund mode (soft cap not met).
+      expect(await sale.phaseRefundsEnabled(1)).to.equal(true);
+    });
+
     it("buy rejects when allocation or hard cap would be exceeded", async function () {
       // Tiny allocation with a moderate hard cap.
       await sale.configurePhase(
@@ -562,6 +579,37 @@ describe("WLABTokenSale", function () {
       // No active phase, but a finalized one exists — finalizeSale should succeed.
       await sale.connect(owner).finalizeSale();
       await expect(sale.connect(owner).finalizeSale()).to.be.revertedWith("Sale: already finalized");
+    });
+
+    it("finalizeSale reverts when no phase is finalized (no-active-phase else-path)", async function () {
+      // Configure a phase but never start it → currentPhase = None, no
+      // finalized phases exist.  finalizeSale enters the else branch and
+      // hits require(_anyPhaseFinalized(), "Sale: no phase ready").
+      await sale.configurePhase(3, PRICE, ALLOCATION, HARD_CAP, SOFT_CAP, ethers.ZeroHash, 0);
+      await expect(
+        sale.connect(owner).finalizeSale()
+      ).to.be.revertedWith("Sale: no phase ready");
+    });
+
+    it("orphaned phase can still be finalized after finalizeSale", async function () {
+      // Phase 1 is orphaned (deactivated but not finalized) when phase 3
+      // starts.  finalizePhase() has no saleFinalized guard, so it can
+      // still be called even after finalizeSale().
+      await sale.configurePhase(1, PRICE, ALLOCATION, HARD_CAP, ethers.parseEther("0.001"), ethers.ZeroHash, 0);
+      await sale.configurePhase(3, PRICE, ALLOCATION, HARD_CAP, ethers.parseEther("0.001"), ethers.ZeroHash, 0);
+      await sale.startPhase(1);
+      const COST1 = costOf(ethers.parseEther("500"));
+      await sale.connect(buyer).buy(ethers.parseEther("500"), [], { value: COST1 });
+      await sale.startPhase(3); // orphans phase 1
+      const COST3 = costOf(ethers.parseEther("100"));
+      await sale.connect(buyer2).buy(ethers.parseEther("100"), [], { value: COST3 });
+      await sale.connect(owner).finalizeSale(); // finalizes phase 3 only
+      await sale.connect(owner).finalizePhase(1); // should work — no saleFinalized gate
+      expect(await sale.phaseRefundsEnabled(1)).to.equal(false);
+      expect(await sale.phaseRefundsEnabled(3)).to.equal(false);
+      await sale.connect(buyer).claim(1);
+      await sale.connect(buyer2).claim(3);
+      expect(await sale.totalUnclaimedTokens()).to.equal(0);
     });
 
     it("claim rejects before finalization and when nothing was purchased", async function () {
@@ -621,6 +669,18 @@ describe("WLABTokenSale", function () {
       await expect(
         sale.connect(owner).recoverUnsoldTokens(ethers.ZeroAddress)
       ).to.be.revertedWith("Sale: zero to");
+    });
+
+    it("refundsEnabled evaluates all short-circuit branches when only a later phase refunds", async function () {
+      const hardSoftCap = ethers.parseEther("10");
+      await sale.configurePhase(2, PRICE, ethers.parseEther("1000"), HARD_CAP, hardSoftCap, ethers.ZeroHash, 0);
+      await sale.startPhase(2);
+      await sale.connect(buyer).buy(ethers.parseEther("100"), [], { value: costOf(ethers.parseEther("100")) });
+      await sale.connect(owner).finalizePhase(2);
+
+      expect(await sale.phaseRefundsEnabled(1)).to.equal(false);
+      expect(await sale.phaseRefundsEnabled(2)).to.equal(true);
+      expect(await sale.refundsEnabled()).to.equal(true);
     });
 
     it("non-owner cannot configure, start, finalize, withdraw, or recover", async function () {

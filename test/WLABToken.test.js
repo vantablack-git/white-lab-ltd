@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
 describe("WLABToken", function () {
   let token, admin, user, treasury;
@@ -376,5 +377,55 @@ describe("WLABToken", function () {
     // Treasury received fee minus burn share
     const treasuryBal = await token.balanceOf(treasury.address);
     expect(treasuryBal).to.equal(fee - burnShare);
+  });
+
+  // ── Coverage: WLABToken.nonces() is exercised through permit() ─────────────
+  it("permit allows gasless approval and covers the nonces() override", async function () {
+    const [alice] = await ethers.getSigners();
+    const AMOUNT = ethers.parseEther("100");
+
+    const domain = {
+      name: "WhiteLab",
+      version: "1",
+      chainId: (await ethers.provider.getNetwork()).chainId,
+      verifyingContract: await token.getAddress(),
+    };
+
+    const types = {
+      Permit: [
+        { name: "owner", type: "address" },
+        { name: "spender", type: "address" },
+        { name: "value", type: "uint256" },
+        { name: "nonce", type: "uint256" },
+        { name: "deadline", type: "uint256" },
+      ],
+    };
+
+    const deadline = BigInt(await time.latest()) + 3600n;
+    const nonce = await token.nonces(alice.address);
+
+    const signature = await alice.signTypedData(domain, types, {
+      owner: alice.address,
+      spender: treasury.address,
+      value: AMOUNT,
+      nonce,
+      deadline,
+    });
+
+    const { v, r, s } = ethers.Signature.from(signature);
+
+    // permit() internally calls nonces(alice) and increments it.
+    await expect(
+      token.permit(alice.address, treasury.address, AMOUNT, deadline, v, r, s)
+    ).to.emit(token, "Approval");
+
+    expect(await token.allowance(alice.address, treasury.address)).to.equal(AMOUNT);
+    expect(await token.nonces(alice.address)).to.equal(nonce + 1n);
+  });
+
+  it("burnFrom reverts when caller lacks BURNER_ROLE", async function () {
+    await expect(
+      token.connect(user).burnFrom(admin.address, 1)
+    ).to.be.reverted;
   });
 });

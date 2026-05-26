@@ -30,6 +30,72 @@ describe("WLABOFTAdapter stub guardrails", function () {
     ).to.be.revertedWith("OFT: disabled stub");
   });
 
+  // ── Branch coverage: require else-paths and modifier else-paths ────────────
+  describe("branch coverage", function () {
+    it("setRemoteAdapter may only be called by the owner", async function () {
+      await expect(
+        adapter.connect(user).setRemoteAdapter(101, recipient.address)
+      ).to.be.revertedWithCustomError(adapter, "OwnableUnauthorizedAccount");
+    });
+
+    it("setBridgeEnabled may only be called by the owner", async function () {
+      await expect(
+        adapter.connect(user).setBridgeEnabled(true)
+      ).to.be.revertedWithCustomError(adapter, "OwnableUnauthorizedAccount");
+    });
+
+    it("bridgeOut rejects unset remote adapter", async function () {
+      await adapter.connect(owner).setBridgeEnabled(true);
+      await expect(
+        adapter.connect(user).bridgeOut(999, ethers.parseEther("10"), recipient.address)
+      ).to.be.revertedWith("OFT: no remote");
+    });
+
+    it("bridgeOut rejects zero amount", async function () {
+      await adapter.connect(owner).setBridgeEnabled(true);
+      await adapter.connect(owner).setRemoteAdapter(101, recipient.address);
+      await expect(
+        adapter.connect(user).bridgeOut(101, 0, recipient.address)
+      ).to.be.revertedWith("OFT: zero amount");
+    });
+
+    it("bridgeOut rejects zero recipient", async function () {
+      await adapter.connect(owner).setBridgeEnabled(true);
+      await adapter.connect(owner).setRemoteAdapter(101, recipient.address);
+      await expect(
+        adapter.connect(user).bridgeOut(101, ethers.parseEther("10"), ethers.ZeroAddress)
+      ).to.be.revertedWith("OFT: zero recipient");
+    });
+
+    it("bridgeIn may only be called by the owner", async function () {
+      await adapter.connect(owner).setBridgeEnabled(true);
+      await expect(
+        adapter.connect(user).bridgeIn(101, recipient.address, ethers.parseEther("10"), ethers.id("msg"))
+      ).to.be.revertedWithCustomError(adapter, "OwnableUnauthorizedAccount");
+    });
+
+    it("bridgeIn rejects zero recipient", async function () {
+      await adapter.connect(owner).setBridgeEnabled(true);
+      await expect(
+        adapter.connect(owner).bridgeIn(101, ethers.ZeroAddress, ethers.parseEther("10"), ethers.id("msg"))
+      ).to.be.revertedWith("OFT: zero recipient");
+    });
+
+    it("bridgeIn rejects zero amount", async function () {
+      await adapter.connect(owner).setBridgeEnabled(true);
+      await expect(
+        adapter.connect(owner).bridgeIn(101, recipient.address, 0, ethers.id("msg"))
+      ).to.be.revertedWith("OFT: zero amount");
+    });
+
+    it("bridgeIn rejects zero message id", async function () {
+      await adapter.connect(owner).setBridgeEnabled(true);
+      await expect(
+        adapter.connect(owner).bridgeIn(101, recipient.address, ethers.parseEther("10"), ethers.ZeroHash)
+      ).to.be.revertedWith("OFT: zero message");
+    });
+  });
+
   it("locks outbound tokens and prevents replayed inbound messages when explicitly enabled", async function () {
     await adapter.connect(owner).setBridgeEnabled(true);
     await adapter.connect(owner).setRemoteAdapter(101, recipient.address);

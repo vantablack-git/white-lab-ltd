@@ -257,6 +257,26 @@ describe("WLABVesting", function () {
       ).to.be.revertedWith("Vesting: not revocable");
     });
 
+    it("revoke after full release refunds nothing and the unreleased path is skipped", async function () {
+      const amount = ethers.parseEther("1000");
+      const start = BigInt(await time.latest());
+      await createDefaultSchedule({ amount, start, duration: 1000n, revocable: true });
+
+      await time.increaseTo(start + 1001n);
+      await vesting.connect(beneficiary).release();
+
+      const ownerBefore = await token.balanceOf(owner.address);
+      const benBefore = await token.balanceOf(beneficiary.address);
+
+      await expect(vesting.revoke(beneficiary.address))
+        .to.emit(vesting, "ScheduleRevoked")
+        .withArgs(beneficiary.address, 0n);
+
+      expect(await token.balanceOf(beneficiary.address)).to.equal(benBefore);
+      expect(await token.balanceOf(owner.address)).to.equal(ownerBefore);
+      expect(await vesting.totalOutstanding()).to.equal(0n);
+    });
+
     it("revoke cannot be called twice and closes outstanding obligations", async function () {
       const start = BigInt(await time.latest());
       await createDefaultSchedule({ start, duration: 1000n, revocable: true });

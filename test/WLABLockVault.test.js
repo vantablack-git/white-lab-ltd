@@ -86,6 +86,69 @@ describe("WLABLockVault", function () {
     expect(await token.balanceOf(user.address)).to.equal(ethers.parseEther("1000"));
   });
 
+  // ── Branch coverage: require else-paths and modifier else-paths ────────────
+  describe("branch coverage", function () {
+    it("constructor rejects zero token address", async function () {
+      const LockVault = await ethers.getContractFactory("WLABLockVault");
+      await expect(
+        LockVault.deploy(ethers.ZeroAddress, owner.address)
+      ).to.be.revertedWith("LockVault: zero token");
+    });
+
+    it("createLock rejects zero amount", async function () {
+      await expect(
+        lockVault.connect(user).createLock(0, await lockVault.MAX_LOCK())
+      ).to.be.revertedWith("LockVault: zero amount");
+    });
+
+    it("createLock rejects lockDuration below 7 days", async function () {
+      await expect(
+        lockVault.connect(user).createLock(ethers.parseEther("100"), 6 * 24 * 60 * 60)
+      ).to.be.revertedWith("LockVault: invalid lock");
+    });
+
+    it("createLock rejects lockDuration above MAX_LOCK", async function () {
+      const maxLock = await lockVault.MAX_LOCK();
+      await expect(
+        lockVault.connect(user).createLock(ethers.parseEther("100"), maxLock + 1n)
+      ).to.be.revertedWith("LockVault: invalid lock");
+    });
+
+    it("withdraw rejects invalid lock index", async function () {
+      await expect(
+        lockVault.connect(user).withdraw(999)
+      ).to.be.revertedWith("LockVault: invalid index");
+    });
+
+    it("withdraw rejects before unlockTime", async function () {
+      const shortLock = 7n * 24n * 60n * 60n;
+      await lockVault.connect(user).createLock(ethers.parseEther("100"), shortLock);
+      await expect(
+        lockVault.connect(user).withdraw(0)
+      ).to.be.revertedWith("LockVault: locked");
+    });
+
+    it("withdraw works when withdrawing the only lock (no swap-and-pop)", async function () {
+      const shortLock = 7n * 24n * 60n * 60n;
+      await lockVault.connect(user).createLock(ethers.parseEther("100"), shortLock);
+      await time.increase(shortLock + 1n);
+      await lockVault.connect(user).withdraw(0);
+      expect(await lockVault.lockCount(user.address)).to.equal(0);
+    });
+
+    it("voteGauge rejects invalid gauge id", async function () {
+      await expect(
+        lockVault.connect(user).voteGauge(999, 100)
+      ).to.be.revertedWith("LockVault: invalid gauge");
+    });
+
+    it("createGauge may only be called by the owner", async function () {
+      await expect(
+        lockVault.connect(user).createGauge(user.address)
+      ).to.be.revertedWithCustomError(lockVault, "OwnableUnauthorizedAccount");
+    });
+  });
+
   it("compacts withdrawn locks with swap-and-pop instead of leaving zeroed slots", async function () {
     const shortLock = 7n * 24n * 60n * 60n;
     const longLock = 30n * 24n * 60n * 60n;
