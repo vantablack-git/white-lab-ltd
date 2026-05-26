@@ -4,9 +4,23 @@
  */
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const root = path.resolve(__dirname, "..");
 const dist = path.join(root, "dist");
+
+function fileHash(filePath) {
+  if (!fs.existsSync(filePath)) return Date.now().toString(36);
+  const buf = fs.readFileSync(filePath);
+  return crypto.createHash("sha1").update(buf).digest("hex").slice(0, 8);
+}
+
+const cacheBust = {
+  siteCss: fileHash(path.join(root, "website", "css", "site.css")),
+  siteJs: fileHash(path.join(root, "website", "js", "site.js")),
+  appCss: fileHash(path.join(root, "frontend", "src", "styles.css")),
+  appJs: fileHash(path.join(root, "frontend", "src", "app.js")),
+};
 
 const ARTIFACTS = [
   "WLABToken",
@@ -51,28 +65,28 @@ function copyDir(src, dest) {
 function writeAppIndex() {
   let html = fs.readFileSync(path.join(root, "frontend", "index.html"), "utf8");
   html = html
-    .replace(/\/frontend\/src\/styles.css/g, "/app/styles.css")
-    .replace(/\/frontend\/src\/app.js/g, "/app/app.js");
+    .replace(/\/frontend\/src\/styles.css/g, `/app/styles.css?v=${cacheBust.appCss}`)
+    .replace(/\/frontend\/src\/app.js/g, `/app/app.js?v=${cacheBust.appJs}`);
   fs.writeFileSync(path.join(dist, "app", "index.html"), html);
 }
 
 function writeMarketingIndex() {
   let html = fs.readFileSync(path.join(root, "website", "index.html"), "utf8");
   html = html
-    .replace(/\/website\/css\/site.css/g, "/css/site.css")
-    .replace(/\/website\/js\/site.js/g, "/js/site.js");
+    .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
+    .replace(/\/website\/js\/site.js/g, `/js/site.js?v=${cacheBust.siteJs}`);
   fs.writeFileSync(path.join(dist, "index.html"), html);
 }
 
 function writeLegal() {
   let html = fs.readFileSync(path.join(root, "website", "legal.html"), "utf8");
-  html = html.replace(/\/website\/css\/site.css/g, "/css/site.css");
+  html = html.replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`);
   fs.writeFileSync(path.join(dist, "legal.html"), html);
 }
 
 function writeWhitepaper() {
   let html = fs.readFileSync(path.join(root, "website", "whitepaper.html"), "utf8");
-  html = html.replace(/\/website\/css\/site.css/g, "/css/site.css");
+  html = html.replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`);
   fs.writeFileSync(path.join(dist, "whitepaper.html"), html);
 }
 
@@ -115,6 +129,9 @@ function main() {
   fs.writeFileSync(path.join(dist, "_headers"), SECURITY_HEADERS);
 
   console.log("Done. Deploy folder: dist/");
+  console.log(
+    `Cache-bust hashes — site.css=${cacheBust.siteCss} site.js=${cacheBust.siteJs} app.css=${cacheBust.appCss} app.js=${cacheBust.appJs}`
+  );
   console.log("Cloudflare Pages → Build output directory: dist");
 }
 
