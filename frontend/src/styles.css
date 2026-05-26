@@ -1,16 +1,16 @@
 :root {
-  --paper: #05070d;
-  --surface: rgba(15, 20, 32, 0.88);
-  --ink: #eef2ff;
-  --muted: #94a3b8;
-  --line: rgba(159, 176, 208, 0.16);
-  --teal: #2dd4bf;
-  --teal-dark: #14b8a6;
-  --amber: #b7791f;
-  --red: #b83245;
-  --green: #2f855a;
-  --violet: #5a4fcf;
-  --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  --paper: var(--wl-bg, #000000);
+  --surface: var(--wl-surface, rgba(255, 255, 255, 0.055));
+  --ink: var(--wl-ink, #ffffff);
+  --muted: var(--wl-muted, #a7a7a7);
+  --line: var(--wl-line, rgba(255, 255, 255, 0.16));
+  --teal: var(--wl-accent, #ffffff);
+  --teal-dark: #d0d0d0;
+  --amber: var(--wl-warn, #e8c547);
+  --red: var(--wl-danger, #ff6b6b);
+  --green: var(--wl-success, #8fd694);
+  --violet: #ffffff;
+  --shadow: var(--wl-shadow, 0 34px 110px rgba(0, 0, 0, 0.72));
 }
 
 * {
@@ -21,11 +21,11 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 16% 10%, rgba(124, 140, 255, 0.14), transparent 32rem),
-    radial-gradient(circle at 88% 0%, rgba(45, 212, 191, 0.1), transparent 28rem),
+    radial-gradient(circle at 16% 10%, rgba(255, 255, 255, 0.08), transparent 32rem),
+    radial-gradient(circle at 88% 0%, rgba(255, 255, 255, 0.05), transparent 28rem),
     var(--paper);
   color: var(--ink);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--wl-font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
   letter-spacing: 0;
 }
 
@@ -42,7 +42,7 @@ select {
 }
 
 .sidebar {
-  background: rgba(8, 11, 18, 0.86);
+  background: rgba(8, 8, 8, 0.92);
   border-right: 1px solid var(--line);
   padding: 24px;
   display: flex;
@@ -366,6 +366,51 @@ h3 {
 .state-list dd {
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+.registry-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.registry-meta {
+  display: grid;
+  gap: 4px;
+}
+
+.registry-meta code {
+  font-family: var(--wl-font-mono, "JetBrains Mono", monospace);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.registry-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.registry-copy,
+.registry-link {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.registry-copy:hover,
+.registry-link:hover {
+  border-color: var(--line-strong, rgba(255, 255, 255, 0.32));
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .section-title {

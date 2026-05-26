@@ -66,7 +66,8 @@ function writeAppIndex() {
   let html = fs.readFileSync(path.join(root, "frontend", "index.html"), "utf8");
   html = html
     .replace(/\/frontend\/src\/styles.css/g, `/app/styles.css?v=${cacheBust.appCss}`)
-    .replace(/\/frontend\/src\/app.js/g, `/app/app.js?v=${cacheBust.appJs}`);
+    .replace(/\/frontend\/src\/app.js/g, `/app/app.js?v=${cacheBust.appJs}`)
+    .replace(/\/shared\/tokens.css/g, `/shared/tokens.css`);
   fs.writeFileSync(path.join(dist, "app", "index.html"), html);
 }
 
@@ -74,7 +75,8 @@ function writeMarketingIndex() {
   let html = fs.readFileSync(path.join(root, "website", "index.html"), "utf8");
   html = html
     .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
-    .replace(/\/website\/js\/site.js/g, `/js/site.js?v=${cacheBust.siteJs}`);
+    .replace(/\/website\/js\/site.js/g, `/js/site.js?v=${cacheBust.siteJs}`)
+    .replace(/\/shared\/tokens.css/g, `/shared/tokens.css`);
   fs.writeFileSync(path.join(dist, "index.html"), html);
 }
 
@@ -86,8 +88,19 @@ function writeLegal() {
 
 function writeWhitepaper() {
   let html = fs.readFileSync(path.join(root, "website", "whitepaper.html"), "utf8");
-  html = html.replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`);
+  html = html
+    .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
+    .replace(/\/shared\/tokens.css/g, `/shared/tokens.css`);
   fs.writeFileSync(path.join(dist, "whitepaper.html"), html);
+}
+
+function writeTurkishIndex() {
+  mkdir(path.join(dist, "tr"));
+  let html = fs.readFileSync(path.join(root, "website", "tr", "index.html"), "utf8");
+  html = html
+    .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
+    .replace(/\/website\/js\/site.js/g, `/js/site.js?v=${cacheBust.siteJs}`);
+  fs.writeFileSync(path.join(dist, "tr", "index.html"), html);
 }
 
 function main() {
@@ -96,6 +109,7 @@ function main() {
   mkdir(dist);
 
   writeMarketingIndex();
+  writeTurkishIndex();
   writeWhitepaper();
   writeLegal();
   mkdir(path.join(dist, "app"));
@@ -121,6 +135,8 @@ function main() {
 
   const redirects = [
     "/app/*  /app/index.html  200",
+    "/tr  /tr/index.html  200",
+    "/tr/  /tr/index.html  200",
     "/whitepaper  /whitepaper.html  200",
     "/legal  /legal.html  200",
   ].join("\n");

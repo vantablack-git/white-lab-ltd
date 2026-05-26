@@ -1,0 +1,77 @@
+{
+  "version": "1.0.0",
+  "commandCenter": "Notion",
+  "databases": {
+    "accessMap": {
+      "properties": [
+        "Name",
+        "Category",
+        "URL",
+        "Owner",
+        "Access Level",
+        "Secret Location",
+        "Agent Can Operate",
+        "Approval Required",
+        "Status",
+        "Notes"
+      ]
+    },
+    "treasuryLedger": {
+      "properties": [
+        "Entry",
+        "Date",
+        "Direction",
+        "Asset",
+        "Amount",
+        "USD Estimate",
+        "Source",
+        "Destination",
+        "Tx / Receipt URL",
+        "Approval ID",
+        "Status",
+        "Notes"
+      ]
+    },
+    "auditLog": {
+      "properties": [
+        "Event",
+        "Timestamp",
+        "Actor",
+        "System",
+        "Action",
+        "Link",
+        "Result",
+        "Approval Required",
+        "Metrics Impact"
+      ]
+    },
+    "approvalQueue": {
+      "properties": [
+        "Request",
+        "Created",
+        "Category",
+        "Risk",
+        "Requested By",
+        "Summary",
+        "Checklist",
+        "Status",
+        "Evidence Link",
+        "Completed At"
+      ]
+    },
+    "weeklyReports": {
+      "properties": [
+        "Report",
+        "Week Start",
+        "Week End",
+        "Traffic Summary",
+        "Growth Summary",
+        "Treasury Summary",
+        "Engineering Summary",
+        "Blockers",
+        "Next Actions",
+        "Status"
+      ]
+    }
+  }
+}

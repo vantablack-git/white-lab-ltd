@@ -468,6 +468,33 @@ main,
   height: 260px;
   border-radius: 50%;
   position: relative;
+  outline: none;
+}
+
+.donut-panel {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+.donut-caption {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-align: center;
+  max-width: 260px;
+}
+
+.alloc-row {
+  cursor: pointer;
+  transition: background var(--wl-duration-fast, 180ms) ease;
+}
+
+.alloc-row:hover,
+.alloc-row:focus,
+.alloc-row.active {
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
 }
 
 .allocation-table {
@@ -537,6 +564,57 @@ th {
   font-family: "JetBrains Mono", ui-monospace, monospace;
   color: var(--muted);
   word-break: break-all;
+}
+
+.registry-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.registry-meta {
+  display: grid;
+  gap: 4px;
+}
+
+.registry-meta code {
+  font-family: var(--wl-font-mono, "JetBrains Mono", monospace);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.registry-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.registry-copy,
+.registry-link {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.registry-copy:hover,
+.registry-link:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-strong);
+}
+
+.registry-link.muted {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .fine-print {
@@ -669,4 +747,29 @@ th {
 
 .wp-page strong {
   color: var(--ink);
+}
+
+.wp-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0 32px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.wp-toc a {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.wp-toc a:hover {
+  color: var(--ink);
+  border-color: var(--line);
+  background: var(--surface-strong);
 }
