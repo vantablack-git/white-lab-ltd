@@ -19,8 +19,9 @@
       </nav>
     </header>
     <article class="wp-page">
-      <p class="eyebrow">Whitepaper v1.0 · May 2026</p>
+      <p class="eyebrow">Whitepaper v1.0 · May 2026 · Testnet candidate</p>
       <h1 id="top">White Lab Protocol ($WLAB)</h1>
+      <p class="wp-lead">A Base-native launch operating system for token sales, vesting, staking, governance locks, treasury control, and audit-conscious release discipline.</p>
       <nav class="wp-toc" aria-label="Table of contents">
         <a href="#abstract">Abstract</a>
         <a href="#problem">Problem</a>
@@ -33,10 +34,10 @@
       </nav>
 
       <h2 id="abstract">Abstract</h2>
-      <p>White Lab is a compliance-oriented token launch operating system on Base. It unifies gated IDO sales, vesting, staking, a weighted governance lock vault, and timelock governance. Max supply is fixed at 1 billion WLAB with documented emissions, fee burns, and transparent on-chain operations. Code is unaudited; mainnet deployment is gated on an external security review.</p>
+      <p>White Lab is a compliance-oriented token launch operating system on Base. It unifies gated IDO sales, vesting, staking, a weighted governance lock vault, treasury controls, and timelock governance. Max supply is fixed at 1 billion WLAB with documented emissions and transparent on-chain operations. Code is unaudited; mainnet deployment is gated on external security review.</p>
 
       <h2 id="problem">Problem &amp; Opportunity</h2>
-      <p>Token launches remain fragmented and trust-deficient. White Lab standardizes the launch stack: OpenZeppelin Governor, Merkle-gated IDO, vesting schedules, and protocol consoles for verifiable operations.</p>
+      <p>Token launches remain fragmented and trust-deficient. White Lab standardizes the launch path: configure the sale, lock supply promises, route governance through timelock, then publish only when validation and review gates are satisfied.</p>
 
       <h2 id="architecture">Architecture</h2>
       <ul>
@@ -48,6 +49,14 @@
         <li><strong>WLABLockVault</strong> — Weighted governance lock vault (fixed power, no decay) with gauge voting</li>
         <li><strong>WLABTreasuryUUPS</strong> — Upgradeable treasury behind production-named proxy</li>
       </ul>
+
+      <h2 id="launch-path">Launch Path</h2>
+      <ol>
+        <li><strong>Configure sale mechanics</strong> — phases, prices, caps, allowlists, claim paths, and refunds.</li>
+        <li><strong>Lock supply obligations</strong> — vesting schedules, staking programs, and unclaimed buyer entitlements.</li>
+        <li><strong>Route authority</strong> — Governor, Timelock, treasury roles, and multisig handover.</li>
+        <li><strong>Publish with restraint</strong> — testnet first, audit pending visible, mainnet blocked until review.</li>
+      </ol>
 
       <h2 id="utility">Token Utility</h2>
       <p>Launch fees, staking rewards, governance, liquidity incentives, and programmatic buyback-and-burn from protocol revenue where implemented.</p>
@@ -61,7 +70,7 @@
       <p>Proposal threshold 100,000 WLAB delegated. Voting period configured for Base block times. Critical operations route through Timelock. Production deploys enforce multisig handover before the deploy script exits.</p>
 
       <h2 id="security">Security</h2>
-      <p>Reentrancy guards, SafeERC20 on value transfers, disabled OFT stub by default, 192 regression tests, adversarial branch coverage on core contracts, Slither in CI. External audit required before mainnet capital deployment.</p>
+      <p>Reentrancy guards, SafeERC20 on value transfers, disabled OFT stub by default, 192 regression tests, 95.43% branch coverage, adversarial branch coverage on core contracts, and Slither in CI. External audit is required before mainnet capital deployment.</p>
 
       <h2 id="risks">Risks</h2>
       <ul>

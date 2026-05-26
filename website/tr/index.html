@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="White Lab Launch OS — Base üzerinde denetim bilinciyle tasarlanmış token lansman altyapısı. Testnet adayı, denetim bekliyor." />
-    <title>White Lab — Base Launch OS</title>
+    <meta name="description" content="White Lab; Base üzerinde token satışı, vesting, staking, yönetişim ve treasury kontrolü için audit odaklı lansman işletim sistemidir." />
+    <title>White Lab — Base lansman altyapısı</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
@@ -31,27 +31,43 @@
       <section class="hero">
         <div class="hero-copy">
           <p class="eyebrow">Base L2 · Launch OS · $WLAB</p>
-          <h1>Base üzerinde sakin bir lansman kontrol düzlemi.</h1>
+          <h1>Sermaye lansmanları için sakin altyapı.</h1>
           <p class="lead">
-            White Lab; IDO satışı, vesting, staking, ağırlıklı governance lock vault ve timelock yönetişimini
-            tek şeffaf yığında birleştirir. OpenZeppelin tabanlıdır, uçtan uca test edilmiştir, denetim beklemektedir.
+            White Lab; token satışı, vesting, staking, governance lock, treasury kontrolü ve audit disiplinini
+            Base-native tek bir lansman işletim sisteminde birleştirir.
           </p>
           <div class="hero-actions">
             <a class="btn primary" href="/app">Protokol Konsolunu Aç</a>
             <a class="btn ghost" href="/whitepaper">Whitepaper</a>
           </div>
           <div class="status-ribbon">
-            <span class="proof-pill">134 test geçiyor</span>
+            <span class="proof-pill">192 test geçiyor</span>
+            <span class="proof-pill">Slither CI</span>
+            <span class="proof-pill">%95.43 branch coverage</span>
             <span class="proof-pill">Multisig zorunlu deploy</span>
-            <span class="proof-pill">Bridge stub kapalı</span>
             <span class="proof-pill warn">Denetim bekliyor</span>
           </div>
+        </div>
+      </section>
+      <section class="section journey" id="yol">
+        <div class="section-head split">
+          <div>
+            <p class="eyebrow">Lansman Yolu</p>
+            <h2>Sermaye canlıya çıkmadan önce dört kontrol noktası.</h2>
+          </div>
+          <p class="section-copy">Hızlı ürün geliştirme ile güvenlik, yönetişim ve operasyon disiplinini aynı akışta tutan bir yüzey.</p>
+        </div>
+        <div class="path-grid">
+          <article class="path-card reveal" tabindex="0"><span class="step-index">01</span><h3>Satışı yapılandır</h3><p>Fazlar, fiyatlar, cap'ler, allowlist ve iade yolları açık kalır.</p></article>
+          <article class="path-card reveal" tabindex="0"><span class="step-index">02</span><h3>Arz sözlerini kilitle</h3><p>Vesting, staking ve claim yükümlülükleri pazarlama anlatısından önce görünür olur.</p></article>
+          <article class="path-card reveal" tabindex="0"><span class="step-index">03</span><h3>Yönetişimi bağla</h3><p>Oylar, timelock, treasury rolleri ve multisig devri ürün yüzeyinin parçası olur.</p></article>
+          <article class="path-card reveal" tabindex="0"><span class="step-index">04</span><h3>Kontrollü yayınla</h3><p>Önce testnet adayı. Audit pending görünür kalır. Mainnet review olmadan açılmaz.</p></article>
         </div>
       </section>
       <section class="section" id="protokol">
         <div class="section-head">
           <p class="eyebrow">Mimari</p>
-          <h2>Açık güven varsayımlarıyla protokol primitifleri.</h2>
+          <h2>İncelenebilir primitiflerden oluşan lansman stack'i.</h2>
         </div>
         <div class="card-grid">
           <article class="card reveal"><h3>WLABToken</h3><p>ERC-20, votes, permit, fee, pause ve uyumluluk kontrolleri.</p></article>

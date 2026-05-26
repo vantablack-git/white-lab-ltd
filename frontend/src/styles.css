@@ -1,6 +1,7 @@
 :root {
   --paper: var(--wl-bg, #000000);
   --surface: var(--wl-surface, rgba(255, 255, 255, 0.055));
+  --surface-strong: var(--wl-surface-strong, rgba(255, 255, 255, 0.12));
   --ink: var(--wl-ink, #ffffff);
   --muted: var(--wl-muted, #a7a7a7);
   --line: var(--wl-line, rgba(255, 255, 255, 0.16));
@@ -21,8 +22,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 16% 10%, rgba(255, 255, 255, 0.08), transparent 32rem),
-    radial-gradient(circle at 88% 0%, rgba(255, 255, 255, 0.05), transparent 28rem),
+    radial-gradient(circle at 16% 10%, rgba(255, 255, 255, 0.12), transparent 32rem),
+    radial-gradient(circle at 88% 0%, rgba(138, 180, 255, 0.075), transparent 28rem),
     var(--paper);
   color: var(--ink);
   font-family: var(--wl-font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
@@ -37,14 +38,19 @@ select {
 
 .app-shell {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: 300px minmax(0, 1fr);
   min-height: 100vh;
 }
 
 .sidebar {
-  background: rgba(8, 8, 8, 0.92);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 38%),
+    rgba(8, 8, 8, 0.94);
   border-right: 1px solid var(--line);
-  padding: 24px;
+  padding: 26px;
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -62,6 +68,8 @@ select {
 
 .brand-block {
   gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
 }
 
 .brand-mark {
@@ -80,6 +88,7 @@ select {
   color: var(--teal);
   font-size: 0.76rem;
   font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -96,8 +105,9 @@ h1 {
 
 h2 {
   max-width: 760px;
-  font-size: clamp(1.4rem, 2vw, 2rem);
-  line-height: 1.12;
+  font-size: clamp(1.55rem, 2.4vw, 2.45rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
 }
 
 h3 {
@@ -106,7 +116,7 @@ h3 {
 
 .nav-list {
   display: grid;
-  gap: 8px;
+  gap: 9px;
 }
 
 .nav-link {
@@ -154,19 +164,39 @@ h3 {
 .nav-button {
   width: 100%;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 999px;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  padding: 11px 12px;
+  padding: 10px 12px;
   text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-button span {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  font-family: var(--wl-font-mono, "JetBrains Mono", monospace);
+  font-size: 0.7rem;
+  color: var(--ink);
 }
 
 .nav-button.active,
 .nav-button:hover {
   border-color: var(--line);
-  background: rgba(238, 242, 255, 0.04);
+  background: rgba(255, 255, 255, 0.075);
   color: var(--ink);
+}
+
+.nav-button.active span {
+  background: #fff;
+  color: #000;
 }
 
 .risk-strip {
@@ -174,7 +204,7 @@ h3 {
   gap: 9px;
   padding: 12px;
   border: 1px solid rgba(245, 158, 11, 0.25);
-  border-radius: 8px;
+  border-radius: 18px;
   background: rgba(245, 158, 11, 0.09);
   color: #ffd995;
   font-size: 0.86rem;
@@ -182,13 +212,19 @@ h3 {
 
 .workspace {
   min-width: 0;
-  padding: 28px;
+  padding: clamp(20px, 3vw, 36px);
 }
 
 .topbar {
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 22px;
+  margin-bottom: 26px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.026)),
+    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.08), transparent 20rem);
 }
 
 .wallet-panel {
@@ -203,7 +239,7 @@ h3 {
   gap: 8px;
   min-height: 38px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 999px;
   background: var(--surface);
   padding: 8px 12px;
   color: var(--muted);
@@ -233,7 +269,7 @@ h3 {
 .ghost-action,
 .danger-action {
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 999px;
   cursor: pointer;
   min-height: 40px;
   padding: 9px 13px;
@@ -242,7 +278,8 @@ h3 {
 
 .primary-action {
   background: var(--teal);
-  color: white;
+  color: #000;
+  box-shadow: 0 0 34px var(--wl-accent-soft, rgba(255, 255, 255, 0.18));
 }
 
 .primary-action:hover {
@@ -290,6 +327,12 @@ h3 {
 
 .view.active {
   display: block;
+  animation: viewIn 260ms ease-out;
+}
+
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
 }
 
 .metric-grid,
@@ -301,15 +344,17 @@ h3 {
 
 .metric-card,
 .panel {
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.03)),
+    var(--surface);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 24px;
   box-shadow: var(--shadow);
 }
 
 .metric-card {
-  min-height: 116px;
-  padding: 16px;
+  min-height: 128px;
+  padding: 18px;
   display: grid;
   align-content: space-between;
 }
@@ -323,7 +368,8 @@ h3 {
 }
 
 .metric-card strong {
-  font-size: 1.36rem;
+  font-size: 1.5rem;
+  letter-spacing: -0.035em;
   overflow-wrap: anywhere;
 }
 
@@ -335,7 +381,7 @@ h3 {
 }
 
 .panel {
-  padding: 16px;
+  padding: 18px;
 }
 
 .panel-heading {
@@ -359,7 +405,7 @@ h3 {
   gap: 12px;
   align-items: center;
   border-top: 1px solid var(--line);
-  padding-top: 10px;
+  padding-top: 12px;
 }
 
 .address-row code,
@@ -438,8 +484,8 @@ input,
 select {
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(238, 242, 255, 0.035);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.055);
   color: var(--ink);
   min-height: 40px;
   padding: 9px 11px;
@@ -459,7 +505,7 @@ canvas {
   width: 100%;
   max-width: 100%;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 18px;
   background: rgba(238, 242, 255, 0.03);
 }
 
@@ -495,12 +541,13 @@ canvas {
 
   .sidebar {
     position: static;
+    height: auto;
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }
 
   .nav-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .two-column {
@@ -534,6 +581,16 @@ canvas {
   .form-grid,
   .legend-grid {
     grid-template-columns: 1fr;
+  }
+
+  .topbar,
+  .panel,
+  .metric-card {
+    border-radius: 20px;
+  }
+
+  h2 {
+    font-size: clamp(1.7rem, 9vw, 2.4rem);
   }
 
   .address-row,

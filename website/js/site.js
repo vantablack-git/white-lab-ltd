@@ -178,6 +178,14 @@ function bindMarketingEvents() {
   if (window.location.pathname.startsWith("/tr")) {
     trackEvent("tr_page_open");
   }
+  document.querySelectorAll(".path-card").forEach((card, index) => {
+    card.addEventListener("mouseenter", () =>
+      trackEvent("launch_path_hover", { step: index + 1 })
+    );
+    card.addEventListener("focus", () =>
+      trackEvent("launch_path_focus", { step: index + 1 })
+    );
+  });
 }
 
 renderAllocationTable();
