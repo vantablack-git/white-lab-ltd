@@ -44,6 +44,7 @@ contract WLABTreasuryUUPS is Initializable, UUPSUpgradeable, AccessControlUpgrad
 
     function withdraw(address token, address to, uint256 amount) external onlyRole(SPENDER_ROLE) {
         require(to != address(0), "Treasury: zero to");
+        // slither-disable-next-line arbitrary-send-erc20
         IERC20(token).safeTransfer(to, amount);
         emit FundsWithdrawn(token, to, amount);
     }
