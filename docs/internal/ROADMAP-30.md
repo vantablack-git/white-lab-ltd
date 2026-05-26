@@ -99,4 +99,5 @@ RC-2 validation pass, frozen commit, Safe-orchestrated deploy plan, post-deploy 
 | Phase | State |
 | --- | --- |
 | 0–6 + RC-1 | done |
-| 7–30 | pending |
+| 7 | done — Slither in CI with high-severity gate, SARIF + JSON artifacts |
+| 8–30 | pending |
