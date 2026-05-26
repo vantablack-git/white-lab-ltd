@@ -231,6 +231,10 @@ async function main() {
     path.join(publicDir, "deployments.json"),
     JSON.stringify({ [network]: manifest }, null, 2)
   );
+  require("child_process").execSync(`node scripts/publish-manifest.js ${network}`, {
+    stdio: "inherit",
+    cwd: path.join(__dirname, ".."),
+  });
   const tokenomicsSrc = path.join(__dirname, "..", "shared", "tokenomics.json");
   if (fs.existsSync(tokenomicsSrc)) {
     fs.copyFileSync(tokenomicsSrc, path.join(publicDir, "tokenomics.json"));

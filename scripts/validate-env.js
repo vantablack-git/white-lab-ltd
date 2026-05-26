@@ -1,6 +1,8 @@
+require("dotenv").config();
+
 const requiredByNetwork = {
-  baseSepolia: ["PRIVATE_KEY", "BASE_SEPOLIA_RPC", "ETHERSCAN_API_KEY", "TREASURY_ADDRESS"],
-  base: ["PRIVATE_KEY", "BASE_MAINNET_RPC", "ETHERSCAN_API_KEY", "TREASURY_ADDRESS"],
+  baseSepolia: ["PRIVATE_KEY", "BASE_SEPOLIA_RPC", "ETHERSCAN_API_KEY", "TREASURY_ADDRESS", "MULTISIG_ADDRESS"],
+  base: ["PRIVATE_KEY", "BASE_MAINNET_RPC", "ETHERSCAN_API_KEY", "TREASURY_ADDRESS", "MULTISIG_ADDRESS"],
 };
 
 const network = process.argv[2] || "baseSepolia";
@@ -19,6 +21,14 @@ if (process.env.PRIVATE_KEY === "0x000000000000000000000000000000000000000000000
 
 if (process.env.TREASURY_ADDRESS && !/^0x[a-fA-F0-9]{40}$/.test(process.env.TREASURY_ADDRESS)) {
   missing.push("TREASURY_ADDRESS must be a valid 20-byte address");
+}
+
+if (process.env.MULTISIG_ADDRESS && !/^0x[a-fA-F0-9]{40}$/.test(process.env.MULTISIG_ADDRESS)) {
+  missing.push("MULTISIG_ADDRESS must be a valid 20-byte address");
+}
+
+if (process.env.MULTISIG_ADDRESS === "0x0000000000000000000000000000000000000000") {
+  missing.push("MULTISIG_ADDRESS must not be the zero address");
 }
 
 if (missing.length) {
