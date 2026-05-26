@@ -94,32 +94,34 @@ main,
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 22px clamp(20px, 4vw, 48px);
+  padding: 20px clamp(20px, 4vw, 48px);
   max-width: 1200px;
   margin: 0 auto;
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(18px);
 }
 
 .logo {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
+  gap: 11px;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   letter-spacing: 0.02em;
 }
 
 .wordmark {
-  font-weight: 300;
-  font-size: 1.05rem;
-  font-style: italic;
+  font-weight: 560;
+  font-size: 1.02rem;
+  font-style: normal;
+  letter-spacing: -0.025em;
   color: var(--ink);
   line-height: 1;
 }
 
 .site-nav {
   display: flex;
-  gap: 20px;
+  gap: 22px;
   align-items: center;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   color: var(--muted);
 }
 
@@ -168,8 +170,8 @@ main,
   font-size: var(--wl-text-hero, clamp(3.2rem, 9vw, 7.6rem));
   line-height: 0.88;
   margin: 0 0 20px;
-  letter-spacing: -0.082em;
-  max-width: 10.6ch;
+  letter-spacing: -0.087em;
+  max-width: 11.8ch;
   text-wrap: balance;
 }
 
@@ -316,8 +318,8 @@ main,
   border-radius: var(--wl-radius-xl, 44px);
   border: 1px solid var(--line-strong);
   background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.025)),
-    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.11), transparent 18rem);
+    linear-gradient(160deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03)),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.15), transparent 18rem);
   box-shadow: var(--shadow);
   padding: 30px;
   backdrop-filter: blur(12px);
@@ -487,10 +489,28 @@ main,
     linear-gradient(180deg, rgba(255, 255, 255, 0.115), rgba(255, 255, 255, 0.032)),
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08), transparent 16rem);
   box-shadow: var(--wl-shadow-soft, 0 20px 70px rgba(0, 0, 0, 0.48));
+  transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
 }
 
 .path-card:nth-child(even) {
   transform: translateY(24px);
+}
+
+.path-card:hover,
+.path-card:focus {
+  border-color: var(--line-strong);
+  outline: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.145), rgba(255, 255, 255, 0.04)),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 16rem);
+}
+
+.path-card:hover {
+  transform: translateY(-4px);
+}
+
+.path-card:nth-child(even):hover {
+  transform: translateY(18px);
 }
 
 .step-index {
@@ -527,7 +547,9 @@ main,
 .card {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.028));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.032)),
+    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.05), transparent 14rem);
   border: 1px solid var(--line);
   border-radius: 26px;
   padding: 24px;
