@@ -4,20 +4,27 @@
  */
 :root {
   --wl-bg: #000000;
-  --wl-bg-elevated: #080808;
-  --wl-surface: rgba(255, 255, 255, 0.055);
-  --wl-surface-strong: rgba(255, 255, 255, 0.09);
+  --wl-bg-elevated: #070707;
+  --wl-bg-soft: #0d0d0d;
+  --wl-surface: rgba(255, 255, 255, 0.07);
+  --wl-surface-strong: rgba(255, 255, 255, 0.12);
+  --wl-surface-glass: rgba(255, 255, 255, 0.075);
   --wl-ink: #ffffff;
-  --wl-muted: #a7a7a7;
-  --wl-muted-2: #707070;
-  --wl-line: rgba(255, 255, 255, 0.16);
-  --wl-line-strong: rgba(255, 255, 255, 0.32);
+  --wl-ink-soft: #f1f1f1;
+  --wl-muted: #b8b8b8;
+  --wl-muted-2: #818181;
+  --wl-line: rgba(255, 255, 255, 0.18);
+  --wl-line-strong: rgba(255, 255, 255, 0.38);
   --wl-accent: #ffffff;
-  --wl-accent-soft: rgba(255, 255, 255, 0.14);
+  --wl-accent-soft: rgba(255, 255, 255, 0.18);
+  --wl-accent-blue: #8ab4ff;
+  --wl-accent-mint: #9df7d3;
   --wl-danger: #ff6b6b;
   --wl-success: #8fd694;
   --wl-warn: #e8c547;
   --wl-shadow: 0 34px 110px rgba(0, 0, 0, 0.72);
+  --wl-shadow-soft: 0 20px 70px rgba(0, 0, 0, 0.48);
+  --wl-glow: 0 0 80px rgba(255, 255, 255, 0.14);
 
   --wl-font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
   --wl-font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -30,12 +37,19 @@
   --wl-space-6: 32px;
   --wl-space-7: 48px;
   --wl-space-8: 64px;
+  --wl-space-9: 96px;
 
   --wl-text-xs: 0.76rem;
   --wl-text-sm: 0.88rem;
   --wl-text-base: 1rem;
   --wl-text-lg: 1.25rem;
   --wl-text-xl: clamp(1.8rem, 4vw, 3.4rem);
+  --wl-text-hero: clamp(3.2rem, 9vw, 7.6rem);
+
+  --wl-radius-sm: 12px;
+  --wl-radius-md: 20px;
+  --wl-radius-lg: 32px;
+  --wl-radius-xl: 44px;
 
   --wl-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --wl-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
