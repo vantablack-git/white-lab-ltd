@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="White Lab Launch OS — Base üzerinde denetim bilinciyle tasarlanmış token lansman altyapısı. Testnet adayı, denetim bekliyor." />
+    <title>White Lab — Base Launch OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/shared/tokens.css" />
+    <link rel="stylesheet" href="/website/css/site.css" />
+    <link rel="alternate" hreflang="en" href="/" />
+    <link rel="alternate" hreflang="tr" href="/tr/" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="logo" href="/tr/"><span class="wordmark">White Lab</span></a>
+      <nav class="site-nav" aria-label="Ana menü">
+        <a href="#protokol">Protokol</a>
+        <a href="#tokenomics">Tokenomik</a>
+        <a href="#seffaflik">Şeffaflık</a>
+        <a href="/whitepaper">Whitepaper</a>
+        <a class="nav-cta" href="/app">Konsolu Aç</a>
+        <a href="/">EN</a>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Base L2 · Launch OS · $WLAB</p>
+          <h1>Base üzerinde sakin bir lansman kontrol düzlemi.</h1>
+          <p class="lead">
+            White Lab; IDO satışı, vesting, staking, ağırlıklı governance lock vault ve timelock yönetişimini
+            tek şeffaf yığında birleştirir. OpenZeppelin tabanlıdır, uçtan uca test edilmiştir, denetim beklemektedir.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="/app">Protokol Konsolunu Aç</a>
+            <a class="btn ghost" href="/whitepaper">Whitepaper</a>
+          </div>
+          <div class="status-ribbon">
+            <span class="proof-pill">134 test geçiyor</span>
+            <span class="proof-pill">Multisig zorunlu deploy</span>
+            <span class="proof-pill">Bridge stub kapalı</span>
+            <span class="proof-pill warn">Denetim bekliyor</span>
+          </div>
+        </div>
+      </section>
+      <section class="section" id="protokol">
+        <div class="section-head">
+          <p class="eyebrow">Mimari</p>
+          <h2>Açık güven varsayımlarıyla protokol primitifleri.</h2>
+        </div>
+        <div class="card-grid">
+          <article class="card reveal"><h3>WLABToken</h3><p>ERC-20, votes, permit, fee, pause ve uyumluluk kontrolleri.</p></article>
+          <article class="card reveal"><h3>Token Sale</h3><p>Çok fazlı IDO, Merkle whitelist, claim ve iade muhasebesi.</p></article>
+          <article class="card reveal"><h3>Staking &amp; Lock Vault</h3><p>Fonlanmış finite reward programları. Sabit, azalmayan governance lock gücü.</p></article>
+          <article class="card reveal"><h3>Governance</h3><p>OpenZeppelin Governor + Timelock — propose, vote, queue, execute.</p></article>
+        </div>
+      </section>
+      <section class="section alt" id="tokenomics">
+        <div class="section-head">
+          <p class="eyebrow">Tokenomik</p>
+          <h2>Sabit arz. Dokümante unlock'lar. Anlatıdan önce muhasebe.</h2>
+        </div>
+        <div class="tokenomics-layout">
+          <div class="donut-panel reveal">
+            <div class="donut-wrap" id="donutChart" aria-label="Arz dağılım grafiği"></div>
+            <p class="donut-caption" id="donutCaption">Detay için tabloya odaklanın.</p>
+          </div>
+          <div class="allocation-table reveal">
+            <table>
+              <thead><tr><th>Bucket</th><th>Pay</th><th>WLAB</th><th>TGE</th></tr></thead>
+              <tbody id="allocationRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <section class="section" id="seffaflik">
+        <div class="section-head">
+          <p class="eyebrow">Zincir üstü şeffaflık</p>
+          <h2>Canlı deployment kaydı</h2>
+        </div>
+        <div class="transparency-panel reveal">
+          <div class="network-badge" id="networkBadge">Ağ yükleniyor…</div>
+          <div class="address-grid" id="contractGrid"></div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <p>© 2026 White Lab Protocol. Yatırım tavsiyesi değildir. Testnet adayı — mainnet öncesi denetim gerekir.</p>
+      <div class="footer-links">
+        <a href="/">English</a>
+        <a href="/legal">Legal</a>
+        <a href="/app">Console</a>
+      </div>
+    </footer>
+    <script src="/website/js/site.js" type="module"></script>
+  </body>
+</html>

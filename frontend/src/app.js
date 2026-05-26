@@ -1,18 +1,10 @@
 import { escapeHtml } from "/shared/dom-utils.js";
+import { loadManifest as fetchManifest, renderAddressRegistry } from "/shared/manifest-utils.js";
+import { trackEvent } from "/shared/analytics.js";
 
 const PHASE = { Seed: 1, Private: 2, Public: 3 };
-const SUPPLY = [
-  ["Team", 15, "#b7791f"],
-  ["Seed", 6, "#4c7f9f"],
-  ["Private", 8, "#5a4fcf"],
-  ["Public IDO", 5, "#167c70"],
-  ["Ecosystem", 20, "#2f855a"],
-  ["Liquidity", 10, "#b83245"],
-  ["Staking", 18, "#3f8f7a"],
-  ["Treasury", 12, "#6f5cc2"],
-  ["Community", 4, "#d07a2d"],
-  ["Advisors", 2, "#7b6f63"],
-];
+const GRAYS = ["#ffffff", "#e8e8e8", "#d0d0d0", "#b8b8b8", "#a2a2a2", "#8c8c8c", "#767676", "#606060", "#4a4a4a", "#343434"];
+let SUPPLY = [];
 
 const RPC_BY_CHAIN = {
   8453: "https://mainnet.base.org",
@@ -75,37 +67,8 @@ async function loadJson(path) {
   return response.json();
 }
 
-function pickManifest(data) {
-  if (data?.contracts && Object.keys(data.contracts).length) return data;
-  if (typeof data !== "object" || !data) return null;
-  const entries = Object.values(data).filter((v) => v?.contracts && Object.keys(v.contracts).length);
-  if (!entries.length) return null;
-  const preferred = ["baseSepolia", "hardhat", "base"];
-  for (const key of preferred) {
-    if (data[key]?.contracts) return data[key];
-  }
-  return entries.sort((a, b) => Date.parse(b.deployedAt || 0) - Date.parse(a.deployedAt || 0))[0];
-}
-
 async function loadManifest() {
-  const paths = [
-    "/public/deployments.json",
-    "/deployments/baseSepolia.json",
-    "/deployments/base-sepolia.json",
-    "/deployments/hardhat.json",
-  ];
-  for (const path of paths) {
-    try {
-      const data = await loadJson(path);
-      const picked = pickManifest(data);
-      if (picked) {
-        state.manifest = picked;
-        break;
-      }
-    } catch {
-      /* try next */
-    }
-  }
+  state.manifest = await fetchManifest();
   renderAddresses();
   renderChainGuard();
   await setupReadOnlyContracts();
@@ -115,6 +78,8 @@ async function loadManifest() {
 async function loadTokenomics() {
   try {
     state.tokenomics = await loadJson("/tokenomics.json").catch(() => loadJson("/shared/tokenomics.json"));
+    SUPPLY = state.tokenomics.allocations.map((a, i) => [a.label, a.percent, GRAYS[i] || "#888"]);
+    drawAllocationChart();
     renderTokenomicsPanel();
     const tge = state.tokenomics?.tge;
     const max = state.tokenomics?.token?.maxSupply;
@@ -193,6 +158,12 @@ function renderChainGuard() {
   guard.innerHTML = mismatch
     ? `<p>Switch wallet to <strong>${currentNetworkName(expected)}</strong> (chain ${expected}).</p><button type="button" class="primary-action" id="switchChainBtn">Switch Network</button>`
     : "";
+  if (mismatch) {
+    trackEvent("chain_mismatch", {
+      connectedChainId: connected,
+      expectedChainId: expected,
+    });
+  }
   $("#switchChainBtn")?.addEventListener("click", switchToManifestChain);
 }
 
@@ -250,16 +221,17 @@ async function loadAbis() {
 
 function renderAddresses() {
   const list = $("#addressList");
-  const contracts = state.manifest?.contracts || {};
-  const entries = Object.entries(contracts);
-  list.innerHTML = entries.length
-    ? entries
-        .map(
-          ([name, address]) =>
-            `<div class="address-row"><strong>${escapeHtml(name)}</strong><code>${escapeHtml(address)}</code></div>`
-        )
-        .join("")
-    : `<div class="alert">No deployed addresses found. Run npm run deploy:local:demo or deploy:sepolia.</div>`;
+  renderAddressRegistry(list, state.manifest, {
+    onCopy: (address, contract) => {
+      showAlert(`Copied ${formatAddress(address)}`, "success");
+      trackEvent("copy_contract_address", {
+        address,
+        contract,
+        chainId: state.manifest?.chainId,
+        network: state.manifest?.network,
+      });
+    },
+  });
 }
 
 function connectContracts() {
@@ -278,12 +250,18 @@ async function connectWallet() {
     return;
   }
 
+  trackEvent("wallet_connect_click");
   state.provider = new ethers.BrowserProvider(window.ethereum);
   await state.provider.send("eth_requestAccounts", []);
   state.signer = await state.provider.getSigner();
   state.account = await state.signer.getAddress();
   const network = await state.provider.getNetwork();
   state.chainId = network.chainId;
+  trackEvent("wallet_connected", {
+    chainId: state.chainId,
+    expectedChainId: expectedChainId(),
+    networkOk: state.chainId === expectedChainId(),
+  });
 
   connectContracts();
   renderConnection();
@@ -349,13 +327,20 @@ async function refreshState() {
 async function sendTx(label, action) {
   try {
     if (!state.signer) throw new Error("Connect wallet first.");
+    trackEvent("tx_intent", { action: label });
     showAlert(`${label}: waiting for wallet signature...`);
     const tx = await action();
+    trackEvent("tx_submitted", { action: label, chainId: state.chainId });
     showAlert(`${label}: submitted ${tx.hash}`);
     await tx.wait();
+    trackEvent("tx_confirmed", { action: label, chainId: state.chainId });
     showAlert(`${label}: confirmed`, "success");
     await refreshState();
   } catch (error) {
+    trackEvent("tx_failed", {
+      action: label,
+      reason: error.shortMessage || error.reason || error.message,
+    });
     showAlert(`${label}: ${error.shortMessage || error.reason || error.message}`, "error");
   }
 }
@@ -456,6 +441,7 @@ function bindForms() {
 
 function drawAllocationChart() {
   const canvas = $("#allocationCanvas");
+  if (!canvas || !SUPPLY.length) return;
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.font = "14px Inter, sans-serif";
@@ -463,17 +449,17 @@ function drawAllocationChart() {
 
   let x = 22;
   const maxHeight = 210;
-  SUPPLY.forEach(([label, pct, color], index) => {
+  SUPPLY.forEach(([label, pct, color]) => {
     const height = (pct / 24) * maxHeight;
     const y = 260 - height;
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 38, height);
-    ctx.fillStyle = "#1f2523";
+    ctx.fillStyle = "#ffffff";
     ctx.fillText(`${pct}%`, x, y - 14);
     ctx.save();
     ctx.translate(x + 8, 284);
     ctx.rotate(-Math.PI / 7);
-    ctx.fillStyle = "#69736e";
+    ctx.fillStyle = "#a7a7a7";
     ctx.fillText(label, 0, 0);
     ctx.restore();
     x += 58;
@@ -499,7 +485,6 @@ function bindNavigation() {
 async function init() {
   bindNavigation();
   bindForms();
-  drawAllocationChart();
   $("#connectWallet").addEventListener("click", connectWallet);
   $("#refreshState")?.addEventListener("click", refreshState);
   const delegateBtn = $("#delegateSelfBtn") || $("#delegateSelf");

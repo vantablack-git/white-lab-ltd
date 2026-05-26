@@ -1,0 +1,70 @@
+/**
+ * White Lab design tokens — shared across marketing site and protocol console.
+ * See docs/adr/0005-design-system.md
+ */
+:root {
+  --wl-bg: #000000;
+  --wl-bg-elevated: #080808;
+  --wl-surface: rgba(255, 255, 255, 0.055);
+  --wl-surface-strong: rgba(255, 255, 255, 0.09);
+  --wl-ink: #ffffff;
+  --wl-muted: #a7a7a7;
+  --wl-muted-2: #707070;
+  --wl-line: rgba(255, 255, 255, 0.16);
+  --wl-line-strong: rgba(255, 255, 255, 0.32);
+  --wl-accent: #ffffff;
+  --wl-accent-soft: rgba(255, 255, 255, 0.14);
+  --wl-danger: #ff6b6b;
+  --wl-success: #8fd694;
+  --wl-warn: #e8c547;
+  --wl-shadow: 0 34px 110px rgba(0, 0, 0, 0.72);
+
+  --wl-font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --wl-font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --wl-space-1: 4px;
+  --wl-space-2: 8px;
+  --wl-space-3: 12px;
+  --wl-space-4: 16px;
+  --wl-space-5: 24px;
+  --wl-space-6: 32px;
+  --wl-space-7: 48px;
+  --wl-space-8: 64px;
+
+  --wl-text-xs: 0.76rem;
+  --wl-text-sm: 0.88rem;
+  --wl-text-base: 1rem;
+  --wl-text-lg: 1.25rem;
+  --wl-text-xl: clamp(1.8rem, 4vw, 3.4rem);
+
+  --wl-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --wl-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --wl-duration-fast: 180ms;
+  --wl-duration-base: 320ms;
+  --wl-duration-slow: 680ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --wl-duration-fast: 0ms;
+    --wl-duration-base: 0ms;
+    --wl-duration-slow: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.wordmark {
+  font-family: var(--wl-font-sans);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  color: var(--wl-ink);
+}

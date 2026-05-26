@@ -3,8 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WhiteLab Whitepaper — $WLAB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <meta name="description" content="White Lab whitepaper — Base-native launch OS for WLAB with IDO, vesting, staking, governance lock vault, and timelock DAO." />
+    <title>White Lab Whitepaper — $WLAB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/shared/tokens.css" />
     <link rel="stylesheet" href="/website/css/site.css" />
   </head>
   <body>
@@ -18,49 +20,61 @@
     </header>
     <article class="wp-page">
       <p class="eyebrow">Whitepaper v1.0 · May 2026</p>
-      <h1>WhiteLab Protocol ($WLAB)</h1>
-      <p><strong>Abstract.</strong> WhiteLab is a compliance-oriented token launch operating system on Base. It unifies gated IDO sales, vesting, staking, a weighted governance lock vault, and timelock governance. Max supply is fixed at 1 billion WLAB with documented emissions, fee burns, and transparent on-chain operations. Code is unaudited; mainnet deployment is gated on an external security review.</p>
+      <h1 id="top">White Lab Protocol ($WLAB)</h1>
+      <nav class="wp-toc" aria-label="Table of contents">
+        <a href="#abstract">Abstract</a>
+        <a href="#problem">Problem</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#utility">Token Utility</a>
+        <a href="#tokenomics">Tokenomics</a>
+        <a href="#governance">Governance</a>
+        <a href="#security">Security</a>
+        <a href="#risks">Risks</a>
+      </nav>
 
-      <h2>Problem & Opportunity</h2>
-      <p>Token launches remain fragmented and trust-deficient. WhiteLab standardizes the launch stack: OpenZeppelin Governor, Merkle-gated IDO, vesting schedules, and protocol consoles for verifiable operations.</p>
+      <h2 id="abstract">Abstract</h2>
+      <p>White Lab is a compliance-oriented token launch operating system on Base. It unifies gated IDO sales, vesting, staking, a weighted governance lock vault, and timelock governance. Max supply is fixed at 1 billion WLAB with documented emissions, fee burns, and transparent on-chain operations. Code is unaudited; mainnet deployment is gated on an external security review.</p>
 
-      <h2>Architecture</h2>
+      <h2 id="problem">Problem &amp; Opportunity</h2>
+      <p>Token launches remain fragmented and trust-deficient. White Lab standardizes the launch stack: OpenZeppelin Governor, Merkle-gated IDO, vesting schedules, and protocol consoles for verifiable operations.</p>
+
+      <h2 id="architecture">Architecture</h2>
       <ul>
         <li><strong>WLABToken</strong> — ERC-20 + Votes + Permit + compliance controls</li>
         <li><strong>WLABTokenSale</strong> — Seed / Private / Public phases, refunds, claims</li>
         <li><strong>WLABVesting</strong> — Cliff + linear release, revocable schedules</li>
-        <li><strong>WLABStaking</strong> — Tiered locks (30–365d), weighted rewards</li>
+        <li><strong>WLABStaking</strong> — Tiered locks (30–365d), funded finite reward programs</li>
         <li><strong>WLABGovernor + Timelock</strong> — 48h+ execution delay, 4% quorum</li>
-        <li><strong>WLABLockVault</strong> — Weighted governance lock vault (fixed power, no decay) with gauge voting parallel to token votes</li>
-        <li><strong>WLABTreasuryUUPS</strong> — Upgradeable treasury behind proxy</li>
+        <li><strong>WLABLockVault</strong> — Weighted governance lock vault (fixed power, no decay) with gauge voting</li>
+        <li><strong>WLABTreasuryUUPS</strong> — Upgradeable treasury behind production-named proxy</li>
       </ul>
 
-      <h2>Token Utility</h2>
-      <p>Launch fees, staking rewards, governance, liquidity incentives, bridge fees (Phase 2), and programmatic buyback-and-burn from protocol revenue.</p>
+      <h2 id="utility">Token Utility</h2>
+      <p>Launch fees, staking rewards, governance, liquidity incentives, and programmatic buyback-and-burn from protocol revenue where implemented.</p>
 
-      <h2>Tokenomics</h2>
+      <h2 id="tokenomics">Tokenomics</h2>
       <p><strong>Max supply:</strong> 1,000,000,000 WLAB (fixed cap).</p>
       <p><strong>TGE circulating:</strong> ~88.5M WLAB (~8.85%) from documented unlock buckets.</p>
       <p><strong>Staking emissions:</strong> 180M WLAB over 60 months (3M/month from pre-allocated pool).</p>
 
-      <h2>Governance</h2>
-      <p>Proposal threshold 100,000 WLAB delegated. Voting period ~7 days on Base. Critical operations route through Timelock. Admin roles must migrate to Gnosis Safe before mainnet.</p>
+      <h2 id="governance">Governance</h2>
+      <p>Proposal threshold 100,000 WLAB delegated. Voting period configured for Base block times. Critical operations route through Timelock. Production deploys enforce multisig handover before the deploy script exits.</p>
 
-      <h2>Security</h2>
-      <p>Reentrancy guards, SafeERC20 on value transfers, disabled OFT stub by default, invariant tests on sale obligations and staking weights. External audit required before mainnet capital deployment.</p>
+      <h2 id="security">Security</h2>
+      <p>Reentrancy guards, SafeERC20 on value transfers, disabled OFT stub by default, 192 regression tests, adversarial branch coverage on core contracts, Slither in CI. External audit required before mainnet capital deployment.</p>
 
-      <h2>Risks</h2>
+      <h2 id="risks">Risks</h2>
       <ul>
         <li>Smart contract vulnerabilities (mitigated via audit + bug bounty)</li>
         <li>Admin key compromise (mitigated via multisig + timelock)</li>
-        <li>Vesting cliff sell pressure (documented in tokenomics)</li>
+        <li>Token concentration affecting early governance</li>
         <li>Regulatory uncertainty for token sales in your jurisdiction</li>
       </ul>
 
       <p><a class="btn primary" href="/app">Open Protocol Console</a></p>
     </article>
     <footer class="site-footer">
-      <p>Full technical docs in repository <code>docs/</code> directory.</p>
+      <p>Full technical docs in repository <code>docs/</code> directory. <a href="#top">Back to top</a></p>
     </footer>
   </body>
 </html>

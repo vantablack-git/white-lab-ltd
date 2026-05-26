@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
 describe("WLABVesting", function () {
-  let token, vesting, owner, beneficiary;
+  let token, vesting, owner, beneficiary, treasury;
 
   beforeEach(async function () {
     [owner, beneficiary, treasury] = await ethers.getSigners();
@@ -129,5 +129,196 @@ describe("WLABVesting", function () {
     const ownerAfter = await stray.balanceOf(owner.address);
 
     expect(ownerAfter - ownerBefore).to.equal(stuck);
+  });
+
+  // ── Phase 10 branch coverage: defensive paths and exact vesting edges ─────
+  describe("branch coverage", function () {
+    async function createDefaultSchedule({
+      account = beneficiary,
+      amount = ethers.parseEther("1000"),
+      cliff = 0n,
+      duration = 1000n,
+      revocable = true,
+      start,
+    } = {}) {
+      const scheduleStart = start ?? BigInt(await time.latest());
+      await vesting.createSchedule(
+        account.address,
+        amount,
+        scheduleStart,
+        cliff,
+        duration,
+        revocable
+      );
+      return { amount, start: scheduleStart, cliff, duration, revocable };
+    }
+
+    it("constructor rejects a zero token address", async function () {
+      const Vesting = await ethers.getContractFactory("WLABVesting");
+      await expect(
+        Vesting.deploy(ethers.ZeroAddress, owner.address)
+      ).to.be.revertedWith("Vesting: zero token");
+    });
+
+    it("createSchedule rejects zero beneficiary, zero amount, zero duration, and duplicate schedules", async function () {
+      const now = BigInt(await time.latest());
+
+      await expect(
+        vesting.createSchedule(ethers.ZeroAddress, ethers.parseEther("1"), now, 0, 1000, true)
+      ).to.be.revertedWith("Vesting: zero beneficiary");
+
+      await expect(
+        vesting.createSchedule(beneficiary.address, 0, now, 0, 1000, true)
+      ).to.be.revertedWith("Vesting: zero amount");
+
+      await expect(
+        vesting.createSchedule(beneficiary.address, ethers.parseEther("1"), now, 0, 0, true)
+      ).to.be.revertedWith("Vesting: zero duration");
+
+      await createDefaultSchedule({ start: now });
+      await expect(
+        vesting.createSchedule(beneficiary.address, ethers.parseEther("1"), now, 0, 1000, true)
+      ).to.be.revertedWith("Vesting: exists");
+    });
+
+    it("only the owner can create schedules, revoke, or emergency withdraw", async function () {
+      const now = BigInt(await time.latest());
+      await expect(
+        vesting.connect(beneficiary).createSchedule(
+          beneficiary.address,
+          ethers.parseEther("1"),
+          now,
+          0,
+          1000,
+          true
+        )
+      ).to.be.revertedWithCustomError(vesting, "OwnableUnauthorizedAccount");
+
+      await createDefaultSchedule({ start: now });
+
+      await expect(
+        vesting.connect(beneficiary).revoke(beneficiary.address)
+      ).to.be.revertedWithCustomError(vesting, "OwnableUnauthorizedAccount");
+
+      await expect(
+        vesting.connect(beneficiary).emergencyWithdraw(await token.getAddress(), 0)
+      ).to.be.revertedWithCustomError(vesting, "OwnableUnauthorizedAccount");
+    });
+
+    it("release rejects no schedule, before cliff, and after schedule is revoked", async function () {
+      await expect(
+        vesting.connect(beneficiary).release()
+      ).to.be.revertedWith("Vesting: nothing to release");
+
+      const start = BigInt(await time.latest()) + 100n;
+      const cliff = 30n * 24n * 60n * 60n;
+      await createDefaultSchedule({ start, cliff, duration: 365n * 24n * 60n * 60n });
+
+      await time.increaseTo(start + cliff - 1n);
+      expect(await vesting.releasableAmount(beneficiary.address)).to.equal(0n);
+      await expect(
+        vesting.connect(beneficiary).release()
+      ).to.be.revertedWith("Vesting: nothing to release");
+
+      await vesting.revoke(beneficiary.address);
+      expect(await vesting.releasableAmount(beneficiary.address)).to.equal(0n);
+      await expect(
+        vesting.connect(beneficiary).release()
+      ).to.be.revertedWith("Vesting: nothing to release");
+    });
+
+    it("releases the exact full amount after the schedule fully vests", async function () {
+      const amount = ethers.parseEther("777");
+      const start = BigInt(await time.latest());
+      const duration = 1000n;
+      await createDefaultSchedule({ amount, start, duration });
+
+      await time.increaseTo(start + duration + 1n);
+      await expect(vesting.connect(beneficiary).release())
+        .to.emit(vesting, "TokensReleased")
+        .withArgs(beneficiary.address, amount);
+
+      expect(await token.balanceOf(beneficiary.address)).to.equal(amount);
+      expect(await vesting.totalOutstanding()).to.equal(0n);
+      await expect(
+        vesting.connect(beneficiary).release()
+      ).to.be.revertedWith("Vesting: nothing to release");
+    });
+
+    it("revoke rejects no schedule, non-revocable schedules, and already-revoked schedules", async function () {
+      await expect(
+        vesting.revoke(beneficiary.address)
+      ).to.be.revertedWith("Vesting: no schedule");
+
+      const start = BigInt(await time.latest());
+      await createDefaultSchedule({ start, revocable: false });
+      await expect(
+        vesting.revoke(beneficiary.address)
+      ).to.be.revertedWith("Vesting: not revocable");
+    });
+
+    it("revoke after full release refunds nothing and the unreleased path is skipped", async function () {
+      const amount = ethers.parseEther("1000");
+      const start = BigInt(await time.latest());
+      await createDefaultSchedule({ amount, start, duration: 1000n, revocable: true });
+
+      await time.increaseTo(start + 1001n);
+      await vesting.connect(beneficiary).release();
+
+      const ownerBefore = await token.balanceOf(owner.address);
+      const benBefore = await token.balanceOf(beneficiary.address);
+
+      await expect(vesting.revoke(beneficiary.address))
+        .to.emit(vesting, "ScheduleRevoked")
+        .withArgs(beneficiary.address, 0n);
+
+      expect(await token.balanceOf(beneficiary.address)).to.equal(benBefore);
+      expect(await token.balanceOf(owner.address)).to.equal(ownerBefore);
+      expect(await vesting.totalOutstanding()).to.equal(0n);
+    });
+
+    it("revoke cannot be called twice and closes outstanding obligations", async function () {
+      const start = BigInt(await time.latest());
+      await createDefaultSchedule({ start, duration: 1000n, revocable: true });
+
+      await vesting.revoke(beneficiary.address);
+      expect(await vesting.totalOutstanding()).to.equal(0n);
+      await expect(
+        vesting.revoke(beneficiary.address)
+      ).to.be.revertedWith("Vesting: already revoked");
+    });
+
+    it("revoke after full vesting pays beneficiary everything and refunds nothing", async function () {
+      const amount = ethers.parseEther("1234");
+      const start = BigInt(await time.latest());
+      const duration = 1000n;
+      await createDefaultSchedule({ amount, start, duration, revocable: true });
+
+      const ownerBefore = await token.balanceOf(owner.address);
+      await time.increaseTo(start + duration + 1n);
+      await expect(vesting.revoke(beneficiary.address))
+        .to.emit(vesting, "ScheduleRevoked")
+        .withArgs(beneficiary.address, 0n);
+
+      expect(await token.balanceOf(beneficiary.address)).to.equal(amount);
+      expect(await token.balanceOf(owner.address)).to.equal(ownerBefore);
+      expect(await vesting.totalOutstanding()).to.equal(0n);
+    });
+
+    it("emergencyWithdraw on the vested token rejects when no excess exists and allows exact excess", async function () {
+      const amount = ethers.parseEther("1000");
+      await createDefaultSchedule({ amount, start: BigInt(await time.latest()), duration: 1000n });
+
+      await expect(
+        vesting.emergencyWithdraw(await token.getAddress(), 1n)
+      ).to.be.revertedWith("Vesting: protected balance");
+
+      const excess = ethers.parseEther("9");
+      await token.connect(owner).transfer(await vesting.getAddress(), excess);
+      await expect(vesting.emergencyWithdraw(await token.getAddress(), excess))
+        .to.emit(vesting, "EmergencyWithdraw")
+        .withArgs(await token.getAddress(), excess);
+      expect(await vesting.totalOutstanding()).to.equal(amount);
+    });
   });
 });

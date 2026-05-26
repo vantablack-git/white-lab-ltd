@@ -19,6 +19,8 @@ const types = {
 
 const routes = {
   "/": "website/index.html",
+  "/tr": "website/tr/index.html",
+  "/tr/": "website/tr/index.html",
   "/app": "frontend/index.html",
   "/app/": "frontend/index.html",
   "/whitepaper": "website/whitepaper.html",

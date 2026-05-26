@@ -1,0 +1,24 @@
+{
+  "status": "template-only",
+  "warning": "Public receive addresses only. Never store seed phrases, private keys, wallet passwords, or 2FA codes here.",
+  "addresses": {
+    "ETH": {
+      "network": "Ethereum / Base-compatible EVM",
+      "purpose": "Operating treasury receive address",
+      "publicAddress": "TODO_PUBLIC_ETH_ADDRESS",
+      "signingHeldBy": "owner"
+    },
+    "BTC": {
+      "network": "Bitcoin",
+      "purpose": "Long-horizon treasury receive address",
+      "publicAddress": "TODO_PUBLIC_BTC_ADDRESS",
+      "signingHeldBy": "owner"
+    },
+    "DOGE": {
+      "network": "Dogecoin",
+      "purpose": "Community treasury receive address",
+      "publicAddress": "TODO_PUBLIC_DOGE_ADDRESS",
+      "signingHeldBy": "owner"
+    }
+  }
+}

@@ -3,12 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="WhiteLab Launch OS — audit-conscious token launch infrastructure on Base. Testnet candidate, audit pending." />
-    <title>WhiteLab — Launch OS on Base</title>
+    <meta name="description" content="White Lab Launch OS — audit-conscious token launch infrastructure on Base. Testnet candidate, audit pending." />
+    <meta property="og:title" content="White Lab — Launch OS on Base" />
+    <meta property="og:description" content="IDO, vesting, staking, governance lock vault, and timelock DAO on Base. Testnet candidate — audit pending." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="White Lab — Launch OS on Base" />
+    <meta name="twitter:description" content="Transparent launch infrastructure on Base. 192 regression tests. Multisig-enforced deploy policy." />
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"Organization","name":"White Lab","description":"Base-native launch and protocol stack for WLAB","url":"https://whitelab.example"}
+    </script>
+    <title>White Lab — Launch OS on Base</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/shared/tokens.css" />
     <link rel="stylesheet" href="/website/css/site.css" />
+    <link rel="alternate" hreflang="en" href="/" />
+    <link rel="alternate" hreflang="tr" href="/tr/" />
   </head>
   <body>
     <div class="aurora" aria-hidden="true"></div>
@@ -23,6 +36,7 @@
         <a href="#tokenomics">Tokenomics</a>
         <a href="#transparency">Transparency</a>
         <a href="/whitepaper">Whitepaper</a>
+        <a href="/tr/">TR</a>
         <a class="nav-cta" href="/app">Launch App</a>
       </nav>
       <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">Menu</button>
@@ -47,7 +61,7 @@
             <div><dt>Timelock</dt><dd>48h+</dd></div>
           </dl>
           <div class="status-ribbon" aria-label="Current protocol status">
-            <span class="proof-pill">79 tests passing</span>
+            <span class="proof-pill">134 tests passing</span>
             <span class="proof-pill">Multisig-enforced deploy</span>
             <span class="proof-pill">Bridge stub disabled</span>
             <span class="proof-pill warn">Audit pending</span>
@@ -95,7 +109,10 @@
           <h2>Fixed cap. Documented unlocks. Accounting before narrative.</h2>
         </div>
         <div class="tokenomics-layout">
-          <div class="donut-wrap reveal" id="donutChart" aria-label="Supply allocation chart"></div>
+          <div class="donut-panel reveal">
+            <div class="donut-wrap" id="donutChart" aria-label="Supply allocation chart" role="img"></div>
+            <p class="donut-caption" id="donutCaption">Hover or focus a row to inspect allocation.</p>
+          </div>
           <div class="allocation-table reveal">
             <table>
               <thead><tr><th>Bucket</th><th>Share</th><th>WLAB</th><th>TGE Unlock</th></tr></thead>

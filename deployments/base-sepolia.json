@@ -1,6 +1,6 @@
 {
   "network": "baseSepolia",
   "chainId": "84532",
-  "note": "Production-candidate demo verified locally: 47 tests passing, 90.03% line coverage. Run npm run env:check before npm run deploy:sepolia.",
+  "note": "Template only. Run npm run env:check then npm run deploy:sepolia after setting PRIVATE_KEY, BASE_SEPOLIA_RPC, ETHERSCAN_API_KEY, TREASURY_ADDRESS, and MULTISIG_ADDRESS.",
   "contracts": {}
 }

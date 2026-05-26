@@ -38,6 +38,28 @@ describe("WLABTreasuryUUPS", function () {
     expect(await token.balanceOf(recipient.address)).to.equal(ethers.parseEther("25"));
   });
 
+  // ── Branch coverage: require else-paths and modifier else-paths ────────────
+  describe("branch coverage", function () {
+    it("setFeeSwitch reverts when fee exceeds 1000 bps", async function () {
+      await expect(
+        treasury.connect(owner).setFeeSwitch(true, 1001)
+      ).to.be.revertedWith("Treasury: fee too high");
+    });
+
+    it("setFeeSwitch reverts when called by non-admin", async function () {
+      await expect(
+        treasury.connect(outsider).setFeeSwitch(true, 100)
+      ).to.be.reverted;
+    });
+
+    it("withdraw reverts when recipient is zero address", async function () {
+      await treasury.connect(owner).grantRole(await treasury.SPENDER_ROLE(), spender.address);
+      await expect(
+        treasury.connect(spender).withdraw(await token.getAddress(), ethers.ZeroAddress, 1)
+      ).to.be.revertedWith("Treasury: zero to");
+    });
+  });
+
   it("preserves storage and requires upgrader role for UUPS upgrades", async function () {
     await treasury.connect(owner).setFeeSwitch(true, 250);
 

@@ -127,6 +127,98 @@ describe("WLABStaking", function () {
     expect(after - before).to.be.lt(ethers.parseEther("100"));
   });
 
+  // ── Branch coverage: require else-paths and edge-case branches ─────────────
+  describe("branch coverage", function () {
+    it("constructor rejects zero staking token", async function () {
+      const Staking = await ethers.getContractFactory("WLABStaking");
+      await expect(
+        Staking.deploy(ethers.ZeroAddress, await token.getAddress(), owner.address)
+      ).to.be.revertedWith("Staking: zero token");
+    });
+
+    it("stake rejects zero amount", async function () {
+      await expect(
+        staking.connect(user).stake(0, 0, false)
+      ).to.be.revertedWith("Staking: zero amount");
+    });
+
+    it("stake rejects invalid tier index", async function () {
+      await expect(
+        staking.connect(user).stake(ethers.parseEther("100"), 4, false)
+      ).to.be.revertedWith("Staking: invalid tier");
+    });
+
+    it("unstake rejects zero amount", async function () {
+      await expect(
+        staking.connect(user).unstake(0)
+      ).to.be.revertedWith("Staking: zero amount");
+    });
+
+    it("unstake rejects amount exceeding balance", async function () {
+      await staking.connect(user).stake(ethers.parseEther("100"), 0, false);
+      await expect(
+        staking.connect(user).unstake(ethers.parseEther("101"))
+      ).to.be.revertedWith("Staking: insufficient");
+    });
+
+    it("unstake rejects before lock end", async function () {
+      await staking.connect(user).stake(ethers.parseEther("100"), 0, false);
+      await expect(
+        staking.connect(user).unstake(ethers.parseEther("1"))
+      ).to.be.revertedWith("Staking: locked");
+    });
+
+    it("emergencyUnstake rejects with no stake", async function () {
+      await expect(
+        staking.connect(user).emergencyUnstake()
+      ).to.be.revertedWith("Staking: no stake");
+    });
+
+    it("setRewardRate may only be called by the owner", async function () {
+      await expect(
+        staking.connect(user).setRewardRate(1)
+      ).to.be.revertedWithCustomError(staking, "OwnableUnauthorizedAccount");
+    });
+
+    it("setRewardProgram may only be called by the owner", async function () {
+      await expect(
+        staking.connect(user).setRewardProgram(1, 7 * 24 * 60 * 60)
+      ).to.be.revertedWithCustomError(staking, "OwnableUnauthorizedAccount");
+    });
+
+    it("pendingReward returns zero for a user with no stake (zero weight)", async function () {
+      expect(await staking.pendingReward(user.address)).to.equal(0);
+    });
+
+    it("setRewardProgram rejects zero duration", async function () {
+      await staking.connect(owner).setRewardRate(0);
+      await expect(
+        staking.connect(owner).setRewardProgram(1, 0)
+      ).to.be.revertedWith("Staking: zero duration");
+    });
+
+    it("handles split reward token in _rewardBackingBalance by returning raw balance", async function () {
+      const RewardToken = await ethers.getContractFactory("WLABToken");
+      const rewardToken = await RewardToken.deploy(owner.address, treasury.address);
+      const Staking = await ethers.getContractFactory("WLABStaking");
+      const splitStaking = await Staking.deploy(
+        await token.getAddress(),
+        await rewardToken.getAddress(),
+        owner.address
+      );
+
+      await token.connect(owner).mint(await splitStaking.getAddress(), ethers.parseEther("1000"));
+      await rewardToken.connect(owner).mint(await splitStaking.getAddress(), ethers.parseEther("500"));
+
+      await splitStaking.connect(owner).setRewardProgram(
+        ethers.parseEther("1") / 86400n,
+        7 * 24 * 60 * 60
+      );
+
+      expect(await splitStaking.rewardRatePerSecond()).to.equal(ethers.parseEther("1") / 86400n);
+    });
+  });
+
   // ── Phase 1D regression: top-ups never silently shorten or mis-handle the lock ─
   it("same-tier top-up never shortens the lock and matches max(existing, new)", async function () {
     const tier = 3; // 365 days

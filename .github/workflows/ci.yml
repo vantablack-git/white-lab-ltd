@@ -38,3 +38,62 @@ jobs:
 
       - name: Build static site
         run: npm run build:site
+
+  static-analysis:
+    name: Slither static analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Run Slither
+        id: slither
+        uses: crytic/slither-action@v0.4.0
+        continue-on-error: true
+        with:
+          node-version: "20"
+          slither-config: slither.config.json
+          fail-on: high
+          sarif: slither.sarif
+          slither-args: --json slither-report.json
+
+      - name: Upload Slither SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slither-sarif
+          path: slither.sarif
+          if-no-files-found: ignore
+
+      - name: Upload Slither JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slither-report
+          path: slither-report.json
+          if-no-files-found: ignore
+
+      - name: Surface Slither outcome
+        if: always()
+        run: |
+          if [ "${{ steps.slither.outcome }}" = "failure" ]; then
+            echo "::error::Slither reported high-severity findings. Inspect the SARIF artifact and remediate before merging."
+            exit 1
+          else
+            echo "Slither completed without high-severity findings (informational and optimization detectors are excluded by slither.config.json)."
+          fi

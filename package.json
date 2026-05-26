@@ -19,6 +19,8 @@
     "verify": "hardhat run scripts/verify.js --network baseSepolia",
     "verify:base": "hardhat run scripts/verify.js --network base",
     "e2e:local": "hardhat run scripts/e2e-local.js --network hardhat",
+    "gas": "node -e \"process.env.REPORT_GAS='true'; process.exit(require('child_process').spawnSync('npx', ['hardhat', 'test'], { stdio: 'inherit', shell: true }).status)\"",
+    "publish:manifest": "node scripts/publish-manifest.js",
     "frontend": "npm run start",
     "env:check": "node scripts/validate-env.js",
     "env:check:base": "node scripts/validate-env.js base",

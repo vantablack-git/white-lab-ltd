@@ -138,11 +138,6 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
 
         if (paymentToken == address(0)) {
             require(msg.value >= paymentRequired, "Sale: insufficient ETH");
-            uint256 excess = msg.value - paymentRequired;
-            if (excess > 0) {
-                (bool refundExtra, ) = msg.sender.call{value: excess}("");
-                require(refundExtra, "Sale: eth refund fail");
-            }
         } else {
             require(msg.value == 0, "Sale: ETH not accepted");
             IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), paymentRequired);
@@ -156,6 +151,14 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
         totalUnclaimedTokens                  += tokenAmount;
 
         emit Purchased(phase, msg.sender, paymentRequired, tokenAmount);
+
+        if (paymentToken == address(0)) {
+            uint256 excess = msg.value - paymentRequired;
+            if (excess > 0) {
+                (bool refundExtra, ) = msg.sender.call{value: excess}("");
+                require(refundExtra, "Sale: eth refund fail");
+            }
+        }
     }
 
     /**
@@ -271,6 +274,7 @@ contract WLABTokenSale is Ownable, ReentrancyGuard {
         require(amount > 0, "Sale: nothing to withdraw");
         withdrawableRaisedWei = 0;
         if (paymentToken == address(0)) {
+            // slither-disable-next-line arbitrary-send-eth
             (bool ok, ) = to.call{value: amount}("");
             require(ok, "Sale: withdraw fail");
         } else {

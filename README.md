@@ -14,7 +14,7 @@ npm run e2e:local
 npm run build:site
 ```
 
-Expected today: `79 passing` plus local E2E passing.
+Expected today: `192 passing` plus local E2E passing.
 
 For a local deploy:
 
@@ -85,15 +85,34 @@ npm run verify
 - Readiness: `docs/10-production-candidate-readiness.md`
 - Operations: `docs/11-operations-runbook.md`
 - Threat model: `docs/13-threat-model.md`
+- Audit prep: `docs/audit-prep.md`
+- Gas budget: `docs/gas-budget.md`
+- Pre-mainnet checklist: `docs/pre-mainnet-checklist.md`
 - ADRs: `docs/adr/`
 - Turkish materials/translations: `docs/tr/`
 - Internal handoff and historical notes: `docs/internal/`
+
+## Static Analysis
+
+Slither runs in CI on every push and pull request via `crytic/slither-action`. The pipeline:
+
+- Uses the existing `slither.config.json` (filters `node_modules`, `contracts/test`, excludes informational/optimization detectors).
+- Fails the build on **high-severity** findings.
+- Persists the SARIF and JSON reports as artifacts under the `static-analysis` job for review.
+
+To run Slither locally (Linux/macOS, Python 3.10+):
+
+```bash
+pip install slither-analyzer
+npm run compile
+slither . --config-file slither.config.json
+```
 
 ## Mainnet Blockers
 
 - External smart contract audit not complete.
 - Public bug bounty not complete.
-- Slither/static analysis must be run in CI or release ceremony and remediated.
+- Slither runs in CI; release ceremony must still archive the latest CI report and remediate before mainnet.
 - Real bridge implementation is not present; current OFT adapter is a disabled stub.
 - Legal/compliance review, liquidity plan, and public launch operations remain outside the codebase.
 

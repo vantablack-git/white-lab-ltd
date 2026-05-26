@@ -72,13 +72,18 @@ async function main() {
     [c.WLABToken, d.deployer || deployer.address],
     "WLABLockVault"
   );
-  await verifyContract(
-    c.WLABOFTAdapter,
-    [c.WLABToken, d.deployer || deployer.address],
-    "WLABOFTAdapter"
-  );
+  if (c.WLABOFTAdapter) {
+    await verifyContract(
+      c.WLABOFTAdapter,
+      [c.WLABToken, d.deployer || deployer.address],
+      "WLABOFTAdapter"
+    );
+  } else {
+    console.log("Skipped: WLABOFTAdapter not in manifest");
+  }
 
   console.log("\n=== VERIFY COMPLETE ===");
+  console.log("Record Basescan URLs in docs/internal/BASESCAN-VERIFICATION.md");
 }
 
 main().catch((err) => {
