@@ -186,3 +186,14 @@ Tüm mimari kararlar, eylemler ve doğrulama kayıtları.
 - **VERIFY** `npx.cmd hardhat run scripts/deploy.js --network hardhat` -> PASS
 - **VERIFY** Browser smoke test desktop/mobile -> PASS, no console errors.
 - **STATUS** Testnet/demo candidate materially improved; mainnet still blocked by audit, Slither, 95% coverage, Safe handover, treasury proxy deployment, and real OFT implementation.
+
+---
+
+## [2026-05-30] Aşama 5 — API Intelligence + 7-Phase Completion Roadmap
+
+- **ACTION** `docs/internal/COMPLETION-ROADMAP.md` — master plan (7 macro phases, auto-continue rules).
+- **ACTION** `docs/ecosystem/api-intelligence-research.md` — scraping + crypto API web research, monetization models.
+- **ACTION** `shared/api-directory.json`, `website/apis.html`, `website/js/apis.js`, build + dev routes.
+- **ACTION** `docs/tr/TAMAMLAMA-ROADMAP.md` — Turkish operator summary.
+- **NOTE** Notion MCP requires auth; research documented in-repo instead of Notion page.
+- **VERIFY** `npm run validate` + `npm run build:site` before commit.

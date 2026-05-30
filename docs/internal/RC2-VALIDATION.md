@@ -11,7 +11,7 @@ Status: **release candidate for testnet/demo surfaces — mainnet still blocked*
 | Unit/integration tests | 192 passing |
 | Local E2E | PASSED |
 | Gas reporter | `npm run gas` |
-| Branch coverage | 84.17% whole-repo (post phases 8–11) |
+| Branch coverage | 95.45% whole-repo (192 tests, post phases 8–11) |
 | Slither | CI high-severity gate |
 | Static site build | `npm run build:site` |
 

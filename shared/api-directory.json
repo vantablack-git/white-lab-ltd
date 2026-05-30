@@ -1,0 +1,186 @@
+{
+  "meta": {
+    "title": "White Lab API Directory",
+    "description": "Curated free and paid APIs for scraping, crypto data, and builder workflows.",
+    "updated": "2026-05-30",
+    "researchDoc": "/docs/ecosystem/api-intelligence-research.md"
+  },
+  "categories": [
+    {
+      "id": "scraping-free",
+      "label": "Web scraping — free / generous tier",
+      "apis": [
+        {
+          "name": "Firecrawl",
+          "tier": "free",
+          "freeAllowance": "1,000 pages/month",
+          "pricingUrl": "https://www.firecrawl.dev/pricing",
+          "bestFor": "AI/RAG, Markdown output, MCP agents",
+          "efficiency": "high",
+          "notes": "1 credit per page scrape; open-source core available"
+        },
+        {
+          "name": "ScraperAPI",
+          "tier": "free-trial",
+          "freeAllowance": "1K credits + 7-day 5K trial",
+          "pricingUrl": "https://www.scraperapi.com/pricing/",
+          "bestFor": "Proxy rotation, multi-language SDKs",
+          "efficiency": "medium",
+          "notes": "Credit multipliers on JS and premium proxies"
+        },
+        {
+          "name": "ScrapingBee",
+          "tier": "free-trial",
+          "freeAllowance": "1,000 API calls",
+          "pricingUrl": "https://www.scrapingbee.com/pricing/",
+          "bestFor": "JavaScript rendering, screenshots",
+          "efficiency": "high",
+          "notes": "Entry paid $49/mo for 250K base credits"
+        },
+        {
+          "name": "Apify",
+          "tier": "free",
+          "freeAllowance": "$5 platform credits/month",
+          "pricingUrl": "https://apify.com/pricing",
+          "bestFor": "19K+ prebuilt Actors marketplace",
+          "efficiency": "high",
+          "notes": "Serverless containers; pay for compute + proxy"
+        },
+        {
+          "name": "FlyByAPIs",
+          "tier": "free",
+          "freeAllowance": "200 Google SERP requests/month",
+          "pricingUrl": "https://flybyapis.com/",
+          "bestFor": "Structured SERP JSON",
+          "efficiency": "very-high",
+          "notes": "Permanent free tier, no credit card"
+        }
+      ]
+    },
+    {
+      "id": "scraping-paid",
+      "label": "Web scraping — paid / scale",
+      "apis": [
+        {
+          "name": "Olostep",
+          "tier": "paid",
+          "entryPrice": "From $9/mo (5K pages)",
+          "pricingUrl": "https://www.olostep.com/",
+          "bestFor": "Batch JSON, 10K URL async jobs",
+          "efficiency": "very-high",
+          "notes": "Scale ~$0.399/1K pages at 1M/mo"
+        },
+        {
+          "name": "Bright Data",
+          "tier": "enterprise",
+          "entryPrice": "From ~$1.50/1K records PAYG",
+          "pricingUrl": "https://brightdata.com/pricing/web-scraper",
+          "bestFor": "Anti-bot, residential proxy scale",
+          "efficiency": "medium",
+          "notes": "Scale plans from ~$499/mo"
+        },
+        {
+          "name": "Scrape.do",
+          "tier": "paid",
+          "entryPrice": "From $29/mo",
+          "pricingUrl": "https://scrape.do/",
+          "bestFor": "Pay-only-for-success scraping",
+          "efficiency": "high",
+          "notes": "110M proxy pool"
+        },
+        {
+          "name": "Oxylabs",
+          "tier": "paid",
+          "entryPrice": "Free trial; from ~$49/mo",
+          "pricingUrl": "https://oxylabs.io/pricing",
+          "bestFor": "Web Scraper API, AI-assisted setup",
+          "efficiency": "medium",
+          "notes": "OxyCopilot prompt-to-code"
+        }
+      ]
+    },
+    {
+      "id": "crypto-free",
+      "label": "Crypto & DeFi — free tier",
+      "apis": [
+        {
+          "name": "DefiLlama",
+          "tier": "free",
+          "freeAllowance": "Unlimited fair use (no API key)",
+          "pricingUrl": "https://api-docs.defillama.com/",
+          "bestFor": "TVL, yields, DEX volume, stablecoins",
+          "efficiency": "very-high",
+          "notes": "api.llama.fi — best no-friction DeFi data"
+        },
+        {
+          "name": "CoinGecko Demo",
+          "tier": "free",
+          "freeAllowance": "10,000 credits/month",
+          "pricingUrl": "https://www.coingecko.com/en/api/pricing",
+          "bestFor": "Broad coin coverage, OHLCV history",
+          "efficiency": "high",
+          "notes": "Flat 1 credit/request; cache-friendly"
+        },
+        {
+          "name": "CoinMarketCap",
+          "tier": "free",
+          "freeAllowance": "10,000 credits/month; keyless endpoints",
+          "pricingUrl": "https://coinmarketcap.com/api/pricing/",
+          "bestFor": "Listings, metadata, zero-signup keyless",
+          "efficiency": "medium",
+          "notes": "Variable credits per endpoint"
+        },
+        {
+          "name": "Binance Public API",
+          "tier": "free",
+          "freeAllowance": "1200 req/min REST; free WebSocket",
+          "pricingUrl": "https://binance-docs.github.io/apidocs/",
+          "bestFor": "Single-exchange real-time prices",
+          "efficiency": "very-high",
+          "notes": "Best free WebSocket for trading bots"
+        }
+      ]
+    },
+    {
+      "id": "crypto-paid",
+      "label": "Crypto data — paid production",
+      "apis": [
+        {
+          "name": "CoinGecko Analyst",
+          "tier": "paid",
+          "entryPrice": "~$129/mo",
+          "pricingUrl": "https://www.coingecko.com/en/api/pricing",
+          "bestFor": "Full historical, WebSocket, webhooks",
+          "efficiency": "high",
+          "notes": "6–24x cheaper than CMC equivalent queries per benchmarks"
+        },
+        {
+          "name": "DefiLlama Pro",
+          "tier": "paid",
+          "entryPrice": "~$300/mo",
+          "pricingUrl": "https://api-docs.defillama.com/",
+          "bestFor": "Higher rate limits, pro-only endpoints",
+          "efficiency": "high",
+          "notes": "pro-api.llama.fi"
+        },
+        {
+          "name": "CoinMarketCap Hobbyist+",
+          "tier": "paid",
+          "entryPrice": "From ~$79/mo",
+          "pricingUrl": "https://coinmarketcap.com/api/pricing/",
+          "bestFor": "Commercial metadata products",
+          "efficiency": "medium",
+          "notes": "Watch credit multipliers on heavy endpoints"
+        }
+      ]
+    }
+  ],
+  "monetization": {
+    "summary": "WhiteLab ecosystem side revenue via API directory affiliates, future Data Gateway, and grants-linked builder tools.",
+    "models": [
+      "Affiliate referrals on recommended APIs",
+      "WLAB-staked discount on WhiteLab Data Gateway (future)",
+      "Grants for Actors/subgraphs that drive protocol fees"
+    ]
+  }
+}

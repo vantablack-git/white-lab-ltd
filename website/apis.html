@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Curated free and paid APIs for web scraping and crypto data — builder directory for the White Lab ecosystem." />
+    <meta property="og:title" content="White Lab API Directory" />
+    <meta property="og:description" content="Efficient free tiers and paid scale options for scraping and crypto market data." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/public/og-card.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#000000" />
+    <title>API Directory — White Lab Ecosystem</title>
+    <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/shared/tokens.css" />
+    <link rel="stylesheet" href="/website/css/site.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="/" aria-label="White Lab home">
+        <span class="brand-sigil" aria-hidden="true"><span></span></span>
+        <span class="wordmark">White Lab</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/app">Console</a>
+        <a href="/whitepaper/">Whitepaper</a>
+        <a class="nav-cta" href="#monetization">Side revenue</a>
+      </nav>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </header>
+
+    <main class="page">
+      <section class="section">
+        <div class="section-head">
+          <p class="eyebrow">Ecosystem · API Intelligence</p>
+          <h1>Builder API directory</h1>
+          <p class="section-copy">
+            Curated free and paid APIs for freelancers and protocol builders — web scraping, crypto market data,
+            and DeFi analytics. Research-backed; verify live pricing before production.
+          </p>
+          <div class="status-ribbon">
+            <span class="proof-pill">Updated May 2026</span>
+            <span class="proof-pill">Free tier focus</span>
+            <span class="proof-pill">Paid scale options</span>
+          </div>
+        </div>
+
+        <div id="apiDirectory" class="api-directory" aria-live="polite">
+          <p class="fine-print">Loading API directory…</p>
+        </div>
+
+        <article class="transparency-panel reveal" id="monetization">
+          <h2>White Lab side revenue angle</h2>
+          <p>
+            This directory supports the WLAB ecosystem as a builder onboarding surface: affiliate referrals on
+            recommended tools, future <strong>Data Gateway</strong> credits (WLAB stake discounts), and grants for
+            Actors/subgraphs that drive protocol usage.
+          </p>
+          <ul>
+            <li><strong>Phase A (now):</strong> Public directory + research doc in repo</li>
+            <li><strong>Phase B:</strong> Partner affiliate enrollment</li>
+            <li><strong>Phase C:</strong> Cloudflare Worker gateway with rate limits</li>
+          </ul>
+          <p class="fine-print">
+            Full analysis: repository <code>docs/ecosystem/api-intelligence-research.md</code> ·
+            Completion roadmap: <code>docs/internal/COMPLETION-ROADMAP.md</code>
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 White Lab Protocol. Third-party APIs subject to their terms. Not financial advice.</p>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/app">Console</a>
+        <a href="/legal">Legal</a>
+      </div>
+    </footer>
+
+    <script src="/website/js/site.js" type="module"></script>
+    <script src="/website/js/apis.js" type="module"></script>
+  </body>
+</html>

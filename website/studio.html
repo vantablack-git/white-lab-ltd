@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="White Lab Studio — scrape any public URL into freelancer-ready documentation and exportable cover images." />
+    <meta property="og:title" content="White Lab Studio — Scrape to Documentation" />
+    <meta property="og:description" content="Turn web pages into agency-ready markdown docs and branded cover images in seconds." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/public/og-card.svg" />
+    <meta name="theme-color" content="#000000" />
+    <title>White Lab Studio — Scrape to Documentation</title>
+    <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/shared/tokens.css" />
+    <link rel="stylesheet" href="/website/css/site.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="/" aria-label="White Lab home">
+        <span class="brand-sigil" aria-hidden="true"><span></span></span>
+        <span class="wordmark">White Lab</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/apis/">APIs</a>
+        <a href="/app">Console</a>
+        <a class="nav-cta" href="#studio-form">Start scrape</a>
+      </nav>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </header>
+
+    <main class="page studio-page">
+      <section class="section studio-hero">
+        <div class="section-head">
+          <p class="eyebrow">White Lab Studio · Freelancer &amp; agency tool</p>
+          <h1>Scrape once. Ship documentation.</h1>
+          <p class="section-copy">
+            Paste any public URL. White Lab Studio captures readable content, formats a client-ready markdown
+            deliverable, and generates a branded cover image for decks, Notion, or LinkedIn.
+          </p>
+          <div class="status-ribbon">
+            <span class="proof-pill">Markdown export</span>
+            <span class="proof-pill">Cover image PNG</span>
+            <span class="proof-pill">Agency templates</span>
+            <span class="proof-pill warn">Public URLs only</span>
+          </div>
+        </div>
+
+        <form class="studio-panel reveal" id="studio-form">
+          <label class="studio-field">
+            <span>Page URL</span>
+            <input id="targetUrl" type="url" name="url" required placeholder="https://docs.example.com/guide" autocomplete="url" />
+          </label>
+
+          <div class="studio-row">
+            <label class="studio-field">
+              <span>Deliverable template</span>
+              <select id="templateSelect" name="template">
+                <option value="agency">Agency client brief</option>
+                <option value="freelancer">Freelancer handoff</option>
+                <option value="technical">Technical reference</option>
+              </select>
+            </label>
+            <label class="studio-check">
+              <input id="generateCover" type="checkbox" checked />
+              <span>Generate cover image</span>
+            </label>
+          </div>
+
+          <div class="studio-actions">
+            <button class="btn primary" id="runScrape" type="submit">Scrape &amp; build doc</button>
+            <button class="btn ghost" id="resetStudio" type="button">Reset</button>
+          </div>
+          <p class="fine-print" id="studioStatus" aria-live="polite">Ready. Uses reader fallback; optional Firecrawl key on server for JS pages + screenshots.</p>
+        </form>
+      </section>
+
+      <section class="section studio-results" id="resultsSection" hidden>
+        <div class="studio-results-head">
+          <div>
+            <p class="eyebrow">Output</p>
+            <h2 id="resultTitle">Documentation ready</h2>
+            <p class="fine-print" id="resultMeta"></p>
+          </div>
+          <div class="studio-toolbar">
+            <button class="btn ghost" id="copyDoc" type="button">Copy markdown</button>
+            <button class="btn ghost" id="downloadDoc" type="button">Download .md</button>
+            <button class="btn primary" id="downloadCover" type="button">Download cover PNG</button>
+          </div>
+        </div>
+
+        <div class="studio-grid">
+          <article class="studio-card">
+            <h3>Documentation preview</h3>
+            <pre class="studio-code" id="docPreview"></pre>
+          </article>
+          <article class="studio-card">
+            <h3>Cover image</h3>
+            <canvas id="coverCanvas" width="1200" height="630" aria-label="Generated documentation cover"></canvas>
+            <p class="fine-print">1200×630 PNG — social, pitch decks, Notion covers.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 White Lab Protocol. Respect robots.txt and site terms when scraping third-party pages.</p>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/apis/">API Directory</a>
+        <a href="/legal">Legal</a>
+      </div>
+    </footer>
+
+    <script src="/website/js/site.js" type="module"></script>
+    <script src="/website/js/studio.js" type="module"></script>
+  </body>
+</html>

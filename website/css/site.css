@@ -1240,6 +1240,55 @@ th {
   background: var(--surface-strong);
 }
 
+.api-category {
+  margin-top: 48px;
+}
+
+.api-category h2 {
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  margin-bottom: 20px;
+}
+
+.api-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 18px;
+}
+
+.api-card {
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.api-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.api-card-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.api-efficiency {
+  font-size: 0.78rem;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.api-card .btn {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
 @media (max-width: 760px) {
   .wp-shell {
     padding-top: 36px;
@@ -1251,5 +1300,133 @@ th {
   }
   .wp-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* White Lab Studio */
+.studio-page .section-head h1 {
+  max-width: 14ch;
+}
+
+.studio-panel {
+  margin-top: 32px;
+  padding: 28px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  display: grid;
+  gap: 18px;
+}
+
+.studio-field {
+  display: grid;
+  gap: 8px;
+}
+
+.studio-field span {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.studio-field input,
+.studio-field select {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--ink);
+  padding: 12px 14px;
+}
+
+.studio-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.studio-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  color: var(--muted);
+}
+
+.studio-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+#studioStatus[data-tone="error"] {
+  color: var(--wl-warn, #e8c547);
+}
+
+#studioStatus[data-tone="success"] {
+  color: var(--wl-success, #8fd694);
+}
+
+.studio-results-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.studio-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.studio-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
+}
+
+.studio-card {
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.studio-card h3 {
+  margin-top: 0;
+}
+
+.studio-code {
+  max-height: 420px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--wl-font-mono, monospace);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+}
+
+#coverCanvas {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: #000;
+}
+
+@media (max-width: 900px) {
+  .studio-grid,
+  .studio-row {
+    grid-template-columns: 1fr;
   }
 }
