@@ -40,6 +40,28 @@ const SECURITY_HEADERS = `/*
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; connect-src 'self' https://sepolia.base.org https://mainnet.base.org https://*.base.org https://*.basescan.org; font-src 'self'; frame-ancestors 'none'; base-uri 'self'
+  Cache-Control: public, max-age=0, must-revalidate
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/app/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/app/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/shared/*
+  Cache-Control: public, max-age=3600
+
+/public/*
+  Cache-Control: public, max-age=86400
+
+/api/*
+  Cache-Control: no-store
 `;
 
 function rm(dir) {
