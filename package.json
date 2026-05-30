@@ -24,7 +24,8 @@
     "frontend": "npm run start",
     "env:check": "node scripts/validate-env.js",
     "env:check:base": "node scripts/validate-env.js base",
-    "validate": "npm run compile && npm test && npm run e2e:local"
+    "validate": "npm run compile && npm test && npm run e2e:local",
+    "test:studio": "node --test test/scrape-core.test.mjs"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",

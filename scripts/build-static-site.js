@@ -1,6 +1,8 @@
 /**
  * Builds dist/ for Cloudflare Pages / GitHub Pages (no Node server required).
  * Run: npm run build:site
+ *
+ * Cloudflare Pages Functions live in /functions (repo root), not dist/.
  */
 const fs = require("fs");
 const path = require("path");
@@ -19,6 +21,7 @@ const cacheBust = {
   siteCss: fileHash(path.join(root, "website", "css", "site.css")),
   siteJs: fileHash(path.join(root, "website", "js", "site.js")),
   apisJs: fileHash(path.join(root, "website", "js", "apis.js")),
+  studioJs: fileHash(path.join(root, "website", "js", "studio.js")),
   appCss: fileHash(path.join(root, "frontend", "src", "styles.css")),
   appJs: fileHash(path.join(root, "frontend", "src", "app.js")),
 };
@@ -36,7 +39,7 @@ const SECURITY_HEADERS = `/*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://sepolia.base.org https://mainnet.base.org https://*.base.org https://*.basescan.org; font-src 'self'; frame-ancestors 'none'; base-uri 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; connect-src 'self' https://sepolia.base.org https://mainnet.base.org https://*.base.org https://*.basescan.org; font-src 'self'; frame-ancestors 'none'; base-uri 'self'
 `;
 
 function rm(dir) {
@@ -63,7 +66,7 @@ function copyDir(src, dest) {
   }
 }
 
-function rewriteSiteHtml(html, { includeApisJs = false } = {}) {
+function rewriteSiteHtml(html, { includeApisJs = false, includeStudioJs = false } = {}) {
   let out = html
     .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
     .replace(/\/website\/js\/site.js/g, `/js/site.js?v=${cacheBust.siteJs}`)
@@ -71,7 +74,17 @@ function rewriteSiteHtml(html, { includeApisJs = false } = {}) {
   if (includeApisJs) {
     out = out.replace(/\/website\/js\/apis.js/g, `/js/apis.js?v=${cacheBust.apisJs}`);
   }
+  if (includeStudioJs) {
+    out = out.replace(/\/website\/js\/studio.js/g, `/js/studio.js?v=${cacheBust.studioJs}`);
+  }
   return out;
+}
+
+function writePage(name, htmlPath, options = {}) {
+  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", htmlPath), "utf8"), options);
+  mkdir(path.join(dist, name));
+  fs.writeFileSync(path.join(dist, `${name}.html`), html);
+  fs.writeFileSync(path.join(dist, name, "index.html"), html);
 }
 
 function writeAppIndex() {
@@ -83,50 +96,24 @@ function writeAppIndex() {
   fs.writeFileSync(path.join(dist, "app", "index.html"), html);
 }
 
-function writeMarketingIndex() {
-  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "index.html"), "utf8"));
-  fs.writeFileSync(path.join(dist, "index.html"), html);
-}
-
-function writeLegal() {
-  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "legal.html"), "utf8"));
-  mkdir(path.join(dist, "legal"));
-  fs.writeFileSync(path.join(dist, "legal.html"), html);
-  fs.writeFileSync(path.join(dist, "legal", "index.html"), html);
-}
-
-function writeWhitepaper() {
-  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "whitepaper.html"), "utf8"));
-  mkdir(path.join(dist, "whitepaper"));
-  fs.writeFileSync(path.join(dist, "whitepaper.html"), html);
-  fs.writeFileSync(path.join(dist, "whitepaper", "index.html"), html);
-}
-
-function writeTurkishIndex() {
-  mkdir(path.join(dist, "tr"));
-  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "tr", "index.html"), "utf8"));
-  fs.writeFileSync(path.join(dist, "tr", "index.html"), html);
-}
-
-function writeApisPage() {
-  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "apis.html"), "utf8"), {
-    includeApisJs: true,
-  });
-  mkdir(path.join(dist, "apis"));
-  fs.writeFileSync(path.join(dist, "apis.html"), html);
-  fs.writeFileSync(path.join(dist, "apis", "index.html"), html);
-}
-
 function main() {
   console.log("Building static site → dist/");
   rm(dist);
   mkdir(dist);
 
-  writeMarketingIndex();
-  writeTurkishIndex();
-  writeWhitepaper();
-  writeLegal();
-  writeApisPage();
+  fs.writeFileSync(path.join(dist, "index.html"), rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "index.html"), "utf8")));
+
+  mkdir(path.join(dist, "tr"));
+  fs.writeFileSync(
+    path.join(dist, "tr", "index.html"),
+    rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "tr", "index.html"), "utf8"))
+  );
+
+  writePage("whitepaper", "whitepaper.html");
+  writePage("legal", "legal.html");
+  writePage("apis", "apis.html", { includeApisJs: true });
+  writePage("studio", "studio.html", { includeStudioJs: true });
+
   mkdir(path.join(dist, "app"));
   writeAppIndex();
 
@@ -158,16 +145,17 @@ function main() {
     "/legal.html  /legal/  301",
     "/apis  /apis/  301",
     "/apis.html  /apis/  301",
+    "/studio  /studio/  301",
+    "/studio.html  /studio/  301",
   ].join("\n");
   fs.writeFileSync(path.join(dist, "_redirects"), `${redirects}\n`);
-
   fs.writeFileSync(path.join(dist, "_headers"), SECURITY_HEADERS);
 
   console.log("Done. Deploy folder: dist/");
   console.log(
-    `Cache-bust hashes — site.css=${cacheBust.siteCss} site.js=${cacheBust.siteJs} apis.js=${cacheBust.apisJs} app.css=${cacheBust.appCss} app.js=${cacheBust.appJs}`
+    `Cache-bust — site.css=${cacheBust.siteCss} apis.js=${cacheBust.apisJs} studio.js=${cacheBust.studioJs}`
   );
-  console.log("Cloudflare Pages → Build output directory: dist");
+  console.log("Cloudflare Pages → Build output: dist · Functions → /functions/api/scrape.js");
 }
 
 main();

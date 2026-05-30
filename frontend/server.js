@@ -24,7 +24,13 @@ const routes = {
   "/app": "frontend/index.html",
   "/app/": "frontend/index.html",
   "/whitepaper": "website/whitepaper.html",
+  "/whitepaper/": "website/whitepaper.html",
   "/legal": "website/legal.html",
+  "/legal/": "website/legal.html",
+  "/apis": "website/apis.html",
+  "/apis/": "website/apis.html",
+  "/studio": "website/studio.html",
+  "/studio/": "website/studio.html",
   "/tokenomics.json": "shared/tokenomics.json",
 };
 
@@ -41,7 +47,49 @@ function resolveRequest(url) {
   return target;
 }
 
-const server = http.createServer((req, res) => {
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", (chunk) => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    req.on("error", reject);
+  });
+}
+
+async function handleScrapeApi(req, res) {
+  try {
+    const raw = await readBody(req);
+    const body = raw ? JSON.parse(raw) : {};
+    const { handleScrapeRequest } = await import("../scripts/lib/scrape-local.mjs");
+    const result = await handleScrapeRequest(body);
+    res.writeHead(200, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+    res.end(JSON.stringify(result));
+  } catch (error) {
+    res.writeHead(400, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+    res.end(JSON.stringify({ ok: false, error: error.message || "Scrape failed." }));
+  }
+}
+
+const server = http.createServer(async (req, res) => {
+  const pathname = decodeURIComponent((req.url || "/").split("?")[0]);
+
+  if (req.method === "POST" && pathname === "/api/scrape") {
+    await handleScrapeApi(req, res);
+    return;
+  }
+
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    res.writeHead(405);
+    res.end("Method not allowed");
+    return;
+  }
+
   const target = resolveRequest(req.url);
   if (!target) {
     res.writeHead(403);
@@ -69,7 +117,8 @@ const server = http.createServer((req, res) => {
 server.listen(port, () => {
   console.log(`WhiteLab site:  http://127.0.0.1:${port}`);
   console.log(`Protocol app:   http://127.0.0.1:${port}/app`);
-  console.log(`Whitepaper:     http://127.0.0.1:${port}/whitepaper`);
-  console.log(`Legal:          http://127.0.0.1:${port}/legal`);
-  console.log(`API directory:  http://127.0.0.1:${port}/apis`);
+  console.log(`Studio tool:    http://127.0.0.1:${port}/studio/`);
+  console.log(`API directory:  http://127.0.0.1:${port}/apis/`);
+  console.log(`Whitepaper:     http://127.0.0.1:${port}/whitepaper/`);
+  console.log(`Legal:          http://127.0.0.1:${port}/legal/`);
 });
