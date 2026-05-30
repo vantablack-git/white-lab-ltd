@@ -189,13 +189,15 @@ Tüm mimari kararlar, eylemler ve doğrulama kayıtları.
 
 ---
 
-## [2026-05-30] Cursor Agent Handoff — Status Sync
+## [2026-05-30] Launch Presentation Pass — Mobile/Tablet + Docs
 
-- **ACTION** Created `docs/internal/cursor-handoff/00-STATUS-SNAPSHOT.md` for agent continuity after Haiku → Cursor transition.
-- **DOC** Synced stale metrics in `docs/10-production-candidate-readiness.md` and `docs/internal/RC2-VALIDATION.md` (192 tests, 95.45% branch coverage, Slither CI).
-- **VERIFY** `npm test` → **192 passing**
-- **VERIFY** `npm run coverage` → **95.45% branch**
-- **VERIFY** `npm run e2e:local` → PASS
-- **VERIFY** `npm run build:site` → PASS
-- **BLOCKED** Phase 15 Base Sepolia live deploy — operator must supply `.env` (PRIVATE_KEY, RPC, Basescan key, treasury, multisig Safe).
-- **NEXT** Operator: Gnosis Safe on Base Sepolia → `npm run deploy:sepolia` → `npm run verify` → Cloudflare redeploy.
+- **ACTION** Mobile hamburger nav on TR, whitepaper, legal; improved menu JS (Escape, outside click, scroll lock).
+- **ACTION** Responsive CSS: sticky header, hero visual hidden on phones, 44px touch targets, safe-area padding.
+- **ACTION** Console: collapsible mobile nav, responsive allocation chart with resize handler.
+- **ACTION** OG card asset (`public/og-card.svg`), meta tags on all public pages.
+- **ACTION** Dev server routes for `/whitepaper/` and `/legal/`.
+- **DOC** `docs/internal/LAUNCH-COMPLETION.md` — research + handoff (Notion MCP auth unavailable).
+- **DOC** `docs/pre-mainnet-checklist.md` — marked codebase-complete surface items.
+- **VERIFY** `npm run validate` -> PASS (192 tests + E2E)
+- **VERIFY** `npm run build:site` -> PASS
+- **NEXT** Operator: merge PR -> Cloudflare auto-deploy -> Phase 15 `.env` + Safe deploy.

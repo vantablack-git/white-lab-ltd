@@ -158,9 +158,25 @@ function bindMenu() {
   const toggle = document.querySelector(".menu-toggle");
   const nav = document.querySelector(".site-nav");
   if (!toggle || !nav) return;
-  toggle.addEventListener("click", () => {
-    const open = nav.classList.toggle("open");
+
+  const setOpen = (open) => {
+    nav.classList.toggle("open", open);
     toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    document.body.style.overflow = open ? "hidden" : "";
+  };
+
+  toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
+  nav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => setOpen(false));
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setOpen(false);
+  });
+  document.addEventListener("click", (event) => {
+    if (!nav.classList.contains("open")) return;
+    if (nav.contains(event.target) || toggle.contains(event.target)) return;
+    setOpen(false);
   });
 }
 

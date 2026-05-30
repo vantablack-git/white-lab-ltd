@@ -45,7 +45,7 @@ Tüm maddeler ✅ olunca proje **production-ready MVP** sayılır.
 - [ ] Basescan verify tüm kontratlar
 - [x] `deployments/base-sepolia.json` şablon + verify script hazır
 - [x] `npm run deploy:local:demo` + `npm run handover:multisig` scriptleri
-- [x] Statik site: CSP headers, legal sayfası, manifest önceliği
+- [x] Statik site: CSP headers, legal sayfası, manifest önceliği, mobil/tablet UX
 - [ ] Multisig admin (4/7) yapılandırıldı (kullanıcı Safe adresi ile)
 - [ ] Mainnet checklist (`docs/06`) gözden geçirildi
 

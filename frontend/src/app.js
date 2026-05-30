@@ -502,6 +502,8 @@ async function init() {
   } else {
     showAlert("Static demo loaded. Connect an injected wallet to execute protocol transactions.");
   }
+
+  window.addEventListener("resize", scheduleAllocationChart);
 }
 
 init().catch((error) => showAlert(error.message, "error"));

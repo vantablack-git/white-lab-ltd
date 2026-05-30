@@ -1026,7 +1026,10 @@ th {
     max-width: 11ch;
   }
   .hero-visual {
-    min-height: 430px;
+    min-height: 280px;
+  }
+  .hero-stats {
+    grid-template-columns: 1fr;
   }
   .command-strip,
   .security-grid {

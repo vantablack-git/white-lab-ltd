@@ -24,7 +24,9 @@ const routes = {
   "/app": "frontend/index.html",
   "/app/": "frontend/index.html",
   "/whitepaper": "website/whitepaper.html",
+  "/whitepaper/": "website/whitepaper.html",
   "/legal": "website/legal.html",
+  "/legal/": "website/legal.html",
   "/tokenomics.json": "shared/tokenomics.json",
 };
 
