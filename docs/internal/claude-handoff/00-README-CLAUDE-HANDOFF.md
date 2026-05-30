@@ -1,5 +1,7 @@
 # WhiteLab — Claude Handoff Paketi
 
+> **Güncel giriş (2026-05-30):** [`../SONNET-DEVAM.md`](../SONNET-DEVAM.md) — Sonnet 4.6 devam prompt'u ve merge checklist burada.
+
 Bu klasör, projeyi **Claude ile istişare ederek** tamamlanmış (production-ready) hale getirmek için hazırlanmıştır.
 
 ---
