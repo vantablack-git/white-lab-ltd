@@ -1026,10 +1026,7 @@ th {
     max-width: 11ch;
   }
   .hero-visual {
-    min-height: 280px;
-  }
-  .hero-stats {
-    grid-template-columns: 1fr;
+    min-height: 430px;
   }
   .command-strip,
   .security-grid {
@@ -1241,6 +1238,55 @@ th {
   color: var(--ink);
   border-color: var(--line);
   background: var(--surface-strong);
+}
+
+.api-category {
+  margin-top: 48px;
+}
+
+.api-category h2 {
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  margin-bottom: 20px;
+}
+
+.api-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 18px;
+}
+
+.api-card {
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.api-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.api-card-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.api-efficiency {
+  font-size: 0.78rem;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.api-card .btn {
+  margin-top: auto;
+  align-self: flex-start;
 }
 
 @media (max-width: 760px) {

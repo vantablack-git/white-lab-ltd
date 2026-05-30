@@ -189,15 +189,11 @@ Tüm mimari kararlar, eylemler ve doğrulama kayıtları.
 
 ---
 
-## [2026-05-30] Launch Presentation Pass — Mobile/Tablet + Docs
+## [2026-05-30] Aşama 5 — API Intelligence + 7-Phase Completion Roadmap
 
-- **ACTION** Mobile hamburger nav on TR, whitepaper, legal; improved menu JS (Escape, outside click, scroll lock).
-- **ACTION** Responsive CSS: sticky header, hero visual hidden on phones, 44px touch targets, safe-area padding.
-- **ACTION** Console: collapsible mobile nav, responsive allocation chart with resize handler.
-- **ACTION** OG card asset (`public/og-card.svg`), meta tags on all public pages.
-- **ACTION** Dev server routes for `/whitepaper/` and `/legal/`.
-- **DOC** `docs/internal/LAUNCH-COMPLETION.md` — research + handoff (Notion MCP auth unavailable).
-- **DOC** `docs/pre-mainnet-checklist.md` — marked codebase-complete surface items.
-- **VERIFY** `npm run validate` -> PASS (192 tests + E2E)
-- **VERIFY** `npm run build:site` -> PASS
-- **NEXT** Operator: merge PR -> Cloudflare auto-deploy -> Phase 15 `.env` + Safe deploy.
+- **ACTION** `docs/internal/COMPLETION-ROADMAP.md` — master plan (7 macro phases, auto-continue rules).
+- **ACTION** `docs/ecosystem/api-intelligence-research.md` — scraping + crypto API web research, monetization models.
+- **ACTION** `shared/api-directory.json`, `website/apis.html`, `website/js/apis.js`, build + dev routes.
+- **ACTION** `docs/tr/TAMAMLAMA-ROADMAP.md` — Turkish operator summary.
+- **NOTE** Notion MCP requires auth; research documented in-repo instead of Notion page.
+- **VERIFY** `npm run validate` + `npm run build:site` before commit.

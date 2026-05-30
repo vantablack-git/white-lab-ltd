@@ -24,6 +24,8 @@ await sdk.launch.createSale({ phase: 'Public', price: '0.04', allocation: '10000
 
 Dokümantasyon: `docs/` + OpenAPI (REST indexer) — subgraph GraphQL.
 
+**API Intelligence (yan gelir):** `docs/ecosystem/api-intelligence-research.md` · Canlı dizin: `/apis/` · Veri: `shared/api-directory.json`
+
 ### Hackathon
 
 - **WhiteLab Buildathon** — 48h, $100K ödül havuzu

@@ -24,9 +24,7 @@ const routes = {
   "/app": "frontend/index.html",
   "/app/": "frontend/index.html",
   "/whitepaper": "website/whitepaper.html",
-  "/whitepaper/": "website/whitepaper.html",
   "/legal": "website/legal.html",
-  "/legal/": "website/legal.html",
   "/tokenomics.json": "shared/tokenomics.json",
 };
 
@@ -73,4 +71,5 @@ server.listen(port, () => {
   console.log(`Protocol app:   http://127.0.0.1:${port}/app`);
   console.log(`Whitepaper:     http://127.0.0.1:${port}/whitepaper`);
   console.log(`Legal:          http://127.0.0.1:${port}/legal`);
+  console.log(`API directory:  http://127.0.0.1:${port}/apis`);
 });

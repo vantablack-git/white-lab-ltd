@@ -18,6 +18,7 @@ function fileHash(filePath) {
 const cacheBust = {
   siteCss: fileHash(path.join(root, "website", "css", "site.css")),
   siteJs: fileHash(path.join(root, "website", "js", "site.js")),
+  apisJs: fileHash(path.join(root, "website", "js", "apis.js")),
   appCss: fileHash(path.join(root, "frontend", "src", "styles.css")),
   appJs: fileHash(path.join(root, "frontend", "src", "app.js")),
 };
@@ -62,6 +63,17 @@ function copyDir(src, dest) {
   }
 }
 
+function rewriteSiteHtml(html, { includeApisJs = false } = {}) {
+  let out = html
+    .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
+    .replace(/\/website\/js\/site.js/g, `/js/site.js?v=${cacheBust.siteJs}`)
+    .replace(/\/shared\/tokens.css/g, `/shared/tokens.css`);
+  if (includeApisJs) {
+    out = out.replace(/\/website\/js\/apis.js/g, `/js/apis.js?v=${cacheBust.apisJs}`);
+  }
+  return out;
+}
+
 function writeAppIndex() {
   let html = fs.readFileSync(path.join(root, "frontend", "index.html"), "utf8");
   html = html
@@ -72,27 +84,19 @@ function writeAppIndex() {
 }
 
 function writeMarketingIndex() {
-  let html = fs.readFileSync(path.join(root, "website", "index.html"), "utf8");
-  html = html
-    .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
-    .replace(/\/website\/js\/site.js/g, `/js/site.js?v=${cacheBust.siteJs}`)
-    .replace(/\/shared\/tokens.css/g, `/shared/tokens.css`);
+  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "index.html"), "utf8"));
   fs.writeFileSync(path.join(dist, "index.html"), html);
 }
 
 function writeLegal() {
-  let html = fs.readFileSync(path.join(root, "website", "legal.html"), "utf8");
-  html = html.replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`);
+  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "legal.html"), "utf8"));
   mkdir(path.join(dist, "legal"));
   fs.writeFileSync(path.join(dist, "legal.html"), html);
   fs.writeFileSync(path.join(dist, "legal", "index.html"), html);
 }
 
 function writeWhitepaper() {
-  let html = fs.readFileSync(path.join(root, "website", "whitepaper.html"), "utf8");
-  html = html
-    .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
-    .replace(/\/shared\/tokens.css/g, `/shared/tokens.css`);
+  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "whitepaper.html"), "utf8"));
   mkdir(path.join(dist, "whitepaper"));
   fs.writeFileSync(path.join(dist, "whitepaper.html"), html);
   fs.writeFileSync(path.join(dist, "whitepaper", "index.html"), html);
@@ -100,11 +104,17 @@ function writeWhitepaper() {
 
 function writeTurkishIndex() {
   mkdir(path.join(dist, "tr"));
-  let html = fs.readFileSync(path.join(root, "website", "tr", "index.html"), "utf8");
-  html = html
-    .replace(/\/website\/css\/site.css/g, `/css/site.css?v=${cacheBust.siteCss}`)
-    .replace(/\/website\/js\/site.js/g, `/js/site.js?v=${cacheBust.siteJs}`);
+  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "tr", "index.html"), "utf8"));
   fs.writeFileSync(path.join(dist, "tr", "index.html"), html);
+}
+
+function writeApisPage() {
+  const html = rewriteSiteHtml(fs.readFileSync(path.join(root, "website", "apis.html"), "utf8"), {
+    includeApisJs: true,
+  });
+  mkdir(path.join(dist, "apis"));
+  fs.writeFileSync(path.join(dist, "apis.html"), html);
+  fs.writeFileSync(path.join(dist, "apis", "index.html"), html);
 }
 
 function main() {
@@ -116,6 +126,7 @@ function main() {
   writeTurkishIndex();
   writeWhitepaper();
   writeLegal();
+  writeApisPage();
   mkdir(path.join(dist, "app"));
   writeAppIndex();
 
@@ -145,6 +156,8 @@ function main() {
     "/whitepaper.html  /whitepaper/  301",
     "/legal  /legal/  301",
     "/legal.html  /legal/  301",
+    "/apis  /apis/  301",
+    "/apis.html  /apis/  301",
   ].join("\n");
   fs.writeFileSync(path.join(dist, "_redirects"), `${redirects}\n`);
 
@@ -152,7 +165,7 @@ function main() {
 
   console.log("Done. Deploy folder: dist/");
   console.log(
-    `Cache-bust hashes — site.css=${cacheBust.siteCss} site.js=${cacheBust.siteJs} app.css=${cacheBust.appCss} app.js=${cacheBust.appJs}`
+    `Cache-bust hashes — site.css=${cacheBust.siteCss} site.js=${cacheBust.siteJs} apis.js=${cacheBust.apisJs} app.css=${cacheBust.appCss} app.js=${cacheBust.appJs}`
   );
   console.log("Cloudflare Pages → Build output directory: dist");
 }
