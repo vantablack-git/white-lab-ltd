@@ -100,7 +100,7 @@ Host via `npm run start` (port 4173) or static export to Cloudflare Pages / GitH
 | Check | Status |
 |-------|--------|
 | Hardhat compile | Passing |
-| Tests | Passing (`79 passing` as of Phase 5) |
+| Tests | Passing (`192 passing` as of RC-2) |
 | Local E2E script | Passing |
 | Hardhat deploy dry run | Passing |
 | Env validation script | Added |

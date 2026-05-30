@@ -186,3 +186,16 @@ Tüm mimari kararlar, eylemler ve doğrulama kayıtları.
 - **VERIFY** `npx.cmd hardhat run scripts/deploy.js --network hardhat` -> PASS
 - **VERIFY** Browser smoke test desktop/mobile -> PASS, no console errors.
 - **STATUS** Testnet/demo candidate materially improved; mainnet still blocked by audit, Slither, 95% coverage, Safe handover, treasury proxy deployment, and real OFT implementation.
+
+---
+
+## [2026-05-30] Cursor Agent Handoff — Status Sync
+
+- **ACTION** Created `docs/internal/cursor-handoff/00-STATUS-SNAPSHOT.md` for agent continuity after Haiku → Cursor transition.
+- **DOC** Synced stale metrics in `docs/10-production-candidate-readiness.md` and `docs/internal/RC2-VALIDATION.md` (192 tests, 95.45% branch coverage, Slither CI).
+- **VERIFY** `npm test` → **192 passing**
+- **VERIFY** `npm run coverage` → **95.45% branch**
+- **VERIFY** `npm run e2e:local` → PASS
+- **VERIFY** `npm run build:site` → PASS
+- **BLOCKED** Phase 15 Base Sepolia live deploy — operator must supply `.env` (PRIVATE_KEY, RPC, Basescan key, treasury, multisig Safe).
+- **NEXT** Operator: Gnosis Safe on Base Sepolia → `npm run deploy:sepolia` → `npm run verify` → Cloudflare redeploy.
