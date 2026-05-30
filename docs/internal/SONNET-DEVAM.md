@@ -45,7 +45,7 @@ flowchart LR
 | Katman | Durum | Not |
 | --- | --- | --- |
 | Kontratlar + test | ✅ 192 passing, ~95% branch | `main`'de yeşil |
-| Site + mobil UX | ✅ Branch'te hazır | PR #9 |
+| Site + mobil UX | ✅ Branch'te hazır | PR #10 |
 | White Lab Studio | ✅ Branch'te hazır | URL → markdown + kapak PNG |
 | API dizini | ✅ Branch'te hazır | `/apis/` |
 | Production `main` | ⏳ Eski (`0612f50`) | Studio/APIs henüz canlıda yok |
@@ -76,9 +76,9 @@ Public metin her yerde: *"testnet candidate, audit pending, mainnet blocked"*.
 
 | | |
 | --- | --- |
-| **Merge edilecek** | `cursor/studio-scraper-tool-835b` → [PR #9](https://github.com/vantablack-git/white-lab-ltd/pull/9) |
+| **Merge edilecek** | `cursor/studio-scraper-tool-835b` → [PR #10](https://github.com/vantablack-git/white-lab-ltd/pull/10) |
 | **İçerik** | Studio + APIs + cache tooling + mobil UX |
-| **Eski PR'lar (#6, #7)** | #9 ile kapsanıyor — doğrudan #9 merge yeterli |
+| **Eski PR'lar (#6, #7, #9)** | #10 ile kapsanıyor — doğrudan #10 merge yeterli |
 
 ---
 
@@ -98,7 +98,7 @@ npm run cache:clear         # dist + hardhat cache; opsiyonel CF purge
 
 ## Sonraki işler (Claude önceliği)
 
-1. PR #9 review — conflict, eksik link, test
+1. PR #10 review — conflict, eksik link, test
 2. Merge sonrası production doğrulama (`whitelab.ltd/studio/`)
 3. [`COMPLETION-ROADMAP.md`](./COMPLETION-ROADMAP.md) — Aşama 5 Studio/APIs tamamlandı olarak güncelle
 4. Aşama 3 Sepolia — sadece checklist yaz; private key isteme
@@ -110,7 +110,7 @@ npm run cache:clear         # dist + hardhat cache; opsiyonel CF purge
 
 | # | Ne | Nerede |
 | --- | --- | --- |
-| 1 | PR #9 merge onayı | GitHub |
+| 1 | PR #10 merge onayı | GitHub |
 | 2 | Cloudflare Pages deploy | Dashboard → Deployments (merge auto-trigger veya Retry) |
 | 3 | Cache purge (eski site görünüyorsa) | Dashboard → Caching → Purge Everything **veya** `.env` + `npm run cache:clear` |
 | 4 | `FIRECRAWL_API_KEY` (opsiyonel) | Cloudflare Pages → Environment variables |
@@ -133,13 +133,13 @@ WhiteLab ($WLAB) projesinde devam ediyorsun. Repo: vantablack-git/white-lab-ltd
 3. docs/internal/COMPLETION-ROADMAP.md  ← 7 aşamalı master plan
 
 GÜNCEL DURUM:
-- Branch cursor/studio-scraper-tool-835b / PR #9: Studio (/studio/), API dizini (/apis/), cache:clear, mobil UX
+- Branch cursor/studio-scraper-tool-835b / PR #10: Studio (/studio/), API dizini (/apis/), cache:clear, mobil UX
 - main production hâlâ eski (0612f50) — merge bekliyor
 - 192 test geçiyor; npm run test:studio → 3/3
 - Base Sepolia deploy OPERATÖR işi (.env + Safe) — private key isteme
 
 BU OTURUM GÖREVİ:
-1. PR #9 merge hazırlığı: conflict check, eksik link/test var mı bak
+1. PR #10 merge hazırlığı: conflict check, eksik link/test var mı bak
 2. Merge sonrası deploy checklist yaz (Cloudflare Pages, cache purge, FIRECRAWL_API_KEY opsiyonel)
 3. COMPLETION-ROADMAP Aşama 5'i Studio/APIs tamamlandı diye güncelle
 4. Küçük diff — gereksiz refactor yok; npm test yeşil kalsın
